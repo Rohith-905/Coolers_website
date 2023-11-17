@@ -1,12 +1,9 @@
-// frontend/src/App.js
+// Registration.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import {  Navigate } from 'react-router-dom';
 import { Grid } from '@mui/material';
-import './login.css'; // Import the CSS file
 
-const Login = ({ setLoggedIn, isLoggedIn  }) => {
-  // const[data,setData] = useState('');
+const Registration = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -14,43 +11,28 @@ const Login = ({ setLoggedIn, isLoggedIn  }) => {
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
-  const HandleLogin = async (e) => {
+  const handleRegistration = async (e) => {
     e.preventDefault();
-  
-    try {
-      
-      // Send a request to the server for authentication
-        await axios.post('http://localhost:5000/api/login', formData);
-        // setError('Successful login');
-        // Store the JWT token in local storage upon successful login
-        // localStorage.setItem('token', response.data.token);
-      
-      // Redirect to a protected route or perform other actions as needed
-      // For example, you can use React Router to navigate to a different page
-      // history.push('/dashboard');
-      // Set isLoggedIn to true upon successful login
-        setLoggedIn(true);
-        if (isLoggedIn) {
-          return <Navigate to="/home" />;
-        }
 
-        // Navigate to the homePage route
-        // navigateToHomePage();
-    } catch (err) {
-      // Handle login error
-      setError('Invalid username or password');
+    try {
+      // Send a request to the server for user registration
+      await axios.post('http://localhost:5000/api/register', formData);
+
+      // Registration successful, you can redirect or show a success message
+      console.log('Registration successful!');
+    } catch (error) {
+        setError('Invalid username or password');
+        console.error('Registration failed:', error.response.data.error);
     }
   };
 
   return (
     <Grid className="login-container">
-      <h2 className="login-title">Login</h2>
-      <form className="login-form" onSubmit={HandleLogin}>
+      <h2 className="login-title">Register</h2>
+      <form className="login-form" onSubmit={handleRegistration}>
         <input
           type="text"
           name="username"
@@ -80,7 +62,7 @@ const Login = ({ setLoggedIn, isLoggedIn  }) => {
         </Grid>
 
         <button type="submit" className="login-button">
-          Login
+          Register
         </button>
       </form>
       {error && <p>{error}</p>}
@@ -88,5 +70,4 @@ const Login = ({ setLoggedIn, isLoggedIn  }) => {
   );
 };
 
-export default Login;
-
+export default Registration;
