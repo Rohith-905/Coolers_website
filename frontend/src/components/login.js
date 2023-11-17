@@ -25,7 +25,7 @@ const Login = ({ setLoggedIn, isLoggedIn  }) => {
     try {
       
       // Send a request to the server for authentication
-        await axios.post('http://localhost:5000/api/login', formData);
+        const res = await axios.post('http://localhost:5000/api/login', formData);
         // setError('Successful login');
         // Store the JWT token in local storage upon successful login
         // localStorage.setItem('token', response.data.token);
@@ -34,6 +34,7 @@ const Login = ({ setLoggedIn, isLoggedIn  }) => {
       // For example, you can use React Router to navigate to a different page
       // history.push('/dashboard');
       // Set isLoggedIn to true upon successful login
+      setError(res.data.message);
         setLoggedIn(true);
         if (isLoggedIn) {
           return <Navigate to="/home" />;

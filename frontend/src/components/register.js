@@ -20,7 +20,7 @@ const Registration = () => {
     try {
       // Send a request to the server for user registration
       await axios.post('http://localhost:5000/api/register', formData);
-
+      setError('Registration successful!')
       // Registration successful, you can redirect or show a success message
       console.log('Registration successful!');
     } catch (error) {

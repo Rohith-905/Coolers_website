@@ -26,24 +26,52 @@ db.connect((err) => {
 });
 
 // API route for user registration
-app.post('/api/register', (req, res) => {
+// app.post('/api/register', (req, res) => {
+//   const { username, password } = req.body;
+
+//   // Hash the password using bcrypt
+//   bcrypt.hash(password, 10, (err, hash) => {
+//     console.log(hash);
+//     if (err) {
+//       return res.status(500).json({ error: 'Internal server error' });
+//     }
+
+//     // Insert the user into the database
+//     const insertUserQuery = 'INSERT INTO authentication (username, password) VALUES ('+username+','+hash+')';
+//     db.query(insertUserQuery, [username, hash], (err, result) => {
+//       if (err) {
+//         return res.status(500).json({ error: 'DB Internal server error' });
+//       }
+//       return res.status(201).json({ message: 'User registered successfully' });
+//     });
+//   });
+// });
+
+app.post('/api/register', async (req, res) => {
   const { username, password } = req.body;
 
-  // Hash the password using bcrypt
-  bcrypt.hash(password, 10, (err, hash) => {
-    if (err) {
-      return res.status(500).json({ error: 'Internal server error' });
-    }
+  try {
+    // Hash the password using bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert the user into the database
-    const insertUserQuery = 'INSERT INTO authentication (username, password_hash) VALUES (?, ?)';
-    db.query(insertUserQuery, [username, hash], (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: 'Internal server error' });
-      }
-      return res.status(201).json({ message: 'User registered successfully' });
-    });
-  });
+    const insertUserQuery = "INSERT INTO authentication (username, password) VALUES ('"+username+"','"+hashedPassword+"')";
+    
+    // Using promise to handle the database query
+    await db.promise().execute(insertUserQuery, [username, hashedPassword]);
+
+    // Registration successful
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (error) {
+    console.error('Error during registration:', error);
+
+    // Handle specific bcrypt errors
+    if (error.name === 'BcryptError') {
+      return res.status(500).json({ error: 'Password hashing error' });
+    }
+
+    res.status(500).json({ error: 'DB Internal server error' });
+  }
 });
 // app.get('/api/data', (req, res) => {
 
@@ -52,12 +80,13 @@ app.post('/api/register', (req, res) => {
 // API route for user login
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
+  console.log(username,password);
    // Find the user in the database
    const findUserQuery = "SELECT * FROM authentication WHERE username = '"+username+"'";
   //  console.log(findUserQuery);
    db.query(findUserQuery, [username], (err, results) => {
      if (err) {
-       return res.status(500).json({ error: 'Internal server error' });
+       return res.status(500).json({ error: 'DB Internal server error' });
      }
  
      // Check if the user doesnt exists
@@ -66,10 +95,11 @@ app.post('/api/login', (req, res) => {
      }
  
      const user = results[0];
+     console.log(JSON.stringify(user));
      // Compare the provided password with the hashed password in the database
-    bcrypt.compare(password, user.password_hash, (err, isMatch) => {
+    bcrypt.compare(password, user.password, (err, isMatch) => {
       if (err) {
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'bcrypt Internal server error' });
       }
 
       if (isMatch) {
