@@ -36,9 +36,6 @@ const Login = ({ setLoggedIn, isLoggedIn  }) => {
       // Set isLoggedIn to true upon successful login
       setError(res.data.message);
         setLoggedIn(true);
-        if (isLoggedIn) {
-          return <Navigate to="/home" />;
-        }
 
         // Navigate to the homePage route
         // navigateToHomePage();
@@ -47,6 +44,9 @@ const Login = ({ setLoggedIn, isLoggedIn  }) => {
       setError('Invalid username or password');
     }
   };
+  if (isLoggedIn) {
+    return <Navigate to="/home" />;
+  }
 
   return (
     <Grid className="login-container">
