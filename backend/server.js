@@ -25,27 +25,6 @@ db.connect((err) => {
   console.log('Connected to MySQL database');
 });
 
-// API route for user registration
-// app.post('/api/register', (req, res) => {
-//   const { username, password } = req.body;
-
-//   // Hash the password using bcrypt
-//   bcrypt.hash(password, 10, (err, hash) => {
-//     console.log(hash);
-//     if (err) {
-//       return res.status(500).json({ error: 'Internal server error' });
-//     }
-
-//     // Insert the user into the database
-//     const insertUserQuery = 'INSERT INTO authentication (username, password) VALUES ('+username+','+hash+')';
-//     db.query(insertUserQuery, [username, hash], (err, result) => {
-//       if (err) {
-//         return res.status(500).json({ error: 'DB Internal server error' });
-//       }
-//       return res.status(201).json({ message: 'User registered successfully' });
-//     });
-//   });
-// });
 
 app.post('/api/register', async (req, res) => {
   const { username, password } = req.body;
@@ -73,10 +52,7 @@ app.post('/api/register', async (req, res) => {
     res.status(500).json({ error: 'DB Internal server error' });
   }
 });
-// app.get('/api/data', (req, res) => {
 
-//     res.json({ message: 'Hello from the server!' });
-//   });
 // API route for user login
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
