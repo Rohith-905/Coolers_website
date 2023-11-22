@@ -12,6 +12,11 @@ function App() {
 
   const [isLoggedIn, setLoggedIn] = useState(false);
 
+  const handleLogout = () => {
+    // Add any additional logic for logging out (e.g., clearing localStorage)
+    setLoggedIn(false);
+  };
+
   return (
     <Router>
     <Grid padding='20px'>
@@ -24,7 +29,13 @@ function App() {
               Login
             </Link>
           </li>
-        ):null}
+        ):
+        <li>
+          <Link to="/" className="nav-link" onClick={handleLogout}>
+            Logout
+          </Link>
+        </li>
+        }
       </Grid>
       <Grid item xs={1}>
       {!isLoggedIn ? (
