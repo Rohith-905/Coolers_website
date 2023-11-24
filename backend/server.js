@@ -90,6 +90,22 @@ app.post('/api/login', (req, res) => {
   });
 });
 
+// API route to fetch details of products
+app.get('/api/coolers_available', (req, res) => {
+  const query = 'SELECT * FROM coolers_available';
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching product details:', err);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+
+    res.status(200).json(results);
+  });
+});
+
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
