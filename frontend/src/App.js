@@ -24,18 +24,12 @@ function App() {
       <Grid item xs={10}/>
       <Grid item xs={1}>
         {!isLoggedIn ? (
-          <li>
-            <Link to="/" className="nav-link">
+          <li align='right'> 
+            <Link to="/" className="nav-link" >
               Login
             </Link>
           </li>
-        ):
-        <li>
-          <Link to="/" className="nav-link" onClick={handleLogout}>
-            Logout
-          </Link>
-        </li>
-        }
+        ):null}
       </Grid>
       <Grid item xs={1}>
       {!isLoggedIn ? (
@@ -44,7 +38,13 @@ function App() {
                 Register
               </Link>
             </li>
-          ):null}
+          ):
+          <li align='right'>
+            <Link to="/" className="nav-link" onClick={handleLogout}>
+              Logout
+            </Link>
+          </li>
+          }
       </Grid>
       <Grid item xs={4}>
       </Grid>

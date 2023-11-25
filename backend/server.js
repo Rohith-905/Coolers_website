@@ -56,7 +56,7 @@ app.post('/api/register', async (req, res) => {
 // API route for user login
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
-  console.log(username,password);
+  // console.log(username,password);
    // Find the user in the database
    const findUserQuery = "SELECT * FROM authentication WHERE username = '"+username+"'";
   //  console.log(findUserQuery);
@@ -71,7 +71,7 @@ app.post('/api/login', (req, res) => {
      }
  
      const user = results[0];
-     console.log(JSON.stringify(user));
+    //  console.log(JSON.stringify(user));
      // Compare the provided password with the hashed password in the database
     bcrypt.compare(password, user.password, (err, isMatch) => {
       if (err) {
@@ -93,6 +93,21 @@ app.post('/api/login', (req, res) => {
 // API route to fetch details of products
 app.get('/api/coolers_available', (req, res) => {
   const query = 'SELECT * FROM coolers_available';
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching product details:', err);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+
+    res.status(200).json(results);
+  });
+});
+
+// API route to fetch details of products
+app.get('/api/customerDetails', (req, res) => {
+  const query = 'SELECT * FROM customer';
 
   db.query(query, (err, results) => {
     if (err) {
