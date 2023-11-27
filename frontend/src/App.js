@@ -19,51 +19,51 @@ function App() {
 
   return (
     <Router>
-    <Grid padding='20px'>
-      <Grid container spacing={2} className='nav-list'>
-      <Grid item xs={10}/>
-      <Grid item xs={1}>
-        {!isLoggedIn ? (
-          <li align='right'> 
-            <Link to="/" className="nav-link" >
-              Login
-            </Link>
-          </li>
-        ):null}
-      </Grid>
-      <Grid item xs={1}>
-      {!isLoggedIn ? (
-            <li>
-              <Link to="/register" className="nav-link">
-                Register
-              </Link>
-            </li>
-          ):
-          <li align='right'>
-            <Link to="/" className="nav-link" onClick={handleLogout}>
-              Logout
-            </Link>
-          </li>
-          }
-      </Grid>
-      <Grid item xs={4}>
-      </Grid>
-    </Grid>
-      <Routes>
-        <Route
-          path="/"
-          element={<Login setLoggedIn={setLoggedIn} isLoggedIn={isLoggedIn} />}
-        />
-        <Route
-          path="/home"
-          element={isLoggedIn ? <Home /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/register"
-          element={!isLoggedIn ? <Register /> : <Navigate to="/" />}
-        />
-      </Routes>
-    </Grid>
+        <Grid padding='20px'>
+          <Grid container spacing={2} className='nav-list'>
+          <Grid item xs={10}/>
+          <Grid item xs={1}>
+            {!isLoggedIn ? (
+              <li align='right'> 
+                <Link to="/" className="nav-link" >
+                  Login
+                </Link>
+              </li>
+            ):null}
+          </Grid>
+          <Grid item xs={1}>
+          {!isLoggedIn ? (
+                <li>
+                  <Link to="/register" className="nav-link">
+                    Register
+                  </Link>
+                </li>
+              ):
+              <li align='right'>
+                <Link to="/" className="nav-link" onClick={handleLogout}>
+                  Logout
+                </Link>
+              </li>
+              }
+          </Grid>
+          <Grid item xs={4}>
+          </Grid>
+        </Grid>
+          <Routes>
+            <Route
+              path="/"
+              element={<Login setLoggedIn={setLoggedIn} isLoggedIn={isLoggedIn} />}
+            />
+            <Route
+              path="/home"
+              element={isLoggedIn ? <Home /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/register"
+              element={!isLoggedIn ? <Register /> : <Navigate to="/" />}
+            />
+          </Routes>
+        </Grid>
   </Router>
 );
 };

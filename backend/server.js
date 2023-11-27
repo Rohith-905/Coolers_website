@@ -96,7 +96,7 @@ app.get('/api/coolers_available', (req, res) => {
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error fetching product details:', err);
+      console.error('Error fetching cooler details:', err);
       res.status(500).json({ error: 'Internal server error' });
       return;
     }
@@ -111,13 +111,41 @@ app.get('/api/customerDetails', (req, res) => {
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error fetching product details:', err);
+      console.error('Error fetching customer details:', err);
       res.status(500).json({ error: 'Internal server error' });
       return;
     }
 
     res.status(200).json(results);
   });
+});
+
+// Endpoint to handle storing customer data
+app.post('/api/add-customer', async (req, res) => {
+  const formData = req.body;
+
+  try {
+
+    // Insert customer data into the 'customer' table
+    const result = await db.execute(
+      'INSERT INTO customer (customer_name, shop_address, model_name, amount, quantity, vehicle_number, date) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [
+        formData.custName,
+        formData.address,
+        formData.modelName,
+        formData.amount,
+        formData.quantity,
+        formData.vehicleNo,
+        formData.date,
+      ]
+    );
+
+    console.log('Data successfully stored in the database');
+    res.status(200).json({ message: 'Data successfully stored in the database' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
 });
 
 
