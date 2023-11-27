@@ -4,12 +4,12 @@ import "./addCustomers.css"; // Import your CSS file
 
 const AddCustomers = () => {
   const [formData, setFormData] = useState({
-    custName: "",
-    address: "",
-    modelName: "",
+    customer_name: "",
+    shop_address: "",
+    model_name: "",
     amount: "",
     quantity: "",
-    vehicleNo: "",
+    vehicle_number: "",
     date: "",
   });
 
@@ -47,12 +47,12 @@ const AddCustomers = () => {
     console.log("Form submitted with data:", formData);
     // Clear the form after submission
     setFormData({
-      custName: "",
-      address: "",
-      modelName: "",
+      customer_name: "",
+      shop_address: "",
+      model_name: "",
       amount: "",
       quantity: "",
-      vehicleNo: "",
+      vehicle_number: "",
       date: "",
     });
   };
@@ -71,8 +71,8 @@ const AddCustomers = () => {
                 <td>
                   <input
                     type="text"
-                    name="custName"
-                    value={formData.custName}
+                    name="customer_name"
+                    value={formData.customer_name}
                     onChange={handleInputChange}
                     required
                   />
@@ -85,8 +85,8 @@ const AddCustomers = () => {
                 <td>
                   <input
                     type="text"
-                    name="address"
-                    value={formData.address}
+                    name="shop_address"
+                    value={formData.shop_address}
                     onChange={handleInputChange}
                     required
                   />
@@ -99,8 +99,8 @@ const AddCustomers = () => {
                 <td>
                   <input
                     type="text"
-                    name="modelName"
-                    value={formData.modelName}
+                    name="model_name"
+                    value={formData.model_name}
                     onChange={handleInputChange}
                     required
                   />
@@ -141,8 +141,8 @@ const AddCustomers = () => {
                 <td>
                   <input
                     type="text"
-                    name="vehicleNo"
-                    value={formData.vehicleNo}
+                    name="vehicle_number"
+                    value={formData.vehicle_number}
                     onChange={handleInputChange}
                     required
                   />
