@@ -1,0 +1,26 @@
+.add-customers-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  td {
+    padding: 8px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
