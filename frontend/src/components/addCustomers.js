@@ -62,8 +62,8 @@ const AddCustomers = () => {
   };
 
   return (
-    <div className="add-customers-container">
-      <AppBarPage>
+
+      <AppBarPage className="add-customers-container">
         <h2>Add Customer Details</h2>
         <form onSubmit={handleSubmit}>
         <table>
@@ -171,7 +171,6 @@ const AddCustomers = () => {
           <button type="submit">Submit</button>
         </form>
       </AppBarPage>
-    </div>
   );
 };
 

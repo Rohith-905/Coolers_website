@@ -80,7 +80,6 @@ const Home = () => {
 	};
 
   return (
-    <div>
       <AppBarPage>
       <div>
         <Grid container spacing={2}>
@@ -128,7 +127,6 @@ const Home = () => {
         </Grid>
       </div>
       </AppBarPage>
-    </div>
   );
 };
 

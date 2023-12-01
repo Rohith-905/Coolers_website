@@ -7,6 +7,8 @@ import { Grid } from '@mui/material';
 import Home from './components/homePage';
 import Login from './components/login';
 import Register from './components/register';
+import Customers from './components/customers';
+import AddCustomers from './components/addCustomers';
 
 function App() {
 
@@ -55,12 +57,20 @@ function App() {
               element={<Login setLoggedIn={setLoggedIn} isLoggedIn={isLoggedIn} />}
             />
             <Route
+              path="/register"
+              element={!isLoggedIn ? <Register /> : <Navigate to="/" />}
+            />
+            <Route
               path="/home"
               element={isLoggedIn ? <Home /> : <Navigate to="/" />}
             />
             <Route
-              path="/register"
-              element={!isLoggedIn ? <Register /> : <Navigate to="/" />}
+              path="/customers"
+              element={isLoggedIn ? <Customers /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/addCustomers"
+              element={isLoggedIn ? <AddCustomers /> : <Navigate to="/" />}
             />
           </Routes>
         </Grid>
