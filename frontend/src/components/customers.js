@@ -77,7 +77,6 @@ const Customers = () => {
 
   return (
 		
-    <div>
 			<AppBarPage >
 				<h2>Customer Details</h2>
 				<Grid container spacing={2}>
@@ -129,7 +128,6 @@ const Customers = () => {
 				)}
 				{error && <p>{error}</p>}
 			</AppBarPage>
-    </div>
   );
 };
 export default Customers;

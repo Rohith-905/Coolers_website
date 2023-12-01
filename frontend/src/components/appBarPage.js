@@ -1,35 +1,28 @@
 // appBarPage.js
 import { AppBar, Box, Button, CssBaseline, Grid, Toolbar } from "@mui/material"
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 
 import CustomerDetails from './customers';
 import AddCustomers from "./addCustomers";
 import Home from "./homePage";
+import { useNavigate } from "react-router-dom";
 
 const AppBarPage = ({ children }) => {
-    const [customerDetails, setCustomerDetails] = useState(false);
-    const [addCustomers, setAddCustomers] = useState(false);
-    const [home, setHome] = useState(true);
+    // const [customerDetails, setCustomerDetails] = useState(false);
+    // const [addCustomers, setAddCustomers] = useState(false);
+    // const [home, setHome] = useState(true);
 
+    const navigate = useNavigate();
     const handleCustomerDetails = () => {
-        setCustomerDetails(true);
-        setAddCustomers(false);
-        setHome(false);
-        console.log("in customerdetails",home,customerDetails,addCustomers);
+        navigate('/customers');
     }
 
     const handleAddCustomers = () => {
-        setAddCustomers(true);
-        setCustomerDetails(false);
-        setHome(false);
-        console.log("in addcustomer",home,customerDetails,addCustomers);
+        navigate('/addCustomers');
     }
 
     const handleHome = () => {
-        setHome(true);
-        setCustomerDetails(false);
-        setAddCustomers(false);
-        console.log("in home",home,customerDetails,addCustomers);
+        navigate('/home');
     }
 
     return (
@@ -53,22 +46,6 @@ const AppBarPage = ({ children }) => {
                     </Toolbar>
                 </AppBar>
             </Box>
-            {
-                home ?
-                    null
-                    : <>{
-                        customerDetails ?
-                            <CustomerDetails />
-                            : <>
-                                {
-                                    addCustomers ?
-                                        <AddCustomers />
-                                        : null
-                                }
-                            </>
-                    }
-                    </>
-            }
             {children}
         </>
     )
