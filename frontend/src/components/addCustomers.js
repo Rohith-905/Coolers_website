@@ -45,6 +45,7 @@ const AddCustomers = () => {
           alert(error);
         });      
     } catch (error) {
+      window.alert("Error");
       console.error("Error:", error);
     }
 
@@ -116,7 +117,7 @@ const AddCustomers = () => {
                 </td>
                 <td>
                   <input
-                     type="text"
+                     type="number"
                      name="amount"
                      value={formData.amount}
                      onChange={handleInputChange}
@@ -130,7 +131,7 @@ const AddCustomers = () => {
                 </td>
                 <td>
                   <input
-                    type="text"
+                    type="number"
                     name="quantity"
                     value={formData.quantity}
                     onChange={handleInputChange}
@@ -158,7 +159,7 @@ const AddCustomers = () => {
                 </td>
                 <td>
                   <input
-                    type="text"
+                    type="date"
                     name="date"
                     value={formData.date}
                     onChange={handleInputChange}
