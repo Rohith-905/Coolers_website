@@ -27,24 +27,23 @@ const AddCustomers = () => {
     try {
       console.log(JSON.stringify(formData));
       // Make a POST request to your backend API endpoint
-      await fetch("http://localhost:5000/api/add-customer", {
+      const response = await fetch("http://localhost:5000/api/add-customer", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
-      })
-        .then(response => {
-          if (response.ok) {
-            console.log("Data successfully stored in the database!");
-          } else {
-            alert("No sufficeint quantity");
-          }
-        })
-        .catch(error => {
-          alert(error);
-        });      
+        body: JSON.stringify(formData)
+      });
+
+      if (response.status===200) {
+        window.alert("Data successfully stored in the database!");
+        console.log("Data successfully stored in the database!");
+      } else if(response.status===500) {
+        window.alert("Failed to store data in the database");
+        console.error("Failed to store data in the database");
+      }
     } catch (error) {
+      window.alert("Error");
       console.error("Error:", error);
     }
 
@@ -62,7 +61,6 @@ const AddCustomers = () => {
   };
 
   return (
-
       <AppBarPage className="add-customers-container">
         <h2>Add Customer Details</h2>
         <form onSubmit={handleSubmit}>
@@ -116,7 +114,7 @@ const AddCustomers = () => {
                 </td>
                 <td>
                   <input
-                     type="text"
+                     type="number"
                      name="amount"
                      value={formData.amount}
                      onChange={handleInputChange}
@@ -130,7 +128,7 @@ const AddCustomers = () => {
                 </td>
                 <td>
                   <input
-                    type="text"
+                    type="number"
                     name="quantity"
                     value={formData.quantity}
                     onChange={handleInputChange}
@@ -158,7 +156,7 @@ const AddCustomers = () => {
                 </td>
                 <td>
                   <input
-                    type="text"
+                    type="date"
                     name="date"
                     value={formData.date}
                     onChange={handleInputChange}

@@ -1,26 +1,129 @@
-.add-customers-container {
-    max-width: 600px;
-    margin: auto;
-    padding: 20px;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-  }
-  
-  td {
-    padding: 8px;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
+/* Variables */
+:root {
+  --ruler: 16px;
+  --color-red: #AE1100;
+  --color-bg: #EBECF0;
+  --color-shadow: #BABECC;
+  --color-white: #FFF;
+}
+
+/* Body and HTML */
+body,
+html {
+  background-color: var(--color-bg);
+}
+
+body,
+p,
+button,
+input,
+select,
+textarea
+ {
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: -0.2px;
+  font-size: var(--ruler);
+}
+
+/* Div and paragraph */
+div,
+p {
+  color: var(--color-shadow);
+  text-shadow: 1px 1px 1px var(--color-white);
+}
+
+/* Form */
+form {
+  padding: var(--ruler);
+  width: calc(var(--ruler) * 20);
+  margin: 0 auto;
+}
+
+/* Segment */
+.segment {
+  padding: calc(var(--ruler) * 2) 0;
+  text-align: center;
+}
+
+/* Button and Input */
+button,
+input {
+  border: 0;
+  outline: 0;
+  font-size: var(--ruler);
+  border-radius: calc(var(--ruler) * 20);
+  padding: var(--ruler);
+  background-color: var(--color-bg);
+  text-shadow: 1px 1px 0 var(--color-white);
+}
+
+/* Label */
+label {
+  display: block;
+  margin-bottom: calc(var(--ruler) * 1.5);
+  width: 100%;
+}
+
+/* Input */
+input {
+  margin-right: calc(var(--ruler) / 2);
+  box-shadow: inset 2px 2px 5px var(--color-shadow), inset -5px -5px 10px var(--color-white);
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s ease-in-out;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+input:focus {
+  box-shadow: inset 1px 1px 2px var(--color-shadow), inset -1px -1px 2px var(--color-white);
+}
+
+/* Button */
+button {
+  color: #61677C;
+  font-weight: bold;
+  box-shadow: -5px -5px 20px var(--color-white), 5px 5px 20px var(--color-shadow);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  font-weight: 600;
+} */
+
+/* button:hover {
+  box-shadow: -2px -2px 5px var(--color-white), 2px 2px 5px var(--color-shadow);
+}
+
+button:active {
+  box-shadow: inset 1px 1px 2px var(--color-shadow), inset -1px -1px 2px var(--color-white);
+}
+
+/* Button Icon */
+.icon {
+  margin-right: var(--ruler) / 2;
+}
+
+/* Unit Button */
+.unit {
+  border-radius: var(--ruler) / 2;
+  line-height: 0;
+  width: calc(var(--ruler) * 3);
+  height: calc(var(--ruler) * 3);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 var(--ruler) / 2;
+  font-size: calc(var(--ruler) * 1.2);
+}
+
+.unit .icon {
+  margin-right: 0;
+}
+
+/* Red Button */
+.red {
+  display: block;
+  width: 100%;
+  color: var(--color-red);
+}
+
+
