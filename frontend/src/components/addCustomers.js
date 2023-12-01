@@ -35,12 +35,15 @@ const AddCustomers = () => {
         body: JSON.stringify(formData)
       });
 
-      if (response.ok) {
+      if (response.status===200) {
+        window.alert("Data successfully stored in the database!");
         console.log("Data successfully stored in the database!");
-      } else {
+      } else if(response.status===500) {
+        window.alert("Failed to store data in the database");
         console.error("Failed to store data in the database");
       }
     } catch (error) {
+      window.alert("Error");
       console.error("Error:", error);
     }
 
@@ -59,7 +62,7 @@ const AddCustomers = () => {
 
   return (
     <div className="add-customers-container">
-      <AppBarPage>
+      <AppBarPage />
         <h2>Add Customer Details</h2>
         <form onSubmit={handleSubmit}>
         <table>
@@ -112,7 +115,7 @@ const AddCustomers = () => {
                 </td>
                 <td>
                   <input
-                     type="text"
+                     type="number"
                      name="amount"
                      value={formData.amount}
                      onChange={handleInputChange}
@@ -126,7 +129,7 @@ const AddCustomers = () => {
                 </td>
                 <td>
                   <input
-                    type="text"
+                    type="number"
                     name="quantity"
                     value={formData.quantity}
                     onChange={handleInputChange}
@@ -154,7 +157,7 @@ const AddCustomers = () => {
                 </td>
                 <td>
                   <input
-                    type="text"
+                    type="date"
                     name="date"
                     value={formData.date}
                     onChange={handleInputChange}
@@ -166,7 +169,7 @@ const AddCustomers = () => {
           </table>
           <button type="submit">Submit</button>
         </form>
-      </AppBarPage>
+      
     </div>
   );
 };
