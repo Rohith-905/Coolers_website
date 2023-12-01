@@ -1,9 +1,10 @@
 // appBarPage.js
 import { AppBar, Box, Button, CssBaseline, Grid, Toolbar } from "@mui/material"
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 
 import CustomerDetails from './customers';
 import AddCustomers from "./addCustomers";
+import Home from "./homePage";
 
 const AppBarPage = ({ children }) => {
     const [customerDetails, setCustomerDetails] = useState(false);
@@ -14,18 +15,21 @@ const AppBarPage = ({ children }) => {
         setCustomerDetails(true);
         setAddCustomers(false);
         setHome(false);
+        console.log("in customerdetails",home,customerDetails,addCustomers);
     }
 
     const handleAddCustomers = () => {
         setAddCustomers(true);
         setCustomerDetails(false);
         setHome(false);
+        console.log("in addcustomer",home,customerDetails,addCustomers);
     }
 
     const handleHome = () => {
         setHome(true);
         setCustomerDetails(false);
         setAddCustomers(false);
+        console.log("in home",home,customerDetails,addCustomers);
     }
 
     return (

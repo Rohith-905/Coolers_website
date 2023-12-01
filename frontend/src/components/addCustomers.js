@@ -27,19 +27,23 @@ const AddCustomers = () => {
     try {
       console.log(JSON.stringify(formData));
       // Make a POST request to your backend API endpoint
-      const response = await fetch("http://localhost:5000/api/add-customer", {
+      await fetch("http://localhost:5000/api/add-customer", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        console.log("Data successfully stored in the database!");
-      } else {
-        console.error("Failed to store data in the database");
-      }
+        body: JSON.stringify(formData),
+      })
+        .then(response => {
+          if (response.ok) {
+            console.log("Data successfully stored in the database!");
+          } else {
+            alert("No sufficeint quantity");
+          }
+        })
+        .catch(error => {
+          alert(error);
+        });      
     } catch (error) {
       console.error("Error:", error);
     }
