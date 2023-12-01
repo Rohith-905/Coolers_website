@@ -120,26 +120,69 @@ app.get('/api/customerDetails', (req, res) => {
   });
 });
 
-// Handle POST request to store customer data
-app.post('/api/add-customer', (req, res) => {
+// Handle POST request to store customer data and update coolers count
+app.post('/api/add-customer', async (req, res) => {
+  let currentQuantity = 0;
+  const formData = req.body;
+  const query = 'SELECT quantity from coolers_available where model_name = "' + formData.model_name + '"';
+  
   try {
-    const formData = req.body;
+    const results = await queryDatabase(query);
 
-    // Insert customer data into the MySQL database
-    db.query('INSERT INTO customer SET ?', formData, (error, results) => {
-      if (error) {
-        console.error('Error inserting data into MySQL:', error);
-        res.status(500).json({ error: 'Failed to store data in the database' });
-      } else {
-        console.log('Data successfully stored in the database!');
-        res.status(200).json({ message: 'Data successfully stored in the database!' });
-      }
-    });
+    if (results.length === 0) {
+      res.status(500).json({ error: 'Cooler not found' });
+      return;
+    }
+
+    currentQuantity = results[0].quantity;
+    console.log(currentQuantity);
+    if (currentQuantity < formData.quantity) {
+      console.log("In if");
+      res.status(500).json({ error: 'Sufficient Quantity is not available. Available quantity is ',currentQuantity });
+    } else {
+      // Update coolers count in the MySQL database
+      const updateCoolersQuery = `
+        UPDATE coolers_available 
+        SET quantity = (
+          SELECT derived_table.new_quantity
+          FROM (
+            SELECT quantity - ? AS new_quantity
+            FROM coolers_available
+            WHERE model_name = ?
+          ) AS derived_table
+        )
+        WHERE model_name = ?
+      `;
+  
+      const updateCoolersValues = [formData.quantity, formData.model_name, formData.model_name];
+      await queryDatabase(updateCoolersQuery, updateCoolersValues);
+  
+      // Insert customer data into the MySQL database
+      const insertCustomerQuery = 'INSERT INTO customer SET ?';
+      await queryDatabase(insertCustomerQuery, formData);
+  
+      // Respond with success
+      res.status(200).json({ message: 'Data successfully stored, and coolers count updated in the database!' });
+    }
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'Failed to store data in the database' });
+    res.status(500).json({ error: 'Failed to store data or update coolers count in the database' });
   }
 });
+
+
+// Helper function to execute queries on the database
+function queryDatabase(query, values) {
+  return new Promise((resolve, reject) => {
+    db.query(query, values, (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+}
 
 
 app.listen(port, () => {
