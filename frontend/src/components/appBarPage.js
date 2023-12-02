@@ -1,16 +1,10 @@
 // appBarPage.js
 import { AppBar, Box, Button, CssBaseline, Grid, Toolbar } from "@mui/material"
-import React, { useState } from "react";
+import React from "react";
 
-import CustomerDetails from './customers';
-import AddCustomers from "./addCustomers";
-import Home from "./homePage";
 import { useNavigate } from "react-router-dom";
 
 const AppBarPage = ({ children }) => {
-    // const [customerDetails, setCustomerDetails] = useState(false);
-    // const [addCustomers, setAddCustomers] = useState(false);
-    // const [home, setHome] = useState(true);
 
     const navigate = useNavigate();
     const handleCustomerDetails = () => {

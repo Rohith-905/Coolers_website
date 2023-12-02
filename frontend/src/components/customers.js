@@ -103,6 +103,7 @@ const Customers = () => {
 									<StyledTableCell align="center">Address</StyledTableCell>
 									<StyledTableCell align="center">Model Name</StyledTableCell>
 									<StyledTableCell align="center">Amount</StyledTableCell>
+									<StyledTableCell align="center">Total Amount</StyledTableCell>
 									<StyledTableCell align="center">Quantity</StyledTableCell>
 									<StyledTableCell align="center">VehicleNo</StyledTableCell>
 									<StyledTableCell align="center">Date</StyledTableCell>
@@ -115,6 +116,7 @@ const Customers = () => {
 										<StyledTableCell align="center">{customer.shop_address}</StyledTableCell>
 										<StyledTableCell align="center">{customer.model_name}</StyledTableCell>
 										<StyledTableCell align="center">{customer.amount}</StyledTableCell>
+										<StyledTableCell align="center">{customer.total_amount}</StyledTableCell>
 										<StyledTableCell align="center">{customer.quantity}</StyledTableCell>
 										<StyledTableCell align="center">{customer.vehicle_number}</StyledTableCell>
 										<StyledTableCell align="center">{customer.date}</StyledTableCell>
