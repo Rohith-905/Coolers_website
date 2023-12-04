@@ -134,9 +134,9 @@ app.post('/api/add-customer', async (req, res) => {
     }
 
     currentQuantity = results[0].quantity;
-    console.log(currentQuantity);
+    // console.log(currentQuantity);
     if (currentQuantity < formData.quantity) {
-      console.log("In if");
+      // console.log("In if");
       res.status(500).json({ error: 'Sufficient Quantity is not available. Available quantity is ',currentQuantity });
     } else {
       // Update coolers count in the MySQL database

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AppBarPage from "./appBarPage";
 import "./addCustomers.css"; // Import your CSS file
 import { Fab } from "@mui/material";
-import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
+import AddIcon from '@mui/icons-material/Add';
 
 const AddCustomers = () => {
   const [formData, setFormData] = useState({
@@ -27,8 +27,7 @@ const AddCustomers = () => {
 
   const handleAddDetails =  async (e) => {
     e.preventDefault();
-  
-    setAdditionalDetails([...additionalDetails, { ...formData }]);
+
     setFormData({
       customer_name: formData.customer_name,
       shop_address: formData.shop_address,
@@ -68,30 +67,38 @@ const AddCustomers = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // try {
-    //   // Make a POST request to your backend API endpoint for additional details
-    //   const responseDetails = await fetch("http://localhost:5000/api/add-customer", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       customer_name: formData.customer_name,
-    //       shop_address: formData.shop_address,
-    //       model_name: formData.model_name,
-    //       amount: formData.amount,
-    //       quantity: formData.quantity,
-    //       vehicle_number: formData.vehicle_number,
-    //       date: formData.date,
-    //       total_amount: formData.amount*formData.quantity,
-    //     }),
-    //   });
+    try {
+      // Make a POST request to your backend API endpoint for additional details
+      const response = await fetch("http://localhost:5000/api/add-customer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customer_name: formData.customer_name,
+          shop_address: formData.shop_address,
+          model_name: formData.model_name,
+          amount: formData.amount,
+          quantity: formData.quantity,
+          vehicle_number: formData.vehicle_number,
+          date: formData.date,
+          total_amount: formData.amount*formData.quantity,
+        }),
+      });
+      if (!response.ok) {
+        // If the response status is not in the range of 200 to 299, handle the error
+        const errorData = await response.json(); // Assuming your server sends details about the error in JSON format
+        throw new Error(errorData.message || "Server error");
+      }
+      else{
+        setAdditionalDetails([...additionalDetails, { ...formData }]);
+      }
   
-    //   // ... (handle the response as needed)
-    // } catch (error) {
-    //   console.error("Error:", error);
-    //   window.alert("Error");
-    // }
+      // ... (handle the response as needed)
+    } catch (error) {
+      console.error("Error:", error);
+      window.alert("Error");
+    }
   
     // Clear the form after submission
     setFormData({
@@ -173,6 +180,11 @@ const AddCustomers = () => {
         <table>
           <tbody>
             {/* Map through additional details and display in the table */}
+            <tr>
+                <td>Model Name</td>
+                <td>Amount</td>
+                <td>Quantity</td>
+              </tr>
             {additionalDetails.map((detail, index) => (
               <tr key={index}>
                 <td>{detail.model_name}</td>
@@ -231,38 +243,10 @@ const AddCustomers = () => {
                 />
               </td>
             </tr>
-            {/* <tr>
-              <td>
-                <label>Vehicle Number:</label>
-              </td>
-              <td>
-                <input
-                  type="text"
-                  name="vehicle_number"
-                  value={formData.vehicle_number}
-                  onChange={handleInputChange}
-                  required
-                />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label>Date:</label>
-              </td>
-              <td>
-                <input
-                  type="date"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleInputChange}
-                  required
-                />
-              </td>
-            </tr> */}
             <tr>
               <td colSpan="2">
                 <Fab color="primary" aria-label="add" onClick={handleAddDetails}>
-                  <AddCircleRoundedIcon />
+                  <AddIcon />
                 </Fab>
               </td>
             </tr>

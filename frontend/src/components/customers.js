@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import { Grid, Table, TableHead, TableBody, TableRow, TableCell, TextField } from '@mui/material';
 import { tableCellClasses } from '@mui/material/TableCell';
 import AppBarPage from "./appBarPage";
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 
 const Customers = () => {
 
@@ -81,16 +82,19 @@ const Customers = () => {
 				<h2>Customer Details</h2>
 				<Grid container spacing={2}>
 					<Grid item xs={4}>
-					<div style={{ marginBottom: '10px' }}>
-						<TextField
+						<div style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
+							<TextField
 							id="standard-basic"
 							label="Search by Customer Name"
 							variant="standard"
 							value={searchInput}
 							onChange={handleSearch}
-						/>
-					</div>
-					</Grid>
+							InputProps={{
+								startAdornment: <SearchRoundedIcon />,
+							}}
+							/>
+						</div>
+						</Grid>
 					<Grid item xs={8}/>
 				</Grid>
 
@@ -103,8 +107,8 @@ const Customers = () => {
 									<StyledTableCell align="center">Address</StyledTableCell>
 									<StyledTableCell align="center">Model Name</StyledTableCell>
 									<StyledTableCell align="center">Amount</StyledTableCell>
-									<StyledTableCell align="center">Total Amount</StyledTableCell>
 									<StyledTableCell align="center">Quantity</StyledTableCell>
+									<StyledTableCell align="center">Total Amount</StyledTableCell>
 									<StyledTableCell align="center">VehicleNo</StyledTableCell>
 									<StyledTableCell align="center">Date</StyledTableCell>
 								</TableRow>
@@ -116,8 +120,8 @@ const Customers = () => {
 										<StyledTableCell align="center">{customer.shop_address}</StyledTableCell>
 										<StyledTableCell align="center">{customer.model_name}</StyledTableCell>
 										<StyledTableCell align="center">{customer.amount}</StyledTableCell>
-										<StyledTableCell align="center">{customer.total_amount}</StyledTableCell>
 										<StyledTableCell align="center">{customer.quantity}</StyledTableCell>
+										<StyledTableCell align="center">{customer.total_amount}</StyledTableCell>
 										<StyledTableCell align="center">{customer.vehicle_number}</StyledTableCell>
 										<StyledTableCell align="center">{customer.date}</StyledTableCell>
 									</StyledTableRow>

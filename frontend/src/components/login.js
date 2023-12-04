@@ -10,6 +10,8 @@ const Login = ({ setLoggedIn, isLoggedIn  }) => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [logIn,setLogIn] = useState(false);
+  
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,6 +38,7 @@ const Login = ({ setLoggedIn, isLoggedIn  }) => {
       // Set isLoggedIn to true upon successful login
       setError(res.data.message);
         setLoggedIn(true);
+        setLogIn(true);
 
         // Navigate to the homePage route
         // navigateToHomePage();
@@ -44,7 +47,7 @@ const Login = ({ setLoggedIn, isLoggedIn  }) => {
       setError('Invalid username or password');
     }
   };
-  if (isLoggedIn) {
+  if (logIn) {
     return <Navigate to="/home" />;
   }
 

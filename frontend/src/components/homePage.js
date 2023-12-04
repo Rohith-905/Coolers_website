@@ -5,6 +5,7 @@ import { styled } from '@mui/material/styles';
 import { Grid, Table, TableHead, TableBody, TableRow, TableCell, TextField } from '@mui/material';
 import { tableCellClasses } from '@mui/material/TableCell';
 import AppBarPage from './appBarPage';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 
 const Home = () => {
   const [coolers, setCoolers] = useState([]);
@@ -87,13 +88,15 @@ const Home = () => {
             <h2>Available Coolers</h2>
             <Grid container spacing={2}>
               <Grid item xs={4}>
-                <div style={{ marginBottom: '10px' }}>
+                <div style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
                   <TextField
-                    id="standard-basic"
                     label="Search by Cooler Name"
                     variant="standard"
                     value={searchInput}
                     onChange={handleSearch}
+                    InputProps={{
+                      startAdornment: <SearchRoundedIcon />,
+                    }}
                   />
                 </div>
                 </Grid>
