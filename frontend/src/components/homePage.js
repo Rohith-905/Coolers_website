@@ -2,15 +2,18 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { styled } from '@mui/material/styles';
-import { Grid, Table, TableHead, TableBody, TableRow, TableCell, TextField } from '@mui/material';
+import { Grid, Table, TableHead, TableBody, TableRow, TableCell, TextField, Button } from '@mui/material';
 import { tableCellClasses } from '@mui/material/TableCell';
 import AppBarPage from './appBarPage';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import "./addCustomers.css";
 
 const Home = () => {
   const [coolers, setCoolers] = useState([]);
   const [error, setError] = useState(' ');
   const [searchInput, setSearchInput] = useState('');
+  const [addCoolers, setAddCoolers] = useState({name:'',quantity:''});
+  const [enableAddCoolers,setEnableAddCoolers] = useState(false);
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -32,6 +35,15 @@ const Home = () => {
       border: 0,
     },
   }));
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setAddCoolers((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   useEffect(() => {
     const fetchCoolers = async () => {
       try {
@@ -51,6 +63,39 @@ const Home = () => {
     fetchCoolers();
   }, []);
 
+  const handleAddCoolerButton = () =>{
+    setEnableAddCoolers(true);
+  }
+  const handleAddCoolers = async (e) => {
+    e.preventDefault();
+
+    setAddCoolers({
+      name:addCoolers.name,
+      quantity:addCoolers.quantity
+    });
+    
+    try {
+      const response = await axios.post('http://localhost:5000/api/add_coolers', {
+        name: addCoolers.name,
+        quantity: addCoolers.quantity,
+      });
+      if (response.status === 201) {
+        // Assuming that the response.data contains updated coolers
+        setCoolers(response.data);
+        // Reset the form
+        setAddCoolers({ name: '', quantity: '' });
+        // Disable the add coolers section
+        setEnableAddCoolers(false);
+  
+      } else {
+        console.error('Failed to add coolers:', response.statusText);
+        setError('Failed to add coolers');
+      }
+    } catch (error) {
+      console.error('Error adding coolers:', error);
+      setError('Error adding coolers');
+    }
+  }
 
   const handleSearch = (e) => {
 		const inputValue = e.target.value.toLowerCase();
@@ -84,7 +129,7 @@ const Home = () => {
       <AppBarPage>
       <div>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <h2>Available Coolers</h2>
             <Grid container spacing={2}>
               <Grid item xs={4}>
@@ -117,17 +162,65 @@ const Home = () => {
                         <StyledTableCell align="center">{cooler.model_name}</StyledTableCell>
                         <StyledTableCell align="center">{cooler.quantity}</StyledTableCell>
                       </StyledTableRow>
-                    ))}
+                    ))}  
                   </TableBody>
                 </Table>
               </div>
             ) : (
               <p>No coolers available</p>
             )}
-
-            {error && <p>{error}</p>}
+          </Grid>
+          <Grid item xs={12} md={6} container justifyContent="flex-end">
+            <Grid item xs={9}/>
+            <Grid item xs={3}>
+              <Button sx={{ backgroundColor: '#1a75ff',color: '#fff',
+                '&:hover': {
+                  backgroundColor: '#0066ff', // Keep the same color on hover
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow on hover
+                },}} onClick={handleAddCoolerButton}>Add Coolers</Button>
+            </Grid>
+            {
+              enableAddCoolers ?
+              <>
+                <form onSubmit={handleAddCoolers}>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <label>Cooler Name:</label>
+                          <input
+                            type="text"
+                            name="name"
+                            value={addCoolers.name}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </td>
+                        <td style={{paddingLeft: '100px' }} >
+                          <label>Quantity:</label>
+                          <input
+                            type="text"
+                            name="quantity"
+                            value={addCoolers.quantity}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </td>
+                      </tr>
+                      </tbody>
+                  </table>
+                  {/* Submit Button */}
+                  <Button sx={{ backgroundColor: '#1a75ff',color: '#fff',
+                '&:hover': {
+                  backgroundColor: '#0066ff', // Keep the same color on hover
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow on hover
+                },}} type="submit" onClick={handleAddCoolers}>Submit</Button>
+                </form>
+              </>:null
+            }
           </Grid>
         </Grid>
+        
       </div>
       </AppBarPage>
   );

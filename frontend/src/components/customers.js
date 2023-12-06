@@ -1,36 +1,45 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { styled } from '@mui/material/styles';
-import { Grid, Table, TableHead, TableBody, TableRow, TableCell, TextField } from '@mui/material';
+import { Table, TableHead, TableBody, TableRow, TableCell, TextField } from '@mui/material';
 import { tableCellClasses } from '@mui/material/TableCell';
 import AppBarPage from "./appBarPage";
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+
+
 
 const Customers = () => {
 
   const [customerDetails, setCustomerDetails] = useState([]);
   const [error, setError] = useState('');
+  const columns = ['Customer Name', 'Model Name', 'Vehicle Number', 'Date']; 
   const [searchInput, setSearchInput] = useState('');
+  const [selectedColumn, setSelectedColumn] = useState('');
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
-      fontSize: 18,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
+	padding: '12px', // Adjust padding as needed
+	textAlign: 'center',
+	borderBottom: `1px solid ${theme.palette.divider}`, // Add bottom border
+	[`&.${tableCellClasses.head}`]: {
+	  backgroundColor: theme.palette.primary.main,
+	  color: theme.palette.common.white,
+	  fontSize: '18px',
+	  fontWeight: 'bold',
+	},
+	[`&.${tableCellClasses.body}`]: {
+	  fontSize: '14px',
+	},
   }));
-
+  
+  // Styling TableRow component
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-      border: 0,
-    },
+	'&:nth-of-type(odd)': {
+	  backgroundColor: theme.palette.action.hover,
+	},
+	// hide last border
+	
   }));
 
   useEffect(() => {
@@ -47,59 +56,73 @@ const Customers = () => {
     fetchCustomerDetails();
   }, []);
 
-  const handleSearch = (e) => {
+ 
+	const handleColumnChange = (event) => {
+		setSelectedColumn(event.target.value); // Update the selected column
+		setSearchInput(''); // Clear search input when column changes
+	  };
+
+	  const handleSearchAll = (e) => {
 		const inputValue = e.target.value.toLowerCase();
 	
 		// Update search input value as the user types
 		setSearchInput(inputValue);
 	
-		// If the search input is empty, reset customer details to the original list
 		if (inputValue === '') {
-			const fetchCustomerDetails = async () => {
-				try {
-					const response = await axios.get('http://localhost:5000/api/customerDetails');
-					setCustomerDetails(response.data);
-				} catch (error) {
-					console.error('Error fetching data:', error);
-					setError('Error fetching data');
-				}
-			};
+		  // Reset customer details to the original list if the search input is empty
+		  const fetchCustomerDetails = async () => {
+			try {
+			  const response = await axios.get('http://localhost:5000/api/customerDetails');
+			  setCustomerDetails(response.data);
+			} catch (error) {
+			  console.error('Error fetching data:', error);
+			  setError('Error fetching data');
+			}
+		  };
 	
-			fetchCustomerDetails();
-		} else {
-			// Filter customerDetails based on the search input
-			const filteredCustomers = customerDetails.filter(customer =>
-				customer.customer_name.toLowerCase().includes(inputValue)
-			);
-			setCustomerDetails(filteredCustomers);
+		  fetchCustomerDetails();
+		} else if (selectedColumn !== '') {
+		  // Filter customerDetails based on the selected column
+		  const filteredCustomers = customerDetails.filter(customer =>
+			customer[selectedColumn.toLowerCase()].toLowerCase().includes(inputValue)
+		  );
+		  setCustomerDetails(filteredCustomers);
 		}
-	};
+	  };
 
 
-  return (
+ return (
 		
 			<AppBarPage >
 				<h2>Customer Details</h2>
-				<Grid container spacing={2}>
-					<Grid item xs={4}>
-						<div style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
-							<TextField
-							id="standard-basic"
-							label="Search by Customer Name"
-							variant="standard"
-							value={searchInput}
-							onChange={handleSearch}
-							InputProps={{
-								startAdornment: <SearchRoundedIcon />,
-							}}
-							/>
-						</div>
-						</Grid>
-					<Grid item xs={8}/>
-				</Grid>
-
-				{customerDetails.length > 0 ? (
-					<div>
+				<div style={{ marginBottom: '10px' }}>
+      			<Select
+        			value={selectedColumn}
+        			onChange={handleColumnChange}
+        			label="Select Column"
+					sx={{ minWidth: '200px' }}
+      			>
+        		<MenuItem value="" disabled></MenuItem>
+        		{columns.map((column, index) => (
+          		<MenuItem key={index} value={column}>{column}</MenuItem>
+        			))}
+      			</Select>
+				
+			
+      		<TextField 
+        		id="standard-basic"
+        		label={`Search by ${selectedColumn}`}
+       	 		variant="standard"
+        		value={searchInput}
+        		onChange={handleSearchAll}
+        		disabled={selectedColumn === ''}
+				InputProps={{
+					startAdornment: <SearchRoundedIcon />,
+				  }}
+      />
+	  </div>
+			{customerDetails.length > 0 ? (
+					<div className="CustomerDetails">
 						<Table>
 							<TableHead>
 								<TableRow>
@@ -108,7 +131,6 @@ const Customers = () => {
 									<StyledTableCell align="center">Model Name</StyledTableCell>
 									<StyledTableCell align="center">Amount</StyledTableCell>
 									<StyledTableCell align="center">Quantity</StyledTableCell>
-									<StyledTableCell align="center">Total Amount</StyledTableCell>
 									<StyledTableCell align="center">VehicleNo</StyledTableCell>
 									<StyledTableCell align="center">Date</StyledTableCell>
 								</TableRow>
@@ -121,7 +143,6 @@ const Customers = () => {
 										<StyledTableCell align="center">{customer.model_name}</StyledTableCell>
 										<StyledTableCell align="center">{customer.amount}</StyledTableCell>
 										<StyledTableCell align="center">{customer.quantity}</StyledTableCell>
-										<StyledTableCell align="center">{customer.total_amount}</StyledTableCell>
 										<StyledTableCell align="center">{customer.vehicle_number}</StyledTableCell>
 										<StyledTableCell align="center">{customer.date}</StyledTableCell>
 									</StyledTableRow>
