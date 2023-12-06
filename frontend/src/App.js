@@ -9,6 +9,8 @@ import Login from './components/login';
 import Register from './components/register';
 import Customers from './components/customers';
 import AddCustomers from './components/addCustomers';
+import RawMaterials from './components/rawMaterials';
+import AddRawMaterials from './components/addRawMaterials';
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -59,6 +61,14 @@ function App() {
           <Route
             path="/addCustomers"
             element={isLoggedIn ? <AddCustomers /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/rawMaterials"
+            element={isLoggedIn ? <RawMaterials /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/addRawMaterials"
+            element={isLoggedIn ? <AddRawMaterials /> : <Navigate to="/" />}
           />
           <Route
             path="/logout"

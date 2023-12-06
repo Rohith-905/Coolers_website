@@ -16,27 +16,12 @@ html {
 body,
 p,
 button,
-input,
 select,
 textarea
  {
   font-family: 'Montserrat', sans-serif;
   letter-spacing: -0.2px;
   font-size: var(--ruler);
-}
-
-/* Div and paragraph */
-div,
-p {
-  color: var(--color-shadow);
-  text-shadow: 1px 1px 1px var(--color-white);
-}
-
-/* Form */
-form {
-  padding: var(--ruler);
-  width: calc(var(--ruler) * 20);
-  margin: 0 auto;
 }
 
 /* Segment */
@@ -46,11 +31,10 @@ form {
 }
 
 /* Button and Input */
-button,
-input {
+button
+{
   border: 0;
   outline: 0;
-  font-size: var(--ruler);
   border-radius: calc(var(--ruler) * 20);
   padding: var(--ruler);
   background-color: var(--color-bg);
@@ -64,24 +48,36 @@ label {
   width: 100%;
 }
 
-/* Input */
+/* Basic Input Style */
 input {
-  margin-right: calc(var(--ruler) / 2);
-  box-shadow: inset 2px 2px 5px var(--color-shadow), inset -5px -5px 10px var(--color-white);
-  width: 100%;
-  box-sizing: border-box;
-  transition: all 0.2s ease-in-out;
-  appearance: none;
-  -webkit-appearance: none;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.3s;
+  width: 100%; 
 }
 
+/* Input Focus Style */
 input:focus {
-  box-shadow: inset 1px 1px 2px var(--color-shadow), inset -1px -1px 2px var(--color-white);
+  border-color: #3498db; /* Change to your desired focus color */
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Optional: Add a subtle box shadow on focus */
 }
+
+/* Placeholder Style */
+input::placeholder {
+  color: #999; /* Change to your desired placeholder color */
+}
+
+/* Hover Effect */
+input:hover {
+  border-color: #95a5a6; /* Change to your desired hover color */
+}
+
 
 /* Button */
 button:hover {
-  color:white;
   box-shadow: -1px -1px 5px var(--color-white), 1px 1px 5px var(--color-shadow);
 } */
 
