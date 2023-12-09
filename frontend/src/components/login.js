@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import {  Navigate } from 'react-router-dom';
 import { Grid } from '@mui/material';
-import './login.css'; // Import the CSS file
+import '../styles.css';
 
 const Login = ({ setLoggedIn, isLoggedIn  }) => {
   // const[data,setData] = useState('');

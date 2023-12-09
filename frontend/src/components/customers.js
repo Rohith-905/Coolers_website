@@ -14,7 +14,7 @@ const Customers = () => {
 
   const [customerDetails, setCustomerDetails] = useState([]);
   const [error, setError] = useState('');
-  const columns = ['Customer Name', 'Model Name', 'Vehicle Number', 'Date']; 
+  const columns = ['customer_name', 'model_name', 'vehicle_number', 'date']; 
   const [searchInput, setSearchInput] = useState('');
   const [selectedColumn, setSelectedColumn] = useState('');
 

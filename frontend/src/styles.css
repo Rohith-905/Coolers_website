@@ -1,4 +1,42 @@
 /* styles.css */
+
+/* components/Login.css */
+.login-container {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-title {
+  text-align: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+
+.login-input {
+  padding: 10px;
+  font-size: 16px;
+}
+
+.login-button {
+  padding: 10px;
+  font-size: 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
 .nav-list {
     list-style: none;
     padding: 0;
@@ -19,4 +57,26 @@
   .nav-link:hover {
     background-color: #eee;
   }
+
+  html, body, #root {
+    height: auto;
+    margin: 0;
+    padding: 0;
+  }
+  .full-height {
+    height: 100%;
+  }
   
+  /* .background-container {
+    background-image: url('https://files.fluxes.com/wp-content/uploads/2017/03/coolers.png');
+    
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  
+    min-height: 100vh;
+  
+    color: #fff;
+    padding: 20px;
+  }
+   */

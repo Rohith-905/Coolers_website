@@ -17,6 +17,10 @@ const AppBarPage = ({ children }) => {
         navigate('/addRawMaterials');
     }
 
+    const handleCustomerCard = () => {
+        navigate('/customerCard');
+    }
+
     const handleCustomerDetails = () => {
         navigate('/customers');
     }
@@ -48,7 +52,9 @@ const AppBarPage = ({ children }) => {
                                 <HomeIcon />
                                 </Button>
                             </Grid>
-                            <Grid item xs={2} />
+                            <Grid item xs={2} >
+                                <Button sx={{ color: '#fff' }} onClick={handleCustomerCard}>Customer Card</Button>
+                            </Grid> 
                             <Grid item xs={2}>
                                 <Button sx={{ color: '#fff' }} onClick={handleCustomerDetails}>Customers</Button>
                             </Grid>
