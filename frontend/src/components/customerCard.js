@@ -36,7 +36,6 @@ export default function CustomerCard() {
   }, []);
 
   useEffect(() => {
-    // Update unique names whenever customerDetails change
     const namesSet = new Set(customerDetails.map((customer) => customer.customer_name));
     setUniqueNames(namesSet);
   }, [customerDetails]);
@@ -46,28 +45,27 @@ export default function CustomerCard() {
     setSearchInput(inputValue);
 
     if (inputValue === '') {
-      // If search input is empty, show all unique names
       setUniqueNames(Array.from(new Set(customerDetails.map((customer) => customer.customer_name))));
     } else {
-      // Convert unique names set to an array before filtering
       const uniqueNamesArray = Array.from(uniqueNames);
-
-      // Filter unique names based on search input
       const filteredNames = uniqueNamesArray.filter((name) => name.toLowerCase().includes(inputValue));
       setUniqueNames(filteredNames);
     }
   };
 
   const handleCustomerCard = (customerName) => {
-    // Find the details of the selected customer
     const selectedCustomerDetails = customerDetails.filter((customer) => customer.customer_name === customerName);
     setSelectedCustomer(selectedCustomerDetails);
+  };
+
+  const handleBackToMainView = () => {
+    setSelectedCustomer(null);
   };
 
   return (
     <AppBarPage>
       {selectedCustomer ? (
-        <HandleCustomerCard customerDetails={selectedCustomer} />
+        <HandleCustomerCard customerDetails={selectedCustomer} onBack={handleBackToMainView} />
       ) : (
         <>
           <TextField
