@@ -7,10 +7,7 @@ import { Grid } from '@mui/material';
 import Home from './components/homePage';
 import Login from './components/login';
 import Register from './components/register';
-import Customers from './components/customers';
 import AddCustomers from './components/addCustomers';
-import RawMaterials from './components/rawMaterials';
-import AddRawMaterials from './components/addRawMaterials';
 import CustomerCard from './components/customerCard';
 
 function App() {
@@ -56,20 +53,8 @@ function App() {
             element={isLoggedIn ? <Home /> : <Navigate to="/" />}
           />
           <Route
-            path="/customers"
-            element={isLoggedIn ? <Customers /> : <Navigate to="/" />}
-          />
-          <Route
             path="/addCustomers"
             element={isLoggedIn ? <AddCustomers /> : <Navigate to="/" />}
-          />
-          <Route
-            path="/rawMaterials"
-            element={isLoggedIn ? <RawMaterials /> : <Navigate to="/" />}
-          />
-          <Route
-            path="/addRawMaterials"
-            element={isLoggedIn ? <AddRawMaterials /> : <Navigate to="/" />}
           />
           <Route
             path="/customerCard"
