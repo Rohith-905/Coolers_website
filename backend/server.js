@@ -13,7 +13,7 @@ app.use(cors());
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'root',
+  password: 'Amruthama@2',
   database: 'Coolers',
 });
 
@@ -193,55 +193,6 @@ app.post('/api/add_coolers', async (req, res) => {
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Failed to store data or update cooler count in the database' });
-  }
-});
-
-// Display raw Materials
-app.get('/api/rawmaterialDetails', (req, res) => {
-  const query = 'SELECT * FROM RawMaterial';
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error('Error fetching RawMaterial details:', err);
-      
-      return res.status(500).json({ error: 'Internal server error' });
-    }
-
-    return res.status(200).json(results);
-  });
-});
-
-// Add RawMaterial
-app.post('/api/add-rawmaterial', async (req, res) => {
-  const formData = req.body;
-  console.log(req.body);
-  const materialName = formData.Material_name;
-  const quantity =  Number(formData.quantity);
-  console.log(materialName,quantity)
-
-  try {
-    // Check if the material already exists in the database
-    const checkQuery = `SELECT * FROM RawMaterial WHERE Material_Name = '${materialName}'`;
-    const checkResult = await queryDatabase(checkQuery);
-
-    if (checkResult.length > 0) {
-      // Material exists, update the quantity
-      const currentQuantity =  Number(checkResult[0].quantity);
-      const newQuantity = currentQuantity + quantity;
-      const updateQuery = `UPDATE RawMaterial SET quantity = ${newQuantity} WHERE Material_Name = '${materialName}'`;
-      await queryDatabase(updateQuery);
-      console.log('Quantity updated successfully')
-      res.status(200).json({ message: 'Quantity updated successfully' });
-    } else {
-      // Material doesn't exist, insert a new row
-      const insertQuery = `INSERT INTO RawMaterial (Material_Name, quantity) VALUES ('${materialName}', ${quantity})`;
-      await queryDatabase(insertQuery);
-      console.log('Quantity added successfully')
-      res.status(200).json({ message: 'New material added successfully' });
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ message: 'Internal server error' });
   }
 });
 

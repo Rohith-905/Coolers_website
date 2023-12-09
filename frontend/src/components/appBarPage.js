@@ -9,20 +9,8 @@ const AppBarPage = ({ children }) => {
 
     const navigate = useNavigate();
 
-    const handleRawMaterialDetails = () => {
-        navigate('/rawMaterials');
-    }
-
-    const handleAddRawMaterials = () => {
-        navigate('/addRawMaterials');
-    }
-
     const handleCustomerCard = () => {
         navigate('/customerCard');
-    }
-
-    const handleCustomerDetails = () => {
-        navigate('/customers');
     }
 
     const handleAddCustomers = () => {
@@ -52,20 +40,12 @@ const AppBarPage = ({ children }) => {
                                 <HomeIcon />
                                 </Button>
                             </Grid>
+                            <Grid item xs={6} />
                             <Grid item xs={2} >
-                                <Button sx={{ color: '#fff' }} onClick={handleCustomerCard}>Customer Card</Button>
+                                <Button sx={{ color: '#fff' }} onClick={handleCustomerCard}>Customers</Button>
                             </Grid> 
-                            <Grid item xs={2}>
-                                <Button sx={{ color: '#fff' }} onClick={handleCustomerDetails}>Customers</Button>
-                            </Grid>
                             <Grid item xs={2} >
                                 <Button sx={{ color: '#fff' }} onClick={handleAddCustomers}>Add Customer</Button>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Button sx={{ color: '#fff' }} onClick={handleRawMaterialDetails}>Raw Material</Button>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Button sx={{ color: '#fff' }} onClick={handleAddRawMaterials}>Add Raw Material</Button>
                             </Grid>
                             <Grid item xs={1}>
                                 <Button sx={{ color: '#fff' }} onClick={handleLogout}>Logout</Button>
