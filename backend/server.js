@@ -99,7 +99,7 @@ app.get('/api/coolers_available', (req, res) => {
       console.error('Error fetching cooler details:', err);
       return res.status(500).json({ error: 'Internal server error' });
     }
-
+    console.log(results);
     return res.status(200).json(results);
   });
 });
@@ -107,7 +107,7 @@ app.get('/api/coolers_available', (req, res) => {
 // API route to fetch details of products
 app.get('/api/customerDetails', (req, res) => {
   const query = 'SELECT * FROM customer';
-
+  console.log(query);
   db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching customer details:', err);
@@ -119,54 +119,107 @@ app.get('/api/customerDetails', (req, res) => {
   });
 });
 
+// Endpoint to get customer details by name
+app.get('/api/customerAddress', (req, res) => {
+  try {
+    const customerName = req.query.name;
+
+      // Select customer details from the database
+      const selectQuery = 'SELECT * FROM customer WHERE customer_name LIKE ?';
+      const searchName = `%${customerName}%`;
+
+      db.query(selectQuery, [searchName], (error, results) => {
+        console.log(selectQuery);
+        if (error) {
+          console.error('Error fetching customer details:', error);
+          res.status(500).json({ message: 'Internal server error' });
+        } else {
+          res.status(200).json(results);
+        }
+      });
+  } catch (error) {
+    console.error('Error fetching customer details:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Endpoint to fetch model names
+app.get('/api/allModelNames', (req, res) => {
+  try {
+    // Use a parameterized query to prevent SQL injection
+    const selectQuery = 'SELECT model_name FROM coolers_available';
+
+    db.query(selectQuery, (error, results) => {
+      if (error) {
+        console.error('Error fetching model names:', error);
+        res.status(500).json({ message: 'Internal server error' });
+      } else {
+        console.log(results);
+        const modelNames = results.map((result) => result.model_name);
+        console.log(modelNames);
+        res.status(200).json(modelNames);
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching model names:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
 // Handle POST request to store customer data and update coolers count
 app.post('/api/add-customer', async (req, res) => {
-  let currentQuantity = 0;
-  const formData = req.body;
-  const query = 'SELECT quantity from coolers_available where model_name = "' + formData.model_name + '"';
-  
-  try {
-    const results = await queryDatabase(query);
 
-    if (results.length === 0) {
-      res.status(500).json({ error: 'Cooler not found' });
-      return;
+  const formDataList = req.body;
+  // Assuming formDataList is an array of customer data objects
+  for (const formData of formDataList) {
+    let currentQuantity = 0;
+    
+    const query = 'SELECT quantity from coolers_available where model_name = "' + formData.model_name + '"';
+    
+    try {
+      const results = await queryDatabase(query);
+
+      if (results.length === 0) {
+        res.status(500).json({ error: 'Cooler not found' });
+        return;
+      }
+
+      currentQuantity = results[0].quantity;
+      // console.log(currentQuantity);
+      if (currentQuantity < formData.quantity) {
+        // console.log("In if");
+        res.status(500).json({ error: 'Sufficient Quantity is not available. Available quantity is ',currentQuantity });
+      } else {
+        // Update coolers count in the MySQL database
+        const updateCoolersQuery = `
+          UPDATE coolers_available 
+          SET quantity = (
+            SELECT derived_table.new_quantity
+            FROM (
+              SELECT quantity - ? AS new_quantity
+              FROM coolers_available
+              WHERE model_name = ?
+            ) AS derived_table
+          )
+          WHERE model_name = ?
+        `;
+    
+        const updateCoolersValues = [formData.quantity, formData.model_name, formData.model_name];
+        await queryDatabase(updateCoolersQuery, updateCoolersValues);
+    
+        // Insert customer data into the MySQL database
+        const insertCustomerQuery = 'INSERT INTO customer SET ?';
+        await queryDatabase(insertCustomerQuery, formData);
+    
+        // Respond with success
+        return res.status(200).json({ message: 'Data successfully stored, and coolers count updated in the database!' });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      return res.status(500).json({ error: 'Failed to store data or update coolers count in the database' });
+
     }
-
-    currentQuantity = results[0].quantity;
-    // console.log(currentQuantity);
-    if (currentQuantity < formData.quantity) {
-      // console.log("In if");
-      res.status(500).json({ error: 'Sufficient Quantity is not available. Available quantity is ',currentQuantity });
-    } else {
-      // Update coolers count in the MySQL database
-      const updateCoolersQuery = `
-        UPDATE coolers_available 
-        SET quantity = (
-          SELECT derived_table.new_quantity
-          FROM (
-            SELECT quantity - ? AS new_quantity
-            FROM coolers_available
-            WHERE model_name = ?
-          ) AS derived_table
-        )
-        WHERE model_name = ?
-      `;
-  
-      const updateCoolersValues = [formData.quantity, formData.model_name, formData.model_name];
-      await queryDatabase(updateCoolersQuery, updateCoolersValues);
-  
-      // Insert customer data into the MySQL database
-      const insertCustomerQuery = 'INSERT INTO customer SET ?';
-      await queryDatabase(insertCustomerQuery, formData);
-  
-      // Respond with success
-      return res.status(200).json({ message: 'Data successfully stored, and coolers count updated in the database!' });
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    return res.status(500).json({ error: 'Failed to store data or update coolers count in the database' });
-
   }
 });
 app.post('/api/add_coolers', async (req, res) => {

@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppBarPage from "./appBarPage";
 import "./addCustomers.css"; // Import your CSS file
-import { Button, Fab } from "@mui/material";
+import { Autocomplete, Button, Fab, TextField } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
+import { useNavigate } from "react-router-dom";
 
 const AddCustomers = () => {
+
+  const [formDataList, setFormDataList] = useState([]);
   const [formData, setFormData] = useState({
     customer_name: "",
     shop_address: "",
@@ -16,16 +19,63 @@ const AddCustomers = () => {
   });
 
   const [additionalDetails, setAdditionalDetails] = useState([]);
+  const [modelNameSuggestions, setModelNameSuggestions] = useState([]);
+  const [selectedModel, setSelectedModel] = useState(null);
+  
+  const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  useEffect(() => {
+    const fetchModelDetails = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/allModelNames`);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Server error");
+        }
+        const modelNames = await response.json();
+        setModelNameSuggestions(modelNames);
+      } catch (error) {
+        console.error("Error fetching model details:", error);
+      }
+    };
+
+    fetchModelDetails();
+  }, []);
+  
+  const handleInputChange = async (e,name,value) => {
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
+
+    // Fetch customer details if the input field is 'customer_name'
+    if (name === 'customer_name') {
+      fetchAddessDetails(value);
+    }
   };
 
-  const validateFeilds = () =>{
+  const fetchAddessDetails = async (customerName) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/customerAddress?name=${customerName}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Server error");
+      }
+
+      const customerDetails = await response.json();
+      if (customerDetails.length > 0) {
+        setFormData((prevData) => ({
+          ...prevData,
+          shop_address: customerDetails[0].shop_address,
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching customer details:", error);
+    }
+  };
+
+   const validateFields = () =>{
     // Validate form fields
     const fieldsToValidate = ['customer_name', 'shop_address', 'vehicle_number', 'date', 'model_name', 'amount', 'quantity'];
     const isFormValid = fieldsToValidate.every(field => formData[field]);
@@ -37,12 +87,11 @@ const AddCustomers = () => {
     }
     return 1;
   }
-  const handleAddDetails =  async (e) => {
+
+  const handleAddDetails = async (e) => {
     e.preventDefault();
 
-    let bool = validateFeilds();
-
-    if(bool){
+    if (validateFields()) {
       setFormData({
         customer_name: formData.customer_name,
         shop_address: formData.shop_address,
@@ -52,82 +101,61 @@ const AddCustomers = () => {
         vehicle_number: formData.vehicle_number,
         date: formData.date,
       });
-      try {
-        // console.log("in add details",formData);
-        // Make a POST request to your backend API endpoint for additional details
-        const response = await fetch("http://localhost:5000/api/add-customer", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            customer_name: formData.customer_name,
-            shop_address: formData.shop_address,
-            model_name: formData.model_name,
-            amount: formData.amount,
-            quantity: formData.quantity,
-            vehicle_number: formData.vehicle_number,
-            date: formData.date,
-            total_amount: formData.amount*formData.quantity,
-          }),
-        });
-        if (!response.ok) {
-          // If the response status is not in the range of 200 to 299, handle the error
-          const errorData = await response.json(); // Assuming your server sends details about the error in JSON format
-          throw new Error(errorData.message || "Server error");
-        }
-        else{
-          setAdditionalDetails([...additionalDetails, { ...formData }]);
-        }
-    
-        // ... (handle the response as needed)
-      } catch (error) {
-        console.error("Error:", error);
-        window.alert("Error");
-      }
+      setFormDataList((prevList) => [...prevList, formData]);
+      setAdditionalDetails([...additionalDetails, { ...formData }]);
+      // try {
+      //   const response = await fetch("http://localhost:5000/api/add-customer", {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({
+      //       customer_name: formData.customer_name.toLowerCase().trim(),
+      //       shop_address: formData.shop_address,
+      //       model_name: formData.model_name,
+      //       amount: formData.amount,
+      //       quantity: formData.quantity,
+      //       vehicle_number: formData.vehicle_number,
+      //       date: formData.date,
+      //       total_amount: formData.amount * formData.quantity,
+      //     }),
+      //   });
+
+      //   if (!response.ok) {
+      //     const errorData = await response.json();
+      //     throw new Error(errorData.message || "Server error");
+      //   } else {
+      //     setAdditionalDetails([...additionalDetails, { ...formData }]);
+      //   }
+      // } catch (error) {
+      //   console.error("Error:", error);
+      //   window.alert("Error");
+      // }
     }
-    
-  
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let bool = validateFeilds();
-    if(bool){
       try {
-        // Make a POST request to your backend API endpoint for additional details
         const response = await fetch("http://localhost:5000/api/add-customer", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            customer_name: formData.customer_name,
-            shop_address: formData.shop_address,
-            model_name: formData.model_name,
-            amount: formData.amount,
-            quantity: formData.quantity,
-            vehicle_number: formData.vehicle_number,
-            date: formData.date,
-            total_amount: formData.amount*formData.quantity,
-          }),
+          body: JSON.stringify(formDataList),
         });
+
         if (!response.ok) {
-          // If the response status is not in the range of 200 to 299, handle the error
-          const errorData = await response.json(); // Assuming your server sends details about the error in JSON format
+          const errorData = await response.json();
           throw new Error(errorData.message || "Server error");
-        }
-        else{
+        } else {
           setAdditionalDetails([...additionalDetails, { ...formData }]);
         }
-    
-        // ... (handle the response as needed)
       } catch (error) {
         console.error("Error:", error);
         window.alert("Error");
       }
-    
-      // Clear the form after submission
+
       setFormData({
         customer_name: "",
         shop_address: "",
@@ -136,17 +164,17 @@ const AddCustomers = () => {
         quantity: "",
         vehicle_number: "",
         date: "",
-        total_amount: "", // Clear the total_amount field too
+        total_amount: "",
       });
       setAdditionalDetails([]);
-    }
   };
-  
-  
+
+  const handlePrintReceipt = () =>{
+    return navigate("/billingPage" ,{ state: { formData, additionalDetails } });
+  }
   return (
     <AppBarPage>
       <h2>Add Customer Details</h2>
-      {/* Main Customer and Address Details */}
       <form onSubmit={handleSubmit}>
         <table>
           <tbody>
@@ -157,40 +185,37 @@ const AddCustomers = () => {
                   type="text"
                   name="customer_name"
                   value={formData.customer_name}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
                   required
                 />
               </td>
-
-              <td style={{paddingLeft: '100px' }}>
+              <td style={{ paddingLeft: '100px' }}>
                 <label>Address:</label>
                 <input
                   type="text"
                   name="shop_address"
                   value={formData.shop_address}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
                   required
                 />
               </td>
-            
-              <td style={{paddingLeft: '100px' }}>
+              <td style={{ paddingLeft: '100px' }}>
                 <label>Vehicle Number:</label>
                 <input
                   type="text"
                   name="vehicle_number"
                   value={formData.vehicle_number}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
                   required
                 />
               </td>
-
-              <td style={{paddingLeft: '100px' }}>
+              <td style={{ paddingLeft: '100px' }}>
                 <label>Date:</label>
                 <input
                   type="date"
                   name="date"
                   value={formData.date}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
                   required
                 />
               </td>
@@ -198,35 +223,34 @@ const AddCustomers = () => {
             <tr>
               <td>
                 <label>Model Name:</label>
-                <input
-                  type="text"
-                  name="model_name"
+                <Autocomplete
                   value={formData.model_name}
-                  onChange={handleInputChange}
-                  required
+                  onChange={(e, value) => handleInputChange(e, "model_name",value)}
+                  options={modelNameSuggestions}
+                  renderInput={(params) => <TextField {...params} />}
                 />
               </td>
-              <td style={{paddingLeft: '100px' }}>
+              <td style={{ paddingLeft: '100px' }}>
                 <label>Amount:</label>
                 <input
                   type="number"
                   name="amount"
                   value={formData.amount}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
                   required
                 />
               </td>
-              <td style={{paddingLeft: '100px' }}>
+              <td style={{ paddingLeft: '100px' }}>
                 <label>Quantity:</label>
                 <input
                   type="number"
                   name="quantity"
                   value={formData.quantity}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
                   required
                 />
               </td>
-              <td style={{paddingLeft: '100px' }}> 
+              <td style={{ paddingLeft: '100px' }}>
                 <Fab color="primary" aria-label="add" onClick={handleAddDetails}>
                   <AddIcon />
                 </Fab>
@@ -236,82 +260,53 @@ const AddCustomers = () => {
         </table>
       </form>
 
-      {/* Additional Details Section */}
       <h3>Additional Details</h3>
       <form>
         <table>
           <tbody>
-            {/* Map through additional details and display in the table */}
             <tr>
-                <td>Model Name:</td>
-                <td style={{paddingLeft: '100px' }}>Amount:</td>
-                <td style={{paddingLeft: '100px' }}>Quantity:</td>
-              </tr>
+              <td>Model Name:</td>
+              <td style={{ paddingLeft: '100px' }}>Amount:</td>
+              <td style={{ paddingLeft: '100px' }}>Quantity:</td>
+            </tr>
             {additionalDetails.map((detail, index) => (
               <tr key={index}>
                 <td >{detail.model_name}</td>
-                <td style={{paddingLeft: '100px' }}>{detail.amount}</td>
-                <td style={{paddingLeft: '100px' }}>{detail.quantity}</td>
+                <td style={{ paddingLeft: '100px' }}>{detail.amount}</td>
+                <td style={{ paddingLeft: '100px' }}>{detail.quantity}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </form>
 
-      {/* Form for Incrementing Details
-      <h3>Increment Details</h3>
-      <form>
-        <table>
-          <tbody>
-            <tr>
-              <td>
-                <label>Model Name:</label>
-                <input
-                  type="text"
-                  name="model_name"
-                  value={formData.model_name}
-                  onChange={handleInputChange}
-                  required
-                />
-              </td>
-              <td style={{paddingLeft: '100px' }}>
-                <label>Amount:</label>
-                <input
-                  type="number"
-                  name="amount"
-                  value={formData.amount}
-                  onChange={handleInputChange}
-                  required
-                />
-              </td>
-              <td style={{paddingLeft: '100px' }}>
-                <label>Quantity:</label>
-                <input
-                  type="number"
-                  name="quantity"
-                  value={formData.quantity}
-                  onChange={handleInputChange}
-                  required
-                />
-              </td>
-              <td style={{paddingLeft: '100px' }}> 
-                <Fab color="primary" aria-label="add" onClick={handleAddDetails}>
-                  <AddIcon />
-                </Fab>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </form> */}
-
-      {/* Submit Button */}
-      <Button sx={{ backgroundColor: '#1a75ff',color: '#fff',
-                '&:hover': {
-                  backgroundColor: '#0066ff', // Keep the same color on hover
-                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow on hover
-                },}}  type="submit" onClick={handleSubmit}>
+      <Button
+        sx={{
+          backgroundColor: '#1a75ff',
+          color: '#fff',
+          '&:hover': {
+            backgroundColor: '#0066ff',
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+          },
+        }}
+        type="submit" onClick={handleSubmit}>
         Submit
       </Button>
+
+      <Button
+        sx={{
+          backgroundColor: '#1a75ff',
+          color: '#fff',
+          '&:hover': {
+            backgroundColor: '#0066ff',
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+          },
+        }}
+        onClick={handlePrintReceipt}
+      >
+        Print Receipt
+      </Button>
+
     </AppBarPage>
   );
 };
