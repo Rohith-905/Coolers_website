@@ -9,6 +9,7 @@ import Login from './components/login';
 import Register from './components/register';
 import AddCustomers from './components/addCustomers';
 import CustomerCard from './components/customerCard';
+import BillingPage from './components/billingPage';
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -63,6 +64,10 @@ function App() {
           <Route
             path="/logout"
             element={<Navigate to="/"/>}
+          />
+          < Route
+            path="/billingPage"
+            element =  { isLoggedIn ? <BillingPage /> : <Navigate to="/" />}
           />
         </Routes>
       </Grid>

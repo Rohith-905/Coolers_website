@@ -77,7 +77,15 @@ export default function CustomerCard() {
               startAdornment: <SearchRoundedIcon />,
             }}
           />
-          <Box sx={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '16px',
+              alignItems: 'flex-start',
+              justifyContent: 'flex-start',
+            }}
+          >
             {Array.from(uniqueNames).map((name) => {
               const customer = customerDetails.find((c) => c.customer_name === name);
               return (
