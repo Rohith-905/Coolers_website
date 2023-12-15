@@ -171,6 +171,8 @@ app.get('/api/allModelNames', (req, res) => {
 app.post('/api/add-customer', async (req, res) => {
 
   const formDataList = req.body;
+  let errorOccurred = false; // Flag to track errors
+
   // Assuming formDataList is an array of customer data objects
   for (const formData of formDataList) {
     let currentQuantity = 0;
@@ -181,6 +183,7 @@ app.post('/api/add-customer', async (req, res) => {
       const results = await queryDatabase(query);
 
       if (results.length === 0) {
+        errorOccurred = true;
         res.status(500).json({ error: 'Cooler not found' });
         return;
       }
@@ -189,6 +192,7 @@ app.post('/api/add-customer', async (req, res) => {
       // console.log(currentQuantity);
       if (currentQuantity < formData.quantity) {
         // console.log("In if");
+        errorOccurred = true;
         res.status(500).json({ error: 'Sufficient Quantity is not available. Available quantity is ',currentQuantity });
       } else {
         // Update coolers count in the MySQL database
@@ -206,22 +210,47 @@ app.post('/api/add-customer', async (req, res) => {
         `;
     
         const updateCoolersValues = [formData.quantity, formData.model_name, formData.model_name];
+        console.log(updateCoolersQuery);
         await queryDatabase(updateCoolersQuery, updateCoolersValues);
     
         // Insert customer data into the MySQL database
         const insertCustomerQuery = 'INSERT INTO customer SET ?';
+        // console.log(insertCustomerQuery);
         await queryDatabase(insertCustomerQuery, formData);
     
-        // Respond with success
-        return res.status(200).json({ message: 'Data successfully stored, and coolers count updated in the database!' });
       }
     } catch (error) {
+      errorOccurred = true;
       console.error('Error:', error);
       return res.status(500).json({ error: 'Failed to store data or update coolers count in the database' });
-
+      break; // Break the loop if an error occurs
     }
   }
+  // Check if any error occurred during the iterations
+  if (!errorOccurred) {
+    res.status(200).json({ message: 'Data stored and coolers count updated successfully' });
+  } else {
+    res.status(500).json({ error: 'Failed to store data or update coolers count in the database' });
+  }
 });
+
+app.post('/savePDFToBackend', (req, res) => {
+  const { pdfData, invoiceNumber } = req.body; // PDF data and invoice number sent from the frontend
+console.log(pdfData,invoiceNumber);
+  // Example: Insert PDF data and invoice number into the 'pdfs' table
+  const query = 'INSERT INTO pdfs (invoice_number, pdf_data) VALUES (?, ?)';
+  console.log(query);
+  db.query(query, [invoiceNumber, pdfData], (err, result) => {
+    if (err) {
+      console.error('Failed to save PDF to the database:', err);
+      res.status(500).send('Failed to save PDF to the database');
+    } else {
+      console.log('PDF saved to the database');
+      res.status(200).send('PDF saved to the database');
+    }
+  });
+});
+
 app.post('/api/add_coolers', async (req, res) => {
   const addCoolers = req.body;
   console.log(addCoolers.name,addCoolers.quantity);

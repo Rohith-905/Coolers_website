@@ -16,11 +16,11 @@ const AddCustomers = () => {
     quantity: "",
     vehicle_number: "",
     date: "",
+    total_amount: "",
   });
 
   const [additionalDetails, setAdditionalDetails] = useState([]);
   const [modelNameSuggestions, setModelNameSuggestions] = useState([]);
-  const [selectedModel, setSelectedModel] = useState(null);
   
   const navigate = useNavigate();
 
@@ -42,18 +42,28 @@ const AddCustomers = () => {
     fetchModelDetails();
   }, []);
   
-  const handleInputChange = async (e,name,value) => {
-
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-
+  const handleInputChange = async (e, name, value) => {
+    // Update total amount when quantity or amount changes
+    setFormData((prevData) => {
+      const newData = {
+        ...prevData,
+        [name]: value,
+      };
+  
+      // Update total amount based on the latest quantity and amount
+      if (name === "quantity" || name === "amount") {
+        newData.total_amount = newData.quantity * newData.amount;
+      }
+  
+      return newData;
+    });
+  
     // Fetch customer details if the input field is 'customer_name'
     if (name === 'customer_name') {
       fetchAddessDetails(value);
     }
   };
+  
 
   const fetchAddessDetails = async (customerName) => {
     try {
@@ -100,6 +110,7 @@ const AddCustomers = () => {
         quantity: "",
         vehicle_number: formData.vehicle_number,
         date: formData.date,
+        total_amount: "",
       });
       setFormDataList((prevList) => [...prevList, formData]);
       setAdditionalDetails([...additionalDetails, { ...formData }]);
@@ -137,6 +148,7 @@ const AddCustomers = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
       try {
+        console.log(formDataList);
         const response = await fetch("http://localhost:5000/api/add-customer", {
           method: "POST",
           headers: {
@@ -167,6 +179,7 @@ const AddCustomers = () => {
         total_amount: "",
       });
       setAdditionalDetails([]);
+      setFormDataList([]);
   };
 
   const handlePrintReceipt = () =>{
@@ -248,6 +261,15 @@ const AddCustomers = () => {
                   value={formData.quantity}
                   onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
                   required
+                />
+              </td>
+              <td style={{ paddingLeft: '100px' }}>
+                <label>Total Amount:</label>
+                <input
+                  type="text"
+                  name="total_amount"
+                  value={formData.total_amount}
+                  readOnly
                 />
               </td>
               <td style={{ paddingLeft: '100px' }}>
