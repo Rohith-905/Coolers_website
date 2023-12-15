@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { styled } from '@mui/material/styles';
-import { Grid, Table, TableHead, TableBody, TableRow, TableCell, TextField, Button, Box, Alert } from '@mui/material';
+import { Grid, Table, TableHead, TableBody, TableRow, TableCell, TextField, Button, Box, Alert, Autocomplete } from '@mui/material';
 import { tableCellClasses } from '@mui/material/TableCell';
 import AppBarPage from './appBarPage';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
@@ -37,12 +37,24 @@ const Home = () => {
     },
   }));
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setAddCoolers((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setAddCoolers((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
+
+  const handleInputChange = async (e, name, value) => {
+
+    setAddCoolers((prevData) => {
+      const newData = {
+        ...prevData,
+        [name]: value,
+      };  
+      return newData;
+    });
+
   };
 
   const validateFields = () => {
@@ -196,20 +208,26 @@ const Home = () => {
                       justifyContent="center"
                     >
                       <label>Cooler Name:</label>
-                      <input
+                      <Autocomplete
+                        value={addCoolers.name}
+                        onChange={(e, value) => handleInputChange(e, "model_name",value)}
+                        options={coolers.map(cooler => cooler.model_name)}
+                        renderInput={(params) => <TextField {...params} style={{ width: '270px'}} />}
+                      />
+                      {/* <input
                         type="text"
                         name="name"
                         value={addCoolers.name}
                         onChange={handleInputChange}
                         required
-                      />
+                      /> */}
 
                       <label>Quantity:</label>
                       <input
                         type="text"
                         name="quantity"
                         value={addCoolers.quantity}
-                        onChange={handleInputChange}
+                        onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
                         required
                       />
 
