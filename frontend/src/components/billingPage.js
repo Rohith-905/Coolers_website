@@ -1,10 +1,11 @@
 // BillingPage.js
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 import '../styles.css';
+import { TextField } from '@mui/material';
 
 const BillingPage = () => {
 
@@ -15,6 +16,17 @@ const BillingPage = () => {
 
   // Destructure data from state
   const { formData, additionalDetails } = state;
+
+  const [paidAmount, setPaidAmount] = useState('');
+  const [dueAmount, setDueAmount] = useState('');
+
+  const handlePaidAmountChange = (event) => {
+    setPaidAmount(event.target.value);
+  };
+
+  const handleDueAmountChange = (event) => {
+    setDueAmount(event.target.value);
+  };
 
   // Calculate total amount based on additional details
   const calculateTotalAmount = () => {
@@ -143,6 +155,26 @@ const BillingPage = () => {
       </table>
 
       <p className="totalAmount">Total Amount:<span className="totalValue">{calculateTotalAmount()}</span></p>
+
+      {/* New input fields for Paid and Due amounts */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '100px' }}>
+        <label> Amount Paid:</label>
+        <input
+          id="paidAmount"
+          type="text"
+          value={paidAmount}
+          onChange={handlePaidAmountChange}
+          required
+        />
+        <label>Remaining Due:</label>
+        <input
+          id="remainingDue"
+          type="text"
+          value={calculateTotalAmount()-paidAmount}
+          readOnly
+          required
+        />
+      </div>
 
       <Button className='printButton' onClick={handlePrint}>
         Print

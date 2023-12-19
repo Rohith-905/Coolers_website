@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AppBarPage from "./appBarPage";
 import "./addCustomers.css"; // Import your CSS file
-import { Autocomplete, Button, Fab, TextField } from "@mui/material";
+import { Autocomplete, Button, Dialog, DialogActions, DialogTitle, Fab, TextField } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from "react-router-dom";
 
@@ -21,6 +21,7 @@ const AddCustomers = () => {
 
   const [additionalDetails, setAdditionalDetails] = useState([]);
   const [modelNameSuggestions, setModelNameSuggestions] = useState([]);
+  const [open, setOpen] = useState(false);
   
   const navigate = useNavigate();
 
@@ -85,17 +86,17 @@ const AddCustomers = () => {
     }
   };
 
-   const validateFields = () =>{
-    // Validate form fields
-    const fieldsToValidate = ['customer_name', 'shop_address', 'vehicle_number', 'date', 'model_name', 'amount', 'quantity'];
-    const isFormValid = fieldsToValidate.every(field => formData[field]);
+  const validateFields = () =>{
+  // Validate form fields
+  const fieldsToValidate = ['customer_name', 'shop_address', 'vehicle_number', 'date', 'model_name', 'amount', 'quantity'];
+  const isFormValid = fieldsToValidate.every(field => formData[field]);
 
-    if (!isFormValid) {
-      // Display an error message or perform any other action
-      alert('Please fill in all fields before submitting.');
-      return 0;
-    }
-    return 1;
+  if (!isFormValid) {
+    // Display an error message or perform any other action
+    alert('Please fill in all fields before submitting.');
+    return 0;
+  }
+  return 1;
   }
 
   const handleAddDetails = async (e) => {
@@ -136,8 +137,8 @@ const AddCustomers = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    if ((additionalDetails.length!==0) || validateFields()) {
       try {
         console.log(formDataList);
         const response = await fetch("http://localhost:5000/api/add-customer", {
@@ -171,11 +172,24 @@ const AddCustomers = () => {
       });
       setAdditionalDetails([]);
       setFormDataList([]);
+    }
   };
 
   const handlePrintReceipt = () =>{
+    handleSubmit();
     return navigate("/billingPage" ,{ state: { formData, additionalDetails } });
   }
+
+  const handleClickOpen = () => {
+    if((additionalDetails.length!==0) || validateFields() ){
+      setOpen(true);
+    };
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
 
       <AppBarPage className="add-customers-container">
@@ -303,11 +317,11 @@ const AddCustomers = () => {
             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
           },
         }}
-        type="submit" onClick={handleSubmit}>
+        type="submit" onClick={handleClickOpen}>
         Submit
       </Button>
 
-      <Button
+      {/* <Button
         sx={{
           backgroundColor: '#1a75ff',
           color: '#fff',
@@ -319,7 +333,7 @@ const AddCustomers = () => {
         onClick={handlePrintReceipt}
       >
         Print Receipt
-      </Button>
+      </Button> */}
 
     </AppBarPage>
   );
