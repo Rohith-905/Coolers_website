@@ -99,7 +99,7 @@ app.get('/api/coolers_available', (req, res) => {
       console.error('Error fetching cooler details:', err);
       return res.status(500).json({ error: 'Internal server error' });
     }
-    console.log(results);
+    // console.log(results);
     return res.status(200).json(results);
   });
 });
@@ -107,7 +107,7 @@ app.get('/api/coolers_available', (req, res) => {
 // API route to fetch details of products
 app.get('/api/customerDetails', (req, res) => {
   const query = 'SELECT * FROM customer';
-  console.log(query);
+  // console.log(query);
   db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching customer details:', err);
@@ -129,7 +129,7 @@ app.get('/api/customerAddress', (req, res) => {
       const searchName = `%${customerName}%`;
 
       db.query(selectQuery, [searchName], (error, results) => {
-        console.log(selectQuery);
+        // console.log(selectQuery);
         if (error) {
           console.error('Error fetching customer details:', error);
           res.status(500).json({ message: 'Internal server error' });
@@ -154,9 +154,9 @@ app.get('/api/allModelNames', (req, res) => {
         console.error('Error fetching model names:', error);
         res.status(500).json({ message: 'Internal server error' });
       } else {
-        console.log(results);
+        // console.log(results);
         const modelNames = results.map((result) => result.model_name);
-        console.log(modelNames);
+        // console.log(modelNames);
         res.status(200).json(modelNames);
       }
     });
@@ -191,7 +191,7 @@ app.post('/api/add-customer', async (req, res) => {
       currentQuantity = results[0].quantity;
       // console.log(currentQuantity);
       if (currentQuantity < formData.quantity) {
-        // console.log("In if");
+        console.log("In if");
         errorOccurred = true;
         res.status(500).json({ error: 'Sufficient Quantity is not available. Available quantity is ',currentQuantity });
       } else {
@@ -210,7 +210,7 @@ app.post('/api/add-customer', async (req, res) => {
         `;
     
         const updateCoolersValues = [formData.quantity, formData.model_name, formData.model_name];
-        console.log(updateCoolersQuery);
+        // console.log(updateCoolersQuery);
         await queryDatabase(updateCoolersQuery, updateCoolersValues);
     
         // Insert customer data into the MySQL database
@@ -236,10 +236,10 @@ app.post('/api/add-customer', async (req, res) => {
 
 app.post('/savePDFToBackend', (req, res) => {
   const { pdfData, invoiceNumber } = req.body; // PDF data and invoice number sent from the frontend
-console.log(pdfData,invoiceNumber);
+// console.log(pdfData,invoiceNumber);
   // Example: Insert PDF data and invoice number into the 'pdfs' table
   const query = 'INSERT INTO pdfs (invoice_number, pdf_data) VALUES (?, ?)';
-  console.log(query);
+  // console.log(query);
   db.query(query, [invoiceNumber, pdfData], (err, result) => {
     if (err) {
       console.error('Failed to save PDF to the database:', err);
@@ -253,7 +253,7 @@ console.log(pdfData,invoiceNumber);
 
 app.post('/api/add_coolers', async (req, res) => {
   const addCoolers = req.body;
-  console.log(addCoolers.name,addCoolers.quantity);
+  // console.log(addCoolers.name,addCoolers.quantity);
   try {
     // Check if the cooler already exists
     const checkCoolerQuery = 'SELECT quantity FROM coolers_available WHERE model_name = ?';
@@ -279,14 +279,39 @@ app.post('/api/add_coolers', async (req, res) => {
   }
 });
 
+
+app.post('/api/get_amountDetails', async (req, res) => {
+  const customerName = req.body;
+  // console.log('customerName', customerName.name);
+
+  try {
+    const get_amountDetails = 'select remaining from maintain_due_advance where name = ?';
+    const amount = await queryDatabase(get_amountDetails, customerName.name);
+    // Note: 'results' should be used instead of 'error' in the following condition
+    if (amount.error) {
+      console.error('Error fetching amount details:', amount.error);
+      res.status(500).json({ message: 'Internal server error' });
+    } else {
+      // console.log(amount[0]);
+      res.status(200).json(amount[0]);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Failed to store data or update cooler count in the database' });
+  }
+});
+
 // Helper function to execute queries on the database
 function queryDatabase(query, values) {
+  // console.log(query, values);
   return new Promise((resolve, reject) => {
     db.query(query, values, (error, results) => {
       if (error) {
-        reject(error);
+        // Use the 'error' variable here
+        reject( error );
       } else {
-        resolve(results);
+        // console.log(results);
+        resolve( results );
       }
     });
   });
