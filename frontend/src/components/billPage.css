@@ -175,25 +175,7 @@
   .shopDetails h2,
   .shopDetails p {
     margin: 5px 0;
-  }
-  
-  .amount-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px; /* Optional: Add margin for spacing */
-  }
-  
-  /* .amount-info label {
-    margin-right: 10px;  
-  }
-  
-  .amount-info input {
-    padding: 5px;
-    box-sizing: border-box;
-  } */
-  
-  
+  }  
   
   .totalAmountRow {
     /* Styles for the Total Amount row */
