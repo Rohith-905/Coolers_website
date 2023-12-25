@@ -1,11 +1,10 @@
 // BillingPage.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
-import '../styles.css';
-import { TextField } from '@mui/material';
+import './billPage.css';
 
 const BillingPage = () => {
 
@@ -15,10 +14,11 @@ const BillingPage = () => {
   const navigate = useNavigate();
 
   // Destructure data from state
-  const { formData, additionalDetails } = state;
+  const { formData, additionalDetailsList } = state;
 
   const [paidAmount, setPaidAmount] = useState('');
   const [dueAmount, setDueAmount] = useState('');
+  const [invoiceNumber,setInvoiceNumber] = useState('');
 
   const handlePaidAmountChange = (event) => {
     setPaidAmount(event.target.value);
@@ -30,10 +30,10 @@ const BillingPage = () => {
 
   // Calculate total amount based on additional details
   const calculateTotalAmount = () => {
-    return additionalDetails.reduce((total, detail) => total + detail.amount * detail.quantity, 0);
+    return additionalDetailsList.reduce((total, detail) => total + detail.amount * detail.quantity, 0);
   };
 
-  const generatePDF = () => {
+  const generatePDF = async() => {
     const element = document.querySelector('.BillStyle');
 
     const pdf = new jsPDF('p', 'pt', 'a4');
@@ -44,34 +44,9 @@ const BillingPage = () => {
       x: 10,
       y: 10,
       callback: function (pdf) {
-        // Save PDF locally
-        const invoiceNumber = generateInvoiceNumber(); // Get the invoice number
         const filename = `invoice_${invoiceNumber}.pdf`;
         savePDFLocally(pdf.output('blob'), filename);
-
-        // Send the generated PDF to the backend for storage
-        savePDFToDatabase(pdf.output('arraybuffer'),invoiceNumber);
       }
-    });
-  };
-
-  const savePDFToDatabase = (pdf, invoiceNumber) => {
-    fetch('/savePDFToBackend', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json', // Change content type to JSON
-      },
-      body: JSON.stringify({ pdfData: pdf, invoiceNumber: invoiceNumber }), // Include PDF data and invoice number
-    })
-    .then(response => {
-      if (response.ok) {
-        console.log('PDF saved to database');
-      } else {
-        console.error('Failed to save PDF to database');
-      }
-    })
-    .catch(error => {
-      console.error('Error saving PDF to database:', error);
     });
   };
   
@@ -99,10 +74,13 @@ const BillingPage = () => {
       .padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}${date.getHours().toString().padStart(2, '0')}${date.getMinutes().toString().padStart(2, '0')}${date.getSeconds().toString().padStart(2, '0')}`;
     const randomDigits = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
 
-    return `INV-${formattedDate}-${randomDigits}`;
+    setInvoiceNumber(`INV-${formattedDate}-${randomDigits}`);
   };
 
- 
+  useEffect(() => {
+    generateInvoiceNumber();
+  },[]);
+
 
    // Redirect to AddCustomers component
    const redirectToAddCustomers = () => {
@@ -112,53 +90,70 @@ const BillingPage = () => {
   return (
     <div className='BillStyle'>
     <Button className='BackButton' onClick={redirectToAddCustomers}>
-        Back
-      </Button>
-      <div className="shopDetails">
-          <h2>XYZ Name</h2>
-          <p>Address: H.NO : 15, 13-261, Bypass Rd, near NTR STATUE, Bank Colony, Khammam, Telangana 507002</p>
-      </div>
-      <h2 >Billing Details</h2>
+      Back
+    </Button>
+  
+    <div className="shopDetails">
       <div className="header">
-    <div className="left-info">
-      <p><strong>Invoice No:</strong> {generateInvoiceNumber()}</p>
-      <p><strong>GSTNo:</strong> Uncle GST no</p>
+        <div className="left-info">
+          <p><strong>GSTNo:</strong> Uncle GST no</p>
+        </div>
+        <div className="right-info">
+          <p><strong>Date:</strong> {formData.date}</p>
+        </div>
+      </div>
+  
+      <h2>XYZ Name</h2>
+      <pre>Address: H.NO : 15, 13-261, Bypass Rd, near NTR STATUE,
+           Bank Colony, Khammam, Telangana 507002</pre>
+      <p><strong>Ph No:</strong>+1 (234) 567-890</p>
     </div>
-    <div className="right-info">
-      <p><strong>Customer Name:</strong> {formData.customer_name}</p>
-      <p><strong>Shop Address:</strong> {formData.shop_address}</p>
-      <p><strong>Vehicle Number:</strong> {formData.vehicle_number}</p>
-      <p><strong>Date:</strong> {formData.date}</p>
+  
+    <h2>Billing Details</h2>
+  
+    <div className="header">
+      <div className="left-info">
+          <p><strong>Name:</strong> {formData.customer_name}</p>
+          <p><strong>Invoice No:</strong> {invoiceNumber}</p>
+          <p><strong>Shop Address:</strong> {formData.shop_address}</p>
+          <p><strong>Vehicle Number:</strong> {formData.vehicle_number}</p>
+      </div>
     </div>
-  </div>
-
-      <h3 >Purchase Details</h3>
-      <table >
-        <thead>
+  
+    <h3>Purchase Details</h3>
+    <table>
+      <thead>
           <tr>
+            <th>Sl. No.</th>
             <th>Model Name</th>
             <th>Amount</th>
             <th>Quantity</th>
             <th>Total</th>
           </tr>
         </thead>
-        <tbody>
-          {additionalDetails.map((detail, index) => (
+      <tbody>
+          {additionalDetailsList.map((detail, index) => (
             <tr key={index}>
+              <td>{index + 1}</td>
               <td>{detail.model_name}</td>
               <td>{detail.amount}</td>
               <td>{detail.quantity}</td>
-              <td>{detail.amount *detail.quantity}</td>
+              <td>{detail.amount * detail.quantity}</td>
             </tr>
           ))}
+          <tr className="totalAmountRow">
+              <td colSpan="3"></td>
+              <td><strong>Total Amount:</strong></td>
+              <td>{calculateTotalAmount()}</td>
+            </tr>
         </tbody>
-      </table>
-
-      <p className="totalAmount">Total Amount:<span className="totalValue">{calculateTotalAmount()}</span></p>
-
-      {/* New input fields for Paid and Due amounts */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '100px' }}>
-        <label> Amount Paid:</label>
+    </table>
+  
+   
+  
+    <div className="amount-info">
+      <div className="left-info">
+        <label>Amount Paid:</label>
         <input
           id="paidAmount"
           type="text"
@@ -166,21 +161,97 @@ const BillingPage = () => {
           onChange={handlePaidAmountChange}
           required
         />
+      </div>
+      <div className="right-info">
         <label>Remaining Due:</label>
         <input
           id="remainingDue"
           type="text"
-          value={calculateTotalAmount()-paidAmount}
+          value={calculateTotalAmount() - paidAmount}
           readOnly
           required
         />
       </div>
-
-      <Button className='printButton' onClick={handlePrint}>
-        Print
-      </Button>
     </div>
-  );
+    <h2 className='thankYouMessage'>Thank you, visit again!</h2>
+  <Button className='printButton' onClick={handlePrint}>
+      Print
+    </Button>
+  </div>
+  
+      
+    );
+  //   <div className='BillStyle'>
+  //   <Button className='BackButton' onClick={redirectToAddCustomers}>
+  //       Back
+  //     </Button>
+  //     <div className="shopDetails">
+  //         <h2>Rohit Coolers</h2>
+  //         <p>Address: H.NO : 15, 13-261, Bypass Rd, near NTR STATUE, Bank Colony, Khammam, Telangana 507002</p>
+  //     </div>
+  //     <h2 >Billing Details</h2>
+  //     <div className="header">
+  //   <div className="left-info">
+  //     <p><strong>Invoice No:</strong> {invoiceNumber}</p>
+  //     <p><strong>GSTNo:</strong> Uncle GST no</p>
+  //   </div>
+  //   <div className="right-info">
+  //     <p><strong>Customer Name:</strong> {formData.customer_name}</p>
+  //     <p><strong>Shop Address:</strong> {formData.shop_address}</p>
+  //     <p><strong>Vehicle Number:</strong> {formData.vehicle_number}</p>
+  //     <p><strong>Date:</strong> {formData.date}</p>
+  //   </div>
+  // </div>
+
+  //     <h3 >Purchase Details</h3>
+  //     <table >
+  //       <thead>
+  //         <tr>
+  //           <th>Model Name</th>
+  //           <th>Amount</th>
+  //           <th>Quantity</th>
+  //           <th>Total</th>
+  //         </tr>
+  //       </thead>
+  //       <tbody>
+  //         {additionalDetailsList.map((detail, index) => (
+  //           <tr key={index}>
+  //             <td>{detail.model_name}</td>
+  //             <td>{detail.amount}</td>
+  //             <td>{detail.quantity}</td>
+  //             <td>{detail.amount *detail.quantity}</td>
+  //           </tr>
+  //         ))}
+  //       </tbody>
+  //     </table>
+
+  //     <p className="totalAmount">Total Amount:<span className="totalValue">{calculateTotalAmount()}</span></p>
+
+  //     {/* New input fields for Paid and Due amounts */}
+  //     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '100px' }}>
+  //       <label> Amount Paid:</label>
+  //       <input
+  //         id="paidAmount"
+  //         type="text"
+  //         value={paidAmount}
+  //         onChange={handlePaidAmountChange}
+  //         required
+  //       />
+  //       <label>Remaining Due:</label>
+  //       <input
+  //         id="remainingDue"
+  //         type="text"
+  //         value={calculateTotalAmount()-paidAmount}
+  //         readOnly
+  //         required
+  //       />
+  //     </div>
+
+  //     <Button className='printButton' onClick={handlePrint}>
+  //       Print
+  //     </Button>
+  //   </div>
+  // );
 };
 
 

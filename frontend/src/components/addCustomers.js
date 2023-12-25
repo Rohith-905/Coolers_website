@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import AppBarPage from "./appBarPage";
 import "./addCustomers.css"; // Import your CSS file
-import { Autocomplete, Button, Dialog, DialogActions, DialogTitle, Fab, TextField } from "@mui/material";
+import { Autocomplete, Button, Dialog, DialogActions, DialogTitle, Fab, Grid, Table, TableBody, TableCell, TableHead, TableRow, TextField, tableCellClasses } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from "react-router-dom";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import DoneIcon from '@mui/icons-material/Done';
+import { styled } from '@mui/material/styles';
 
 const AddCustomers = () => {
 
@@ -18,12 +22,33 @@ const AddCustomers = () => {
     date: "",
     total_amount: "",
   });
+  const [additionalDetails, setAdditionalDetails] = useState({
+    model_name: "",
+    amount: "",
+    quantity: "",
+    total_amount: "",
+  });
 
-  const [additionalDetails, setAdditionalDetails] = useState([]);
+  const [additionalDetailsList, setAdditionalDetailsList] = useState([]);
   const [modelNameSuggestions, setModelNameSuggestions] = useState([]);
+  const [customerNameSuggestions, setCustomerNameSuggestions] = useState([]);
   const [open, setOpen] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
+  const [editedQuantity, setEditedQuantity] = useState('');
+  const [editedAmount, setEditedAmount] = useState('');
   
   const navigate = useNavigate();
+
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+      fontSize: 18,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
 
   useEffect(() => {
     const fetchModelDetails = async () => {
@@ -34,16 +59,65 @@ const AddCustomers = () => {
           throw new Error(errorData.message || "Server error");
         }
         const modelNames = await response.json();
+        console.log(modelNames);
         setModelNameSuggestions(modelNames);
       } catch (error) {
         console.error("Error fetching model details:", error);
       }
+      
     };
-
+    const fetchCustomerNames = async()=>{
+      try{
+        const response = await fetch(`http://localhost:5000/api/customerDetails`);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Server error");
+        }
+        const customerDetails = await response.json();
+        const customerNames = new Set(customerDetails.map((customer) => customer.customer_name));
+        setCustomerNameSuggestions(customerNames);
+      } catch (error) {
+        console.error("Error fetching model details:", error);
+      }
+    };
+    fetchCustomerNames();
     fetchModelDetails();
   }, []);
+
+  
+
+  const handleEdit = (index) => {
+    setEditIndex(index);
+    setEditedQuantity(additionalDetailsList[index].quantity.toString());
+    setEditedAmount(additionalDetailsList[index].amount.toString())
+  };
+
+  const handleSaveEdit = () => {
+    setAdditionalDetailsList((prevList) => {
+      const updatedList = [...prevList];
+      const editedItem = updatedList[editIndex];
+      editedItem.quantity = parseFloat(editedQuantity);
+      editedItem.amount = parseFloat(editedAmount);
+      editedItem.total_amount = editedItem.amount * editedItem.quantity;
+      return updatedList;
+    });
+    setEditIndex(null);
+  };
   
   const handleInputChange = async (e, name, value) => {
+
+    if (name === "model_name" || name === "amount" || name === "quantity" || name === "total_amount")
+    setAdditionalDetails((prevData) =>{
+      const newData ={
+        ...prevData,
+        [name]:value,
+      }
+      // Update total amount based on the latest quantity and amount
+      if (name === "quantity" || name === "amount") {
+        newData.total_amount = newData.quantity * newData.amount;
+      }
+      return newData;
+    })
     // Update total amount when quantity or amount changes
     setFormData((prevData) => {
       const newData = {
@@ -138,9 +212,10 @@ const AddCustomers = () => {
   };
 
   const handleSubmit = async () => {
+
     if ((additionalDetails.length!==0) || validateFields()) {
       try {
-        console.log(formDataList);
+        // console.log(formDataList);
         const response = await fetch("http://localhost:5000/api/add-customer", {
           method: "POST",
           headers: {
@@ -152,35 +227,23 @@ const AddCustomers = () => {
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || "Server error");
-        } else {
-          setAdditionalDetails([...additionalDetails, { ...formData }]);
+        }
+        else{
+          window.alert("Successfully saved");
         }
       } catch (error) {
         console.error("Error:", error);
         window.alert("Error");
       }
-
-      setFormData({
-        customer_name: "",
-        shop_address: "",
-        model_name: "",
-        amount: "",
-        quantity: "",
-        vehicle_number: "",
-        date: "",
-        total_amount: "",
-      });
-      setAdditionalDetails([]);
-      setFormDataList([]);
     }
   };
 
   const handlePrintReceipt = () =>{
-    handleSubmit();
-    return navigate("/billingPage" ,{ state: { formData, additionalDetails } });
+    handleClose();
+    return navigate("/billingPage" ,{ state: { formData, additionalDetailsList } });
   }
 
-  const handleClickOpen = () => {
+  const handleOpen = () => {
     if((additionalDetails.length!==0) || validateFields() ){
       setOpen(true);
     };
@@ -190,6 +253,29 @@ const AddCustomers = () => {
     setOpen(false);
   };
 
+  const handleDelete = (index) => {
+    setAdditionalDetailsList((prevList) => {
+      const updatedList = [...prevList];
+      updatedList.splice(index, 1); // Remove the item at the specified index
+      return updatedList;
+    });
+  };
+
+  const handleRest = () =>{
+    setFormData({
+      customer_name: "",
+      shop_address: "",
+      model_name: "",
+      amount: "",
+      quantity: "",
+      vehicle_number: "",
+      date: "",
+      total_amount: "",
+    });
+    setAdditionalDetailsList([]);
+    setFormDataList([]);
+  }
+
   return (
 
       <AppBarPage className="add-customers-container">
@@ -198,6 +284,15 @@ const AddCustomers = () => {
         <table>
           <tbody>
             <tr>
+            <td>
+                <label>Customer Name:</label>
+                <Autocomplete
+                  value={formData.customer_name}
+                  onChange={(e, value) => handleInputChange(e, "customer_name",value)}
+                  options={customerNameSuggestions}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </td>
               <td>
                 <label>Customer Name:</label>
                 <input
@@ -288,25 +383,81 @@ const AddCustomers = () => {
         </table>
       </form>
 
+    <Grid container spacing={2}>
+      <Grid item xs={9}>
       <h3>Additional Details</h3>
       <form>
-        <table>
-          <tbody>
-            <tr>
-              <td>Model Name:</td>
-              <td style={{ paddingLeft: '100px' }}>Amount:</td>
-              <td style={{ paddingLeft: '100px' }}>Quantity:</td>
-            </tr>
-            {additionalDetails.map((detail, index) => (
-              <tr key={index}>
-                <td >{detail.model_name}</td>
-                <td style={{ paddingLeft: '100px' }}>{detail.amount}</td>
-                <td style={{ paddingLeft: '100px' }}>{detail.quantity}</td>
-              </tr>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <StyledTableCell align="center">Model Name:</StyledTableCell>
+              <StyledTableCell align="center">Amount:</StyledTableCell>
+              <StyledTableCell align="center">Quantity:</StyledTableCell>
+              <StyledTableCell align="center">Total Amount:</StyledTableCell>
+              <StyledTableCell align="center"></StyledTableCell>
+              <StyledTableCell align="center"></StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {additionalDetailsList.map((detail, index) => (
+              <TableRow key={index}>
+                <td align="center">{detail.model_name}</td>
+                <td align="center">
+                  {editIndex === index ? (
+                    <input
+                      type="number"
+                      value={editedAmount}
+                      onChange={(e) => setEditedAmount(e.target.value)}
+                      style={{ width: '100px' }}
+                    />
+                  ) : (
+                    <span>{detail.amount}</span>
+                  )}
+                </td>
+                <td align="center">
+                {editIndex === index ? (
+                  <>
+                    <input
+                      type="number"
+                      value={editedQuantity}
+                      onChange={(e) => setEditedQuantity(e.target.value)}
+                      style={{ width: '100px' }}
+                    />
+                  </>
+                ) : (
+                  <span>{detail.quantity}</span>
+                )}
+              </td>
+              <td align="center">{detail.total_amount}</td>
+              <td align="center">
+                {editIndex !== index ? (
+                  <EditIcon onClick={() => handleEdit(index)} />
+                ):<DoneIcon onClick={handleSaveEdit}>Save</DoneIcon>}
+              </td>
+              <td style={{ paddingLeft: '50px' }}>
+                <DeleteIcon onClick={() => handleDelete(index)} />
+              </td>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </form>
+      </Grid>
+      <Grid item xs={3}/>
+    </Grid>
+      <div style={{display:"flex", justifyContent: "space-between", marginTop: '20px'}}>
+      <Button
+        sx={{
+          backgroundColor: '#1a75ff',
+          color: '#fff',
+          '&:hover': {
+            backgroundColor: '#0066ff',
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+          },
+        }}
+        type="submit" onClick={handleSubmit}>
+        Submit
+      </Button>
 
       <Button
         sx={{
@@ -317,24 +468,11 @@ const AddCustomers = () => {
             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
           },
         }}
-        type="submit" onClick={handleClickOpen}>
-        Submit
-      </Button>
-
-      {/* <Button
-        sx={{
-          backgroundColor: '#1a75ff',
-          color: '#fff',
-          '&:hover': {
-            backgroundColor: '#0066ff',
-            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-          },
-        }}
-        onClick={handlePrintReceipt}
+        onClick={handleOpen}
       >
         Print Receipt
-      </Button> */}
-
+      </Button>
+      </div>
     </AppBarPage>
   );
 };
