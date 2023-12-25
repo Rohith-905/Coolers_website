@@ -41,7 +41,7 @@ const AddCustomers = () => {
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
+      backgroundColor: '#66a3ff',
       color: theme.palette.common.white,
       fontSize: 18,
     },
@@ -75,7 +75,8 @@ const AddCustomers = () => {
         }
         const customerDetails = await response.json();
         const customerNames = new Set(customerDetails.map((customer) => customer.customer_name));
-        setCustomerNameSuggestions(customerNames);
+        const customerNamesList = [...customerNames];
+        setCustomerNameSuggestions(customerNamesList);
       } catch (error) {
         console.error("Error fetching model details:", error);
       }
@@ -101,10 +102,19 @@ const AddCustomers = () => {
       editedItem.total_amount = editedItem.amount * editedItem.quantity;
       return updatedList;
     });
+    setFormDataList((prevList) =>{
+      const updatedList = [...prevList];
+      const editedItem = updatedList[editIndex];
+      editedItem.quantity = parseFloat(editedQuantity);
+      editedItem.amount = parseFloat(editedAmount);
+      editedItem.total_amount = editedItem.amount * editedItem.quantity;
+      return updatedList;
+    });
     setEditIndex(null);
   };
   
   const handleInputChange = async (e, name, value) => {
+    console.log("Called");
 
     if (name === "model_name" || name === "amount" || name === "quantity" || name === "total_amount")
     setAdditionalDetails((prevData) =>{
@@ -135,6 +145,7 @@ const AddCustomers = () => {
   
     // Fetch customer details if the input field is 'customer_name'
     if (name === 'customer_name') {
+      console.log(value);
       fetchAddessDetails(value);
     }
   };
@@ -214,7 +225,7 @@ const AddCustomers = () => {
         }
       } catch (error) {
         console.error("Error:", error);
-        window.alert("Error");
+        window.alert("Quantity is more than available");
       }
     }
   };
@@ -289,29 +300,18 @@ const AddCustomers = () => {
       </Button>
 
     </div>
-      
-      
       <form onSubmit={handleSubmit}>
         <table>
           <tbody>
             <tr>
-            <td>
+              <td>
                 <label>Customer Name:</label>
                 <Autocomplete
                   value={formData.customer_name}
                   onChange={(e, value) => handleInputChange(e, "customer_name",value)}
                   options={customerNameSuggestions}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </td>
-              <td>
-                <label>Customer Name:</label>
-                <input
-                  type="text"
-                  name="customer_name"
-                  value={formData.customer_name}
-                  onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
-                  required
+                  freeSolo
+                  renderInput={(params) => <TextField {...params}  style={{ width: '200px' }} />}
                 />
               </td>
               <td style={{ paddingLeft: '100px' }}>

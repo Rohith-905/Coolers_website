@@ -184,16 +184,13 @@ app.post('/api/add-customer', async (req, res) => {
 
       if (results.length === 0) {
         errorOccurred = true;
-        res.status(500).json({ error: 'Cooler not found' });
         return;
       }
 
       currentQuantity = results[0].quantity;
       // console.log(currentQuantity);
       if (currentQuantity < formData.quantity) {
-        console.log("In if");
         errorOccurred = true;
-        res.status(500).json({ error: 'Sufficient Quantity is not available. Available quantity is ',currentQuantity });
       } else {
         // Update coolers count in the MySQL database
         const updateCoolersQuery = `
@@ -222,7 +219,6 @@ app.post('/api/add-customer', async (req, res) => {
     } catch (error) {
       errorOccurred = true;
       console.error('Error:', error);
-      return res.status(500).json({ error: 'Failed to store data or update coolers count in the database' });
       break; // Break the loop if an error occurs
     }
   }
@@ -262,6 +258,24 @@ app.post('/api/add_coolers', async (req, res) => {
   }
 });
 
+app.post('/api/saveFormDataAndDetails', async (req, res) => {
+  try {
+    const { invoiceNumber, formData, additionalDetailsList, paidAmount, overallTotalAmount } = req.body;
+    const { customer_name, shop_address, vehicle_number, date } = formData;
+    const additionalDetailsJSON = JSON.stringify(additionalDetailsList);
+    console.log(paidAmount,overallTotalAmount);
+   
+    const query = 'INSERT INTO soldgoods (invoice_number, customer_name, shop_address, vehicle_number, date, additional_details_json,paidAmount,overallTotalAmount) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [invoiceNumber, customer_name, shop_address, vehicle_number, date, additionalDetailsJSON, paidAmount, overallTotalAmount];
+
+    await queryDatabase(query, values);
+    
+    res.status(200).send('Data saved to the backend');
+  } catch (error) {
+    console.error('Error saving data to the backend:', error);
+    res.status(500).send('Failed to save data to the backend');
+  }
+});
 
 app.post('/api/get_amountDetails', async (req, res) => {
   const customerName = req.body;
