@@ -234,23 +234,6 @@ app.post('/api/add-customer', async (req, res) => {
   }
 });
 
-app.post('/savePDFToBackend', (req, res) => {
-  const { pdfData, invoiceNumber } = req.body; // PDF data and invoice number sent from the frontend
-// console.log(pdfData,invoiceNumber);
-  // Example: Insert PDF data and invoice number into the 'pdfs' table
-  const query = 'INSERT INTO pdfs (invoice_number, pdf_data) VALUES (?, ?)';
-  // console.log(query);
-  db.query(query, [invoiceNumber, pdfData], (err, result) => {
-    if (err) {
-      console.error('Failed to save PDF to the database:', err);
-      res.status(500).send('Failed to save PDF to the database');
-    } else {
-      console.log('PDF saved to the database');
-      res.status(200).send('PDF saved to the database');
-    }
-  });
-});
-
 app.post('/api/add_coolers', async (req, res) => {
   const addCoolers = req.body;
   // console.log(addCoolers.name,addCoolers.quantity);

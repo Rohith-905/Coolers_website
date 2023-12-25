@@ -16,7 +16,6 @@ import HandleCustomerCard from './handleCustomerCard';
 
 export default function CustomerCard() {
   const [customerDetails, setCustomerDetails] = useState([]);
-  const [error, setError] = useState('');
   const [uniqueNames, setUniqueNames] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -28,7 +27,6 @@ export default function CustomerCard() {
         setCustomerDetails(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
-        setError('Error fetching data');
       }
     };
 
