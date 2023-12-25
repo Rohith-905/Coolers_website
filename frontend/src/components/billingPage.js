@@ -19,6 +19,7 @@ const BillingPage = () => {
   const [paidAmount, setPaidAmount] = useState('');
   const [dueAmount, setDueAmount] = useState('');
   const [invoiceNumber,setInvoiceNumber] = useState('');
+  const [overallTotalAmount,setOverallTotalAmount ] = useState('');
 
   const handlePaidAmountChange = (event) => {
     setPaidAmount(event.target.value);
@@ -30,7 +31,7 @@ const BillingPage = () => {
 
   // Calculate total amount based on additional details
   const calculateTotalAmount = () => {
-    return additionalDetailsList.reduce((total, detail) => total + detail.amount * detail.quantity, 0);
+    setOverallTotalAmount(additionalDetailsList.reduce((total, detail) => total + detail.amount * detail.quantity, 0));
   };
 
   const generatePDF = async() => {
@@ -52,7 +53,8 @@ const BillingPage = () => {
   
 
   const handlePrint = () => {
-    generatePDF(); // Generate PDF before printing
+    // generatePDF(); // Generate PDF before printing
+    savePDFToBackend();
     window.print(); // Print the document
   };
 
@@ -63,6 +65,27 @@ const BillingPage = () => {
     link.download = filename;
     link.click();
     URL.revokeObjectURL(blobUrl);
+  };
+
+  const savePDFToBackend = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/saveFormDataAndDetails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({invoiceNumber, formData, additionalDetailsList, paidAmount, overallTotalAmount }),
+      });
+
+      if (response.ok) {
+        console.log('Data saved to the backend');
+        // Optionally, perform further actions after successful save
+      } else {
+        console.error('Failed to save data to the backend');
+      }
+    } catch (error) {
+      console.error('Error saving data to the backend:', error);
+    }
   };
 
 
@@ -79,6 +102,7 @@ const BillingPage = () => {
 
   useEffect(() => {
     generateInvoiceNumber();
+    calculateTotalAmount();
   },[]);
 
 
@@ -144,7 +168,7 @@ const BillingPage = () => {
           <tr className="totalAmountRow">
               <td colSpan="3"></td>
               <td><strong>Total Amount:</strong></td>
-              <td>{calculateTotalAmount()}</td>
+              <td>{overallTotalAmount}</td>
             </tr>
         </tbody>
     </table>
@@ -162,7 +186,7 @@ const BillingPage = () => {
         <input
           id="remainingDue"
           type="text"
-          value={calculateTotalAmount() - paidAmount}
+          value={overallTotalAmount-paidAmount}
           readOnly
           required
         />
