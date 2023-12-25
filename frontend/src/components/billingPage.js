@@ -149,10 +149,7 @@ const BillingPage = () => {
         </tbody>
     </table>
   
-   
-  
-    <div className="amount-info">
-      <div className="left-info">
+    <div style={{display: 'flex', justifyContent: 'flex-end', gap: '100px'}}>
         <label>Amount Paid:</label>
         <input
           id="paidAmount"
@@ -161,8 +158,6 @@ const BillingPage = () => {
           onChange={handlePaidAmountChange}
           required
         />
-      </div>
-      <div className="right-info">
         <label>Remaining Due:</label>
         <input
           id="remainingDue"
@@ -171,7 +166,6 @@ const BillingPage = () => {
           readOnly
           required
         />
-      </div>
     </div>
     <h2 className='thankYouMessage'>Thank you, visit again!</h2>
   <Button className='printButton' onClick={handlePrint}>
