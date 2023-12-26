@@ -14,24 +14,24 @@ const BillingPage = () => {
   const navigate = useNavigate();
 
   // Destructure data from state
-  const { formData, additionalDetailsList } = state;
+  const { formData, additionalDetailsList, dueAmount } = state;
 
-  const [paidAmount, setPaidAmount] = useState('');
-  const [dueAmount, setDueAmount] = useState('');
+  const [paidAmount, setPaidAmount] = useState(0);
   const [invoiceNumber,setInvoiceNumber] = useState('');
-  const [overallTotalAmount,setOverallTotalAmount ] = useState('');
+  const [overallTotalAmount,setOverallTotalAmount ] = useState(0);
+  const [error,setError] = useState('');
 
   const handlePaidAmountChange = (event) => {
     setPaidAmount(event.target.value);
   };
 
-  const handleDueAmountChange = (event) => {
-    setDueAmount(event.target.value);
-  };
+  // const handleDueAmountChange = (event) => {
+  //   setDueAmount(event.target.value);
+  // };
 
   // Calculate total amount based on additional details
   const calculateTotalAmount = () => {
-    setOverallTotalAmount(additionalDetailsList.reduce((total, detail) => total + detail.amount * detail.quantity, 0));
+    setOverallTotalAmount((additionalDetailsList.reduce((total, detail) => total + detail.amount * detail.quantity, 0)) + dueAmount);
   };
 
   const generatePDF = async() => {
@@ -100,10 +100,39 @@ const BillingPage = () => {
     setInvoiceNumber(`INV-${formattedDate}-${randomDigits}`);
   };
 
+  // const isDueCheck = async() =>{
+  //   try {
+  //     // console.log(customerName);
+  //     const response = await fetch(`http://localhost:5000/api/get_amountDetails?name=${formData.customer_name}`);
+  //     if (response.status === 200) {
+  //       const amountDetails = await response.json();
+  //       console.log(amountDetails.remaining);
+  //       setDueAmount(amountDetails.remaining);
+  //     } else {
+  //       console.error('Failed to add coolers:', response.statusText);
+  //       setError('Failed to add coolers');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error adding coolers:', error);
+  //     setError('Error adding coolers');
+  //   }
+  // };
+
   useEffect(() => {
-    generateInvoiceNumber();
-    calculateTotalAmount();
-  },[]);
+  // const fetchData = async () => {
+  //   // Execute isDueCheck() and wait for the response
+  //   const isDueResponse = await isDueCheck();
+
+  //   // Check the response from isDueCheck() and proceed accordingly
+  //   if (isDueResponse) {
+      // isDueCheck() returned true, so now proceed to generateInvoiceNumber()
+      generateInvoiceNumber();
+      calculateTotalAmount();
+    // }
+  // };
+
+  // fetchData(); // Call the async function
+}, []);
 
 
    // Redirect to AddCustomers component
@@ -165,11 +194,21 @@ const BillingPage = () => {
               <td>{detail.amount * detail.quantity}</td>
             </tr>
           ))}
-          <tr className="totalAmountRow">
+          {
+            dueAmount?
+            <tr className="totalAmountRow">
               <td colSpan="3"></td>
-              <td><strong>Total Amount:</strong></td>
-              <td>{overallTotalAmount}</td>
+              <td><strong>Due Amount:</strong></td>
+              <td>{dueAmount}</td>
             </tr>
+            :null
+          }
+          
+          <tr className="totalAmountRow">
+            <td colSpan="3"></td>
+            <td><strong>Total Amount:</strong></td>
+            <td>{overallTotalAmount}</td>
+          </tr>
         </tbody>
     </table>
   

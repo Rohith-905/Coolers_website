@@ -147,17 +147,17 @@ app.get('/api/customerAddress', (req, res) => {
 app.get('/api/allModelNames', (req, res) => {
   try {
     // Use a parameterized query to prevent SQL injection
-    const selectQuery = 'SELECT model_name FROM coolers_available';
+    const selectQuery = 'SELECT * FROM coolers_available';
 
     db.query(selectQuery, (error, results) => {
       if (error) {
         console.error('Error fetching model names:', error);
         res.status(500).json({ message: 'Internal server error' });
       } else {
-        // console.log(results);
-        const modelNames = results.map((result) => result.model_name);
-        // console.log(modelNames);
-        res.status(200).json(modelNames);
+        console.log(results);
+        // const modelNames = results.map((result) => result.model_name);
+        // // console.log(modelNames);
+        res.status(200).json(results);
       }
     });
   } catch (error) {
@@ -269,7 +269,7 @@ app.post('/api/saveFormDataAndDetails', async (req, res) => {
     const values = [invoiceNumber, customer_name, shop_address, vehicle_number, date, additionalDetailsJSON, paidAmount, overallTotalAmount];
 
     await queryDatabase(query, values);
-    
+
     res.status(200).send('Data saved to the backend');
   } catch (error) {
     console.error('Error saving data to the backend:', error);
@@ -277,19 +277,19 @@ app.post('/api/saveFormDataAndDetails', async (req, res) => {
   }
 });
 
-app.post('/api/get_amountDetails', async (req, res) => {
-  const customerName = req.body;
-  // console.log('customerName', customerName.name);
+app.get('/api/get_amountDetails', async (req, res) => {
+  const customerName = req.query.name;
+  console.log('customerName', customerName);
 
   try {
     const get_amountDetails = 'select remaining from maintain_due_advance where name = ?';
-    const amount = await queryDatabase(get_amountDetails, customerName.name);
+    const amount = await queryDatabase(get_amountDetails, customerName);
     // Note: 'results' should be used instead of 'error' in the following condition
     if (amount.error) {
       console.error('Error fetching amount details:', amount.error);
       res.status(500).json({ message: 'Internal server error' });
     } else {
-      // console.log(amount[0]);
+      console.log(amount[0]);
       res.status(200).json(amount[0]);
     }
   } catch (error) {

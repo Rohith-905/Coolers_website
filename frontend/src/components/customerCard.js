@@ -87,7 +87,7 @@ export default function CustomerCard() {
             {Array.from(uniqueNames).map((name) => {
               const customer = customerDetails.find((c) => c.customer_name === name);
               return (
-                <Card key={customer.id} sx={{ minWidth: 200, maxWidth: 250 }}>
+                <Card  key={customer.id} sx={{ minWidth: 200, maxWidth: 250, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)' }}>
                   <CardContent>
                     <Typography variant="h6" color="text.primary" gutterBottom>
                       {customer.customer_name}
