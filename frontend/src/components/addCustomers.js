@@ -166,6 +166,12 @@ const AddCustomers = () => {
           shop_address: customerDetails[0].shop_address,
         }));
       }
+      else{
+        setFormData((prevData) => ({
+          ...prevData,
+          shop_address: " ",
+        }));
+      }
     } catch (error) {
       console.error("Error fetching customer details:", error);
     }
@@ -179,9 +185,9 @@ const AddCustomers = () => {
   if (!isFormValid) {
     // Display an error message or perform any other action
     alert('Please fill in all fields before submitting.');
-    return 0;
+    return false;
   }
-  return 1;
+  return true;
   }
 
   const handleAddDetails = async (e) => {
@@ -309,6 +315,7 @@ const AddCustomers = () => {
                 <Autocomplete
                   value={formData.customer_name}
                   onChange={(e, value) => handleInputChange(e, "customer_name",value)}
+                  onInputChange={(e, newInputValue) => handleInputChange(e, "customer_name", newInputValue)}
                   options={customerNameSuggestions}
                   freeSolo
                   renderInput={(params) => <TextField {...params}  style={{ width: '200px' }} />}
@@ -378,7 +385,7 @@ const AddCustomers = () => {
               <td style={{ paddingLeft: '100px' }}>
                 <label>Total Amount:</label>
                 <input
-                  type="text"
+                  type="number"
                   name="total_amount"
                   value={formData.total_amount}
                   readOnly
