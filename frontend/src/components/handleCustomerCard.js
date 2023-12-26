@@ -25,11 +25,11 @@ const HandleCustomerCard = ({ customerDetails, onBack }) => {
     customerDetails.forEach((customer) => { customerName = customer.customer_name})
     try {
       // console.log(customerName);
-      const response = await axios.post('http://localhost:5000/api/get_amountDetails', {
-        name: customerName,
-      });
+      const response = await fetch(`http://localhost:5000/api/get_amountDetails?name=${customerName}`);
       if (response.status === 200) {
-        setRemainingAmount(response.data.remaining);
+        const amountDetails = await response.json();
+        console.log(amountDetails.remaining);
+        setRemainingAmount(amountDetails.remaining);
       } else {
         console.error('Failed to add coolers:', response.statusText);
         setError('Failed to add coolers');
@@ -41,15 +41,17 @@ const HandleCustomerCard = ({ customerDetails, onBack }) => {
   }
   useEffect(() => {
     handleAmountDetails();
+    console.log(remainingAmount);
   });
 
   return (
     <div>
       <Button onClick={onBack}>Back</Button>
-      
+      {remainingAmount?
       <div style={{ textAlign: 'right', color: remainingAmountColor, fontWeight:'bold' }}>
         {advance_or_due} : {remainingAmount}
       </div>
+      :null}
       {Object.entries(groupedByDate).map(([date, details]) => (
         <div key={date}>
           <h3>Date: {date}</h3>

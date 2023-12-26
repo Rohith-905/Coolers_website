@@ -32,10 +32,16 @@ const AddCustomers = () => {
   const [additionalDetailsList, setAdditionalDetailsList] = useState([]);
   const [modelNameSuggestions, setModelNameSuggestions] = useState([]);
   const [customerNameSuggestions, setCustomerNameSuggestions] = useState([]);
+  const [coolersWithQuantityList,setCoolersWithQuantityList] = useState([]);
   const [open, setOpen] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
-  const [editedQuantity, setEditedQuantity] = useState('');
-  const [editedAmount, setEditedAmount] = useState('');
+  const [editedQuantity, setEditedQuantity] = useState(0);
+  const [editedAmount, setEditedAmount] = useState(0);
+  const [dueAmount, setDueAmount] = useState(0);
+  const [error,setError] = useState('');
+  const [dataSaved,setDataSaved] = useState(false);
+
+
   
   const navigate = useNavigate();
 
@@ -50,71 +56,8 @@ const AddCustomers = () => {
     },
   }));
 
-  useEffect(() => {
-    const fetchModelDetails = async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/api/allModelNames`);
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Server error");
-        }
-        const modelNames = await response.json();
-        console.log(modelNames);
-        setModelNameSuggestions(modelNames);
-      } catch (error) {
-        console.error("Error fetching model details:", error);
-      }
-      
-    };
-    const fetchCustomerNames = async()=>{
-      try{
-        const response = await fetch(`http://localhost:5000/api/customerDetails`);
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Server error");
-        }
-        const customerDetails = await response.json();
-        const customerNames = new Set(customerDetails.map((customer) => customer.customer_name));
-        const customerNamesList = [...customerNames];
-        setCustomerNameSuggestions(customerNamesList);
-      } catch (error) {
-        console.error("Error fetching model details:", error);
-      }
-    };
-    fetchCustomerNames();
-    fetchModelDetails();
-  }, []);
-
-  
-
-  const handleEdit = (index) => {
-    setEditIndex(index);
-    setEditedQuantity(additionalDetailsList[index].quantity.toString());
-    setEditedAmount(additionalDetailsList[index].amount.toString())
-  };
-
-  const handleSaveEdit = () => {
-    setAdditionalDetailsList((prevList) => {
-      const updatedList = [...prevList];
-      const editedItem = updatedList[editIndex];
-      editedItem.quantity = parseFloat(editedQuantity);
-      editedItem.amount = parseFloat(editedAmount);
-      editedItem.total_amount = editedItem.amount * editedItem.quantity;
-      return updatedList;
-    });
-    setFormDataList((prevList) =>{
-      const updatedList = [...prevList];
-      const editedItem = updatedList[editIndex];
-      editedItem.quantity = parseFloat(editedQuantity);
-      editedItem.amount = parseFloat(editedAmount);
-      editedItem.total_amount = editedItem.amount * editedItem.quantity;
-      return updatedList;
-    });
-    setEditIndex(null);
-  };
-  
   const handleInputChange = async (e, name, value) => {
-    console.log("Called");
+    // console.log("Called");
 
     if (name === "model_name" || name === "amount" || name === "quantity" || name === "total_amount")
     setAdditionalDetails((prevData) =>{
@@ -150,7 +93,89 @@ const AddCustomers = () => {
     }
   };
   
+  const fetchModelDetails = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/allModelNames`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Server error");
+      }
+      // console.log(response.json());
+      const availableCoolersList = await response.json();
+      setCoolersWithQuantityList(availableCoolersList);
+      const modelNames = availableCoolersList.map((availableCooler) => availableCooler.model_name);
+      console.log(modelNames);
+      setModelNameSuggestions(modelNames);
+    } catch (error) {
+      console.error("Error fetching model details:", error);
+    }
+    
+  };
 
+  const fetchCustomerNames = async()=>{
+    try{
+      const response = await fetch(`http://localhost:5000/api/customerDetails`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Server error");
+      }
+      const customerDetails = await response.json();
+      const customerNames = new Set(customerDetails.map((customer) => customer.customer_name));
+      const customerNamesList = [...customerNames];
+      setCustomerNameSuggestions(customerNamesList);
+    } catch (error) {
+      console.error("Error fetching model details:", error);
+    }
+  };
+
+  const isDueCheck = async() =>{
+    try {
+      const response = await fetch(`http://localhost:5000/api/get_amountDetails?name=${formData.customer_name}`);
+      if (response.status === 200) {
+        const amountDetails = await response.json();
+        console.log(amountDetails.remaining);
+        setDueAmount(amountDetails.remaining);
+      } else {
+        console.error('Failed to add coolers:', response.statusText);
+        setError('Failed to add coolers');
+      }
+    } catch (error) {
+      console.error('Error adding coolers:', error);
+      setError('Error adding coolers');
+    }
+  };
+  
+  useEffect(() => {
+    fetchCustomerNames();
+    fetchModelDetails();
+  }, []);
+
+  const handleEdit = (index) => {
+    setEditIndex(index);
+    setEditedQuantity(additionalDetailsList[index].quantity.toString());
+    setEditedAmount(additionalDetailsList[index].amount.toString())
+  };
+
+  const handleSaveEdit = () => {
+    setAdditionalDetailsList((prevList) => {
+      const updatedList = [...prevList];
+      const editedItem = updatedList[editIndex];
+      editedItem.quantity = parseFloat(editedQuantity);
+      editedItem.amount = parseFloat(editedAmount);
+      editedItem.total_amount = editedItem.amount * editedItem.quantity;
+      return updatedList;
+    });
+    setFormDataList((prevList) =>{
+      const updatedList = [...prevList];
+      const editedItem = updatedList[editIndex];
+      editedItem.quantity = parseFloat(editedQuantity);
+      editedItem.amount = parseFloat(editedAmount);
+      editedItem.total_amount = editedItem.amount * editedItem.quantity;
+      return updatedList;
+    });
+    setEditIndex(null);
+  };
+  
   const fetchAddessDetails = async (customerName) => {
     try {
       const response = await fetch(`http://localhost:5000/api/customerAddress?name=${customerName}`);
@@ -226,13 +251,31 @@ const AddCustomers = () => {
       console.error("Error:", error);
       window.alert("Error");
     }
+    else{
+      if (validateFields()) {
+        isDueCheck();
+        setFormData({
+          customer_name: formData.customer_name,
+          shop_address: formData.shop_address,
+          model_name: "",
+          amount: "",
+          quantity: "",
+          vehicle_number: formData.vehicle_number,
+          date: formData.date,
+          total_amount: "",
+        });
+        setFormDataList((prevList) => [...prevList, formData]);
+        setAdditionalDetailsList([...additionalDetailsList, { ...additionalDetails }]);
+      }
+    }
+    
   };
 
   const handleSubmit = async () => {
 
-    if ((additionalDetails.length!==0) || validateFields()) {
+    if (formDataList.length!==0) {
       try {
-        // console.log(formDataList);
+        console.log(formDataList);
         const response = await fetch("http://localhost:5000/api/add-customer", {
           method: "POST",
           headers: {
@@ -247,23 +290,33 @@ const AddCustomers = () => {
         }
         else{
           window.alert("Successfully saved");
+          setDataSaved(true);
         }
       } catch (error) {
         console.error("Error:", error);
         window.alert("Quantity is more than available");
       }
     }
+    else{
+      window.alert("please click on add Details button");
+    }
   };
 
   const handlePrintReceipt = () =>{
+    if(!dataSaved){
+      handleSubmit();
+    }
     handleClose();
-    return navigate("/billingPage" ,{ state: { formData, additionalDetailsList } });
+    return navigate("/billingPage" ,{ state: { formData, additionalDetailsList,dueAmount } });
   }
 
   const handleOpen = () => {
-    if((additionalDetails.length!==0) || validateFields() ){
+    if(formDataList.length!==0 ){
       setOpen(true);
-    };
+    }
+    else{
+      window.alert("please fill all the details");
+    }
   };
 
   const handleClose = () => {
@@ -274,6 +327,11 @@ const AddCustomers = () => {
     setAdditionalDetailsList((prevList) => {
       const updatedList = [...prevList];
       updatedList.splice(index, 1); // Remove the item at the specified index
+      return updatedList;
+    });
+    setFormDataList((prevList) =>{
+      const updatedList = [...prevList];
+      updatedList.splice(index, 1);
       return updatedList;
     });
   };
@@ -383,7 +441,7 @@ const AddCustomers = () => {
                 />
               </td>
               <td style={{ paddingLeft: '100px' }}>
-                <Fab color="primary" aria-label="add" onClick={handleAddDetails}>
+                <Fab size="small" color="primary" aria-label="add" onClick={handleAddDetails}>
                   <AddIcon />
                 </Fab>
               </td>
