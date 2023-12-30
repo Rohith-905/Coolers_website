@@ -99,7 +99,7 @@ const BillingPage = () => {
         headers:{
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({"remainingAmount":remainingAmount,"name":formData.model_name}),
+        body: JSON.stringify({"remainingAmount":remainingAmount,"name":formData.customer_name}),
       });
       if (response.ok) {
         console.log('Data saved to the backend');
