@@ -19,7 +19,7 @@ const BillingPage = () => {
   const [paidAmount, setPaidAmount] = useState(0);
   const [invoiceNumber,setInvoiceNumber] = useState('');
   const [overallTotalAmount,setOverallTotalAmount ] = useState(0);
-  const [error,setError] = useState('');
+  let remainingAmount = 0;
 
   const handlePaidAmountChange = (event) => {
     setPaidAmount(event.target.value);
@@ -54,7 +54,10 @@ const BillingPage = () => {
 
   const handlePrint = () => {
     // generatePDF(); // Generate PDF before printing
+    console.log("overallTotalAmount",overallTotalAmount,paidAmount);
+    remainingAmount = overallTotalAmount-paidAmount;
     savePDFToBackend();
+    updateRemainingAmount();
     window.print(); // Print the document
   };
 
@@ -74,7 +77,7 @@ const BillingPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({invoiceNumber, formData, additionalDetailsList, paidAmount, overallTotalAmount }),
+        body: JSON.stringify({invoiceNumber, formData, additionalDetailsList, paidAmount, overallTotalAmount, dueAmount }),
       });
 
       if (response.ok) {
@@ -88,6 +91,27 @@ const BillingPage = () => {
     }
   };
 
+  const updateRemainingAmount = async () =>{
+    try{
+      console.log(remainingAmount,formData.customer_name);
+      const response = await fetch('http://localhost:5000/api/updateDueAmount',{
+        method:'POST',
+        headers:{
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({"remainingAmount":remainingAmount,"name":formData.model_name}),
+      });
+      if (response.ok) {
+        console.log('Data saved to the backend');
+        // Optionally, perform further actions after successful save
+      } else {
+        console.error('Failed to save data to the backend');
+      }
+    } catch (error) {
+      console.error('Error saving data to the backend:', error);
+    }
+  }
+
 
   // Generate a unique invoice number based on date/time and a random number
   const generateInvoiceNumber = () => {
@@ -100,38 +124,9 @@ const BillingPage = () => {
     setInvoiceNumber(`INV-${formattedDate}-${randomDigits}`);
   };
 
-  // const isDueCheck = async() =>{
-  //   try {
-  //     // console.log(customerName);
-  //     const response = await fetch(`http://localhost:5000/api/get_amountDetails?name=${formData.customer_name}`);
-  //     if (response.status === 200) {
-  //       const amountDetails = await response.json();
-  //       console.log(amountDetails.remaining);
-  //       setDueAmount(amountDetails.remaining);
-  //     } else {
-  //       console.error('Failed to add coolers:', response.statusText);
-  //       setError('Failed to add coolers');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error adding coolers:', error);
-  //     setError('Error adding coolers');
-  //   }
-  // };
-
   useEffect(() => {
-  // const fetchData = async () => {
-  //   // Execute isDueCheck() and wait for the response
-  //   const isDueResponse = await isDueCheck();
-
-  //   // Check the response from isDueCheck() and proceed accordingly
-  //   if (isDueResponse) {
-      // isDueCheck() returned true, so now proceed to generateInvoiceNumber()
-      generateInvoiceNumber();
-      calculateTotalAmount();
-    // }
-  // };
-
-  // fetchData(); // Call the async function
+    generateInvoiceNumber();
+    calculateTotalAmount();
 }, []);
 
 

@@ -118,77 +118,53 @@ app.get('/api/customerDetails', (req, res) => {
   });
 });
 
-// Endpoint to get customer details by name
-app.get('/api/customerAddress', (req, res) => {
-  try {
-    const customerName = req.query.name;
-
-      // Select customer details from the database
-      const selectQuery = 'SELECT * FROM soldgoods WHERE customer_name LIKE ?';
-      const searchName = `%${customerName}%`;
-
-      db.query(selectQuery, [searchName], (error, results) => {
-        // console.log(selectQuery);
-        if (error) {
-          console.error('Error fetching customer details:', error);
-          res.status(500).json({ message: 'Internal server error' });
-        } else {
-          res.status(200).json(results);
-        }
-      });
-  } catch (error) {
-    console.error('Error fetching customer details:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
 // Handle POST request to store customer data and update coolers count
-app.post('/api/add-customer', async (req, res) => {
+// app.post('/api/add-customer', async (req, res) => {
 
-  const formDataList = req.body;
-  let errorOccurred = false; // Flag to track errors
+//   const formDataList = req.body;
+//   let errorOccurred = false; // Flag to track errors
 
-  // Assuming formDataList is an array of customer data objects
-  for (const formData of formDataList) {
-    let currentQuantity = 0;
+//   // Assuming formDataList is an array of customer data objects
+//   for (const formData of formDataList) {
+//     let currentQuantity = 0;
     
-    const query = 'SELECT quantity from coolers_available where model_name = "' + formData.model_name + '"';
+//     const query = 'SELECT quantity from coolers_available where model_name = "' + formData.model_name + '"';
     
-    try {
-      const results = await queryDatabase(query);
+//     try {
+//       const results = await queryDatabase(query);
 
-      if (results.length === 0) {
-        errorOccurred = true;
-        return;
-      }
+//       if (results.length === 0) {
+//         errorOccurred = true;
+//         return;
+//       }
 
-      currentQuantity = results[0].quantity;
-      // console.log(currentQuantity);
-      if (currentQuantity < formData.quantity) {
-        errorOccurred = true;
-      } else {
-        // Update coolers count in the MySQL database
-        const updateCoolersQuery = `
-          UPDATE coolers_available 
-          SET quantity = (
-            SELECT derived_table.new_quantity
-            FROM (
-              SELECT quantity - ? AS new_quantity
-              FROM coolers_available
-              WHERE model_name = ?
-            ) AS derived_table
-          )
-          WHERE model_name = ?
-        `;
+//       currentQuantity = results[0].quantity;
+//       // console.log(currentQuantity);
+//       if (currentQuantity < formData.quantity) {
+//         errorOccurred = true;
+//       } else {
+//         // Update coolers count in the MySQL database
+//         const updateCoolersQuery = `
+//           UPDATE coolers_available 
+//           SET quantity = (
+//             SELECT derived_table.new_quantity
+//             FROM (
+//               SELECT quantity - ? AS new_quantity
+//               FROM coolers_available
+//               WHERE model_name = ?
+//             ) AS derived_table
+//           )
+//           WHERE model_name = ?
+//         `;
     
-        const updateCoolersValues = [formData.quantity, formData.model_name, formData.model_name];
-        // console.log(updateCoolersQuery);
-        await queryDatabase(updateCoolersQuery, updateCoolersValues);
+//         const updateCoolersValues = [formData.quantity, formData.model_name, formData.model_name];
+//         // console.log(updateCoolersQuery);
+//         await queryDatabase(updateCoolersQuery, updateCoolersValues);
     
-        // // Insert customer data into the MySQL database
-        // const insertCustomerQuery = 'INSERT INTO customer SET ?';
-        // // console.log(insertCustomerQuery);
-        // await queryDatabase(insertCustomerQuery, formData);
+//         // // Insert customer data into the MySQL database
+//         // const insertCustomerQuery = 'INSERT INTO customer SET ?';
+//         // // console.log(insertCustomerQuery);
+//         // await queryDatabase(insertCustomerQuery, formData);
     
       }
     } catch (error) {
@@ -269,13 +245,62 @@ app.post('/api/add_coolers', async (req, res) => {
 
 app.post('/api/saveFormDataAndDetails', async (req, res) => {
   try {
-    const { invoiceNumber, formData, additionalDetailsList, paidAmount, overallTotalAmount } = req.body;
+    const { invoiceNumber, formData, additionalDetailsList, paidAmount, overallTotalAmount, dueAmount } = req.body;
     const { customer_name, shop_address, vehicle_number, date } = formData;
     const additionalDetailsJSON = JSON.stringify(additionalDetailsList);
-    console.log(paidAmount,overallTotalAmount);
+    // console.log(paidAmount,overallTotalAmount);
+    const modelDetailsList = additionalDetailsList;
+    let errorOccurred = false; // Flag to track errors
+
+    // Assuming formDataList is an array of customer data objects
+    for (const modelDetail of modelDetailsList) {
+      let currentQuantity = 0;
+      
+      const query = 'SELECT quantity from coolers_available where model_name = "' + modelDetail.model_name + '"';
+      
+      try {
+        const results = await queryDatabase(query);
+
+        if (results.length === 0) {
+          errorOccurred = true;
+          return;
+        }
+
+        currentQuantity = results[0].quantity;
+        // console.log(currentQuantity);
+        if (currentQuantity < modelDetail.quantity) {
+          errorOccurred = true;
+        } else {
+          // Update coolers count in the MySQL database
+          const updateCoolersQuery = `
+            UPDATE coolers_available 
+            SET quantity = (
+              SELECT derived_table.new_quantity
+              FROM (
+                SELECT quantity - ? AS new_quantity
+                FROM coolers_available
+                WHERE model_name = ?
+              ) AS derived_table
+            )
+            WHERE model_name = ?
+          `;
+      
+          const updateCoolersValues = [modelDetail.quantity, modelDetail.model_name, modelDetail.model_name];
+          // console.log(updateCoolersQuery);
+          await queryDatabase(updateCoolersQuery, updateCoolersValues);
+        }
+      } catch (error) {
+        errorOccurred = true;
+        console.error('Error:', error);
+        break; // Break the loop if an error occurs
+      }
+    }
    
-    const query = 'INSERT INTO soldgoods (invoice_number, customer_name, shop_address, vehicle_number, date, additional_details_json,paidAmount,overallTotalAmount) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    const values = [invoiceNumber, customer_name, shop_address, vehicle_number, date, additionalDetailsJSON, paidAmount, overallTotalAmount];
+    const query = 'INSERT INTO soldgoods (invoice_number, customer_name, shop_address, vehicle_number, date, additional_details_json,paidAmount,overallTotalAmount, dueAmount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [invoiceNumber, customer_name, shop_address, vehicle_number, date, additionalDetailsJSON, paidAmount, overallTotalAmount, dueAmount];
+
+    // Replace the null value with the SQL NULL keyword
+    values[8] = dueAmount !== null ? dueAmount : null;
 
     await queryDatabase(query, values);
 
@@ -288,7 +313,7 @@ app.post('/api/saveFormDataAndDetails', async (req, res) => {
 
 app.get('/api/get_amountDetails', async (req, res) => {
   const customerName = req.query.name;
-  console.log('customerName', customerName);
+  // console.log('customerName', customerName);
 
   try {
     const get_amountDetails = 'select remaining from maintain_due_advance where name = ?';
@@ -298,7 +323,7 @@ app.get('/api/get_amountDetails', async (req, res) => {
       console.error('Error fetching amount details:', amount.error);
       res.status(500).json({ message: 'Internal server error' });
     } else {
-      console.log(amount[0]);
+      // console.log(amount[0]);
       res.status(200).json(amount[0]);
     }
   } catch (error) {
@@ -323,11 +348,35 @@ app.get('/api/getDetailsByInvoiceNumber', (req, res) => {
       res.status(404).json({ message: 'No data found for the invoice number' });
       return;
     }
-    console.log(results);
+    // console.log(results);
     res.status(200).send(results);
   });
 });
 
+app.post('/api/updateDueAmount', async(req,res) =>{
+  const {remainingAmount, name} = req.body;
+  const query = `select * from maintain_due_amount where name = ${name}`;
+  db.query(query,(error,results) =>{
+    if (error) {
+      console.error('Error fetching data:', error);
+      res.status(500).json({ error: 'Failed to fetch data' });
+      return;
+    }
+
+    if (results.length === 0) {
+      const query = `insert into maintain_due_amount values (${name},${remainingAmount})`;
+      db.query(query,(error,results) =>{
+        if(error){
+          res.status(500).json({ error: 'Failed to fetch data' });
+          return;
+        }
+      });
+    }
+    else{
+      const query = 
+    }
+  })
+})
 // Helper function to execute queries on the database
 function queryDatabase(query, values) {
   // console.log(query, values);
