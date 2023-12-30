@@ -44,17 +44,14 @@ const Home = () => {
   //     [name]: value,
   //   }));
   // };
-
-  const handleInputChange = async (e, name, value) => {
-
+  const handleInputChange = async (e, name, value) => {  
     setAddCoolers((prevData) => {
       const newData = {
         ...prevData,
         [name]: value,
-      };  
+      };
       return newData;
     });
-
   };
 
   const validateFields = () => {
@@ -89,7 +86,7 @@ const Home = () => {
 
   const handleAddCoolers = async (e) => {
     e.preventDefault();
-
+    console.log(addCoolers);
     if (validateFields()) {
       try {
         const response = await axios.post('http://localhost:5000/api/add_coolers', {
@@ -101,7 +98,7 @@ const Home = () => {
           setFilteredCoolers(response.data);
           setAddCoolers({ name: '', quantity: '' });
           fetchCoolers();
-
+          setEnableAddCoolers(false);
           // Show success alert
           setShowSuccessAlert(true);
 
@@ -210,16 +207,17 @@ const Home = () => {
                       <label>Cooler Name:</label>
                       <Autocomplete
                         value={addCoolers.name}
+                        onChange={(e, value) => handleInputChange(e, "name",value)}
+                        onInputChange={(e, newInputValue) => handleInputChange(e, "name", newInputValue)}
+                        options={coolers.map(cooler => cooler.model_name)}
+                        freeSolo
+                        renderInput={(params) => <TextField {...params}  style={{ width: '300px' }} />}
+                      />
+                      {/* <Autocomplete
+                        value={addCoolers.name}
                         onChange={(e, value) => handleInputChange(e, "model_name",value)}
                         options={coolers.map(cooler => cooler.model_name)}
                         renderInput={(params) => <TextField {...params} style={{ width: '270px'}} />}
-                      />
-                      {/* <input
-                        type="text"
-                        name="name"
-                        value={addCoolers.name}
-                        onChange={handleInputChange}
-                        required
                       /> */}
 
                       <label>Quantity:</label>

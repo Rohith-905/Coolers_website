@@ -1,8 +1,8 @@
 // handleCustomerCard.js
 import React, { useEffect, useState } from 'react';
-import { Table, TableBody, TableRow, TableCell, TableHead, Paper, Button } from '@mui/material';
-import axios from 'axios';
-
+import { Button, Accordion, AccordionSummary, Typography, AccordionDetails } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import InvoiceDetailsByNumber from './invoiceDetails';
 const HandleCustomerCard = ({ customerDetails, onBack }) => {
 
   const [error,setError] = useState('');
@@ -14,6 +14,7 @@ const HandleCustomerCard = ({ customerDetails, onBack }) => {
   // Group customer details by date
   const groupedByDate = {};
   customerDetails.forEach((customer) => {
+    // console.log(customer);
     const date = customer.date;
     if (!groupedByDate[date]) {
       groupedByDate[date] = [];
@@ -40,43 +41,71 @@ const HandleCustomerCard = ({ customerDetails, onBack }) => {
     }
   }
   useEffect(() => {
-    handleAmountDetails();
-    console.log(remainingAmount);
-  });
-
+    const fetchData = async () => {
+      try {
+        await handleAmountDetails();
+        console.log(remainingAmount);
+      } catch (error) {
+        console.error('Error fetching amount details:', error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
   return (
     <div>
       <Button onClick={onBack}>Back</Button>
-      {remainingAmount?
-      <div style={{ textAlign: 'right', color: remainingAmountColor, fontWeight:'bold' }}>
+      {remainingAmount !== undefined && remainingAmount !== null && (
+      <div style={{ textAlign: 'right', color: remainingAmountColor, fontWeight: 'bold' }}>
         {advance_or_due} : {remainingAmount}
       </div>
-      :null}
+      )}
       {Object.entries(groupedByDate).map(([date, details]) => (
         <div key={date}>
           <h3>Date: {date}</h3>
-          <Paper elevation={6} style={{ width: '50%', display: 'flex' }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">Model Name</TableCell>
-                  <TableCell align="center">Quantity</TableCell>
-                  <TableCell align="center">Amount</TableCell>
-                  <TableCell align="center">Total Amount</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {details.map((customer, index) => (
-                  <TableRow key={index}>
-                    <TableCell align="center">{customer.model_name}</TableCell>
-                    <TableCell align="center">{customer.quantity}</TableCell>
-                    <TableCell align="center">{customer.amount}</TableCell>
-                    <TableCell align="center">{customer.total_amount}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Paper>
+          {details.map((customer,index) =>(
+            <div>
+             <Accordion>
+             <AccordionSummary
+               expandIcon={<ExpandMoreIcon />}
+               aria-controls="panel1a-content"
+               id="panel1a-header"
+             >
+               <Typography>{customer.invoice_number}</Typography>
+             </AccordionSummary>
+             <AccordionDetails>
+               <Typography>
+                <InvoiceDetailsByNumber invoiceNumber= {customer.invoice_number} />
+                {/* <Paper elevation={6} style={{ width: '50%', display: 'flex' }}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell align="center">Model Name</TableCell>
+                        <TableCell align="center">Quantity</TableCell>
+                        <TableCell align="center">Amount</TableCell>
+                        <TableCell align="center">Total Amount</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                   
+                      {JSON.parse(customer.additional_details_json).map((model, index) => (
+                        <TableRow key={index}>
+                          <TableCell align="center">{model.model_name}</TableCell>
+                          <TableCell align="center">{model.quantity}</TableCell>
+                          <TableCell align="center">{model.amount}</TableCell>
+                          <TableCell align="center">{model.total_amount}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Paper> */}
+               </Typography>
+             </AccordionDetails>
+           </Accordion>
+           </div>
+          ))}
+          
         </div>
       ))}
       

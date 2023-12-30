@@ -106,15 +106,14 @@ app.get('/api/coolers_available', (req, res) => {
 
 // API route to fetch details of products
 app.get('/api/customerDetails', (req, res) => {
-  const query = 'SELECT * FROM customer';
+  const query = 'select * from soldgoods';
   // console.log(query);
   db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching customer details:', err);
-      
       return res.status(500).json({ error: 'Internal server error' });
     }
-
+    // console.log(results);
     return res.status(200).json(results);
   });
 });
@@ -125,7 +124,7 @@ app.get('/api/customerAddress', (req, res) => {
     const customerName = req.query.name;
 
       // Select customer details from the database
-      const selectQuery = 'SELECT * FROM customer WHERE customer_name LIKE ?';
+      const selectQuery = 'SELECT * FROM soldgoods WHERE customer_name LIKE ?';
       const searchName = `%${customerName}%`;
 
       db.query(selectQuery, [searchName], (error, results) => {
@@ -142,30 +141,6 @@ app.get('/api/customerAddress', (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-
-// Endpoint to fetch model names
-app.get('/api/allModelNames', (req, res) => {
-  try {
-    // Use a parameterized query to prevent SQL injection
-    const selectQuery = 'SELECT * FROM coolers_available';
-
-    db.query(selectQuery, (error, results) => {
-      if (error) {
-        console.error('Error fetching model names:', error);
-        res.status(500).json({ message: 'Internal server error' });
-      } else {
-        console.log(results);
-        // const modelNames = results.map((result) => result.model_name);
-        // // console.log(modelNames);
-        res.status(200).json(results);
-      }
-    });
-  } catch (error) {
-    console.error('Error fetching model names:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
 
 // Handle POST request to store customer data and update coolers count
 app.post('/api/add-customer', async (req, res) => {
@@ -210,10 +185,10 @@ app.post('/api/add-customer', async (req, res) => {
         // console.log(updateCoolersQuery);
         await queryDatabase(updateCoolersQuery, updateCoolersValues);
     
-        // Insert customer data into the MySQL database
-        const insertCustomerQuery = 'INSERT INTO customer SET ?';
-        // console.log(insertCustomerQuery);
-        await queryDatabase(insertCustomerQuery, formData);
+        // // Insert customer data into the MySQL database
+        // const insertCustomerQuery = 'INSERT INTO customer SET ?';
+        // // console.log(insertCustomerQuery);
+        // await queryDatabase(insertCustomerQuery, formData);
     
       }
     } catch (error) {
@@ -299,7 +274,7 @@ app.get('/api/get_amountDetails', async (req, res) => {
 });
 
 app.get('/api/getDetailsByInvoiceNumber', (req, res) => {
-  console.log("in server");
+  // console.log("in server");
   const invoiceNumber = req.query.invoiceNumber;
   const query = 'SELECT * FROM soldgoods WHERE invoice_number = ?';
 
