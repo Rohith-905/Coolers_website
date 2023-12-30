@@ -13,7 +13,7 @@ app.use(cors());
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'Amruthama@2',
+  password: 'root',
   database: 'Coolers',
 });
 
@@ -282,7 +282,7 @@ app.get('/api/get_amountDetails', async (req, res) => {
   // console.log('customerName', customerName);
 
   try {
-    const get_amountDetails = 'select remaining from maintain_due_advance where name = ?';
+    const get_amountDetails = 'select amount from maintain_due_advance where name = ?';
     const amount = await queryDatabase(get_amountDetails, customerName);
     // Note: 'results' should be used instead of 'error' in the following condition
     if (amount.error) {
@@ -319,30 +319,50 @@ app.get('/api/getDetailsByInvoiceNumber', (req, res) => {
   });
 });
 
-app.post('/api/updateDueAmount', async(req,res) =>{
-  const {remainingAmount, name} = req.body;
-  const query = `select * from maintain_due_amount where name = ${name}`;
-  db.query(query,(error,results) =>{
-    if (error) {
-      console.error('Error fetching data:', error);
-      res.status(500).json({ error: 'Failed to fetch data' });
-      return;
-    }
+app.post('/api/updateDueAmount', async (req, res) => {
+  console.log(req.body);
+  const { remainingAmount, name } = req.body;
+  console.log(remainingAmount, name);
 
-    if (results.length === 0) {
-      const query = `insert into maintain_due_amount values (${name},${remainingAmount})`;
-      db.query(query,(error,results) =>{
-        if(error){
-          res.status(500).json({ error: 'Failed to fetch data' });
-          return;
-        }
-      });
-    }
-    else{
-      const query = 
-    }
-  })
-})
+  try {
+    const selectQuery = 'SELECT * FROM maintain_due_amount WHERE name = ?';
+    db.query(selectQuery, [name], (error, results) => {
+      if (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).json({ error: 'Failed to fetch data' });
+        return;
+      }
+
+      if (results.length === 0) {
+        const insertQuery = 'INSERT INTO maintain_due_amount (name, amount) VALUES (?, ?)';
+        db.query(insertQuery, [name, remainingAmount], (error, results) => {
+          if (error) {
+            console.error('Error inserting data:', error);
+            res.status(500).json({ error: 'Failed to insert data' });
+            return;
+          }
+          console.log('New DATA ADDED');
+          res.status(200).json({ message: 'New DATA ADDED' });
+        });
+      } else {
+        const updateQuery = 'UPDATE maintain_due_amount SET amount = amount + ? WHERE name = ?';
+        db.query(updateQuery, [remainingAmount, name], (error, results) => {
+          if (error) {
+            console.error('Error updating data:', error);
+            res.status(500).json({ error: 'Failed to update data' });
+            return;
+          }
+          console.log('UPDATED the DATA');
+          res.status(200).json({ message: 'UPDATED the DATA' });
+        });
+      }
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Helper function to execute queries on the database
 function queryDatabase(query, values) {
   // console.log(query, values);
