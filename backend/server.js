@@ -332,6 +332,27 @@ app.get('/api/get_amountDetails', async (req, res) => {
   }
 });
 
+app.get('/api/getDetailsByInvoiceNumber', (req, res) => {
+  console.log("in server");
+  const invoiceNumber = req.query.invoiceNumber;
+  const query = 'SELECT * FROM soldgoods WHERE invoice_number = ?';
+
+  db.query(query, invoiceNumber, (error, results) => {
+    if (error) {
+      console.error('Error fetching data:', error);
+      res.status(500).json({ error: 'Failed to fetch data' });
+      return;
+    }
+
+    if (results.length === 0) {
+      res.status(404).json({ message: 'No data found for the invoice number' });
+      return;
+    }
+    console.log(results);
+    res.status(200).send(results);
+  });
+});
+
 // Helper function to execute queries on the database
 function queryDatabase(query, values) {
   // console.log(query, values);
