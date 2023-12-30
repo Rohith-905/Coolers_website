@@ -70,10 +70,6 @@ function App() {
             path="/billingPage"
             element =  { isLoggedIn ? <BillingPage /> : <Navigate to="/" />}
           />
-          < Route
-            path="/invoiceDetails"
-            element =  { isLoggedIn ? <InvoiceDetailsByNumber /> : <Navigate to="/" />}
-          />
         </Routes>
       </Grid>
     </Router>

@@ -105,6 +105,7 @@ const Home = () => {
           // Hide the alert after 2000 milliseconds (2 seconds)
           setTimeout(() => {
             setShowSuccessAlert(false);
+            setEnableAddCoolers(true);
           }, 2000);
         } else {
           console.error('Failed to add coolers:', response.statusText);

@@ -97,6 +97,15 @@ const InvoiceDetailsByNumber = ( {invoiceNumber}) => {
                                                         <td>{detail.amount * detail.quantity}</td>
                                                     </tr>
                                                 ))}
+                                                {
+                                                    detail.dueAmount?
+                                                    <tr className="totalAmountRow">
+                                                    <td colSpan="3"></td>
+                                                    <td><strong>Due Amount:</strong></td>
+                                                    <td>{detail.dueAmount}</td>
+                                                    </tr>
+                                                    :null
+                                                }
                                                 <tr className="totalAmountRow">
                                                     <td colSpan="3"></td>
                                                     <td><strong>Total Amount:</strong></td>

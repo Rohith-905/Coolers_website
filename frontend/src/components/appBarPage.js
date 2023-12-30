@@ -25,10 +25,6 @@ const AppBarPage = ({ children }) => {
         navigate('/logout');
     }
 
-    const handleInvoiceDetails = () => {
-        navigate('/invoicedetails');
-    }
-
     return (
         <>
             <Box sx={{ display: 'flex',padding:'20px' }}>
@@ -44,10 +40,7 @@ const AppBarPage = ({ children }) => {
                                 <HomeIcon />
                                 </Button>
                             </Grid>
-                            <Grid item xs={4} />
-                            <Grid item xs={2} >
-                                <Button sx={{ color: '#fff' }} onClick={handleInvoiceDetails}>Invoice Details</Button>
-                            </Grid> 
+                            <Grid item xs={6} />
                             <Grid item xs={2} >
                                 <Button sx={{ color: '#fff' }} onClick={handleCustomerCard}>Customers</Button>
                             </Grid> 
