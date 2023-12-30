@@ -53,6 +53,7 @@ export default function CustomerCard() {
 
   const handleCustomerCard = (customerName) => {
     const selectedCustomerDetails = customerDetails.filter((customer) => customer.customer_name === customerName);
+    console.log(selectedCustomerDetails);
     setSelectedCustomer(selectedCustomerDetails);
   };
 

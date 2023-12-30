@@ -95,7 +95,7 @@ const AddCustomers = () => {
   
   const fetchModelDetails = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/allModelNames`);
+      const response = await fetch(`http://localhost:5000/api/coolers_available`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Server error");
@@ -122,6 +122,7 @@ const AddCustomers = () => {
       const customerDetails = await response.json();
       const customerNames = new Set(customerDetails.map((customer) => customer.customer_name));
       const customerNamesList = [...customerNames];
+      console.log(customerNamesList);
       setCustomerNameSuggestions(customerNamesList);
     } catch (error) {
       console.error("Error fetching model details:", error);

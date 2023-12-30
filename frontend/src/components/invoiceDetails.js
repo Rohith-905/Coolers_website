@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import Button from '@mui/material/Button';
+import React, { useEffect, useState } from 'react';
 import AppBarPage from './appBarPage';
 import './billPage.css';
 
-const InvoiceDetailsByNumber = () => {
-    const [invoiceNumber, setInvoiceNumber] = useState('');
+const InvoiceDetailsByNumber = ( {invoiceNumber}) => {
+    console.log(invoiceNumber);
     const [details, setDetails] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -16,13 +15,9 @@ const InvoiceDetailsByNumber = () => {
         return `${year}-${month}-${day}`;
     };
 
-    const handleInputChange = (event) => {
-        setInvoiceNumber(event.target.value);
-    };
-
     const getDetailsByInvoice = async () => {
         try {
-
+            console.log(invoiceNumber);
             const response = await fetch(`http://localhost:5000/api/getDetailsByInvoiceNumber?invoiceNumber=${invoiceNumber}`);
             if (response.ok) {
                 const data = await response.json();
@@ -40,17 +35,14 @@ const InvoiceDetailsByNumber = () => {
         }
     };
 
+    useEffect(() =>{
+        console.log(invoiceNumber);
+        getDetailsByInvoice();
+    },[]);
+
     return (
         <AppBarPage>
             <div>
-                <input
-                    type="text"
-                    value={invoiceNumber}
-                    onChange={handleInputChange}
-                    placeholder="Enter Invoice Number"
-                />
-                <Button onClick={getDetailsByInvoice}>Get Details</Button>
-
                 {errorMessage && <p>{errorMessage}</p>}
                 <div className='BillStyle'>
                     {details && (
