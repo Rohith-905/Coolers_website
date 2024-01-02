@@ -13,7 +13,7 @@ app.use(cors());
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'root',
+  password: 'Amruthama@2',
   database: 'Coolers',
 });
 
@@ -211,10 +211,10 @@ app.post('/api/add_coolers', async (req, res) => {
 
 app.post('/api/saveFormDataAndDetails', async (req, res) => {
   try {
-    const { invoiceNumber, formData, additionalDetailsList, paidAmount, overallTotalAmount, dueAmount } = req.body;
+    const { invoiceNumber, formData, additionalDetailsList, paidAmount, overallTotalAmount, dueAmount, purchased } = req.body;
     const { customer_name, shop_address, vehicle_number, date } = formData;
     const additionalDetailsJSON = JSON.stringify(additionalDetailsList);
-    // console.log(paidAmount,overallTotalAmount);
+    // console.log(purchased);
     const modelDetailsList = additionalDetailsList;
     let errorOccurred = false; // Flag to track errors
 
@@ -226,31 +226,55 @@ app.post('/api/saveFormDataAndDetails', async (req, res) => {
       
       try {
         const results = await queryDatabase(query);
+        let updateCoolersQuery = '';
 
-        if (results.length === 0) {
+        if (!purchased && results.length === 0) {
           errorOccurred = true;
           return;
+        }
+        else if(purchased && results.length === 0){
+          // Cooler doesn't exist, insert a new record
+          // console.log(modelDetail.model_name,modelDetail.quantity);
+          const insertCoolerQuery = 'INSERT INTO coolers_available (model_name, quantity) VALUES (?, ?)';
+          await queryDatabase(insertCoolerQuery, [modelDetail.model_name, modelDetail.quantity]);
         }
 
         currentQuantity = results[0].quantity;
         // console.log(currentQuantity);
-        if (currentQuantity < modelDetail.quantity) {
+        if (!purchased && currentQuantity < modelDetail.quantity) {
           errorOccurred = true;
         } else {
-          // Update coolers count in the MySQL database
-          const updateCoolersQuery = `
-            UPDATE coolers_available 
-            SET quantity = (
-              SELECT derived_table.new_quantity
-              FROM (
-                SELECT quantity - ? AS new_quantity
-                FROM coolers_available
-                WHERE model_name = ?
-              ) AS derived_table
-            )
-            WHERE model_name = ?
-          `;
-      
+          if(purchased){
+            // Update coolers count in the MySQL database
+            updateCoolersQuery = `
+              UPDATE coolers_available 
+              SET quantity = (
+                SELECT derived_table.new_quantity
+                FROM (
+                  SELECT quantity + ? AS new_quantity
+                  FROM coolers_available
+                  WHERE model_name = ?
+                ) AS derived_table
+              )
+              WHERE model_name = ?
+            `;
+          }
+          else{
+            // Update coolers count in the MySQL database
+            updateCoolersQuery = `
+              UPDATE coolers_available 
+              SET quantity = (
+                SELECT derived_table.new_quantity
+                FROM (
+                  SELECT quantity - ? AS new_quantity
+                  FROM coolers_available
+                  WHERE model_name = ?
+                ) AS derived_table
+              )
+              WHERE model_name = ?
+            `;
+          }
+          
           const updateCoolersValues = [modelDetail.quantity, modelDetail.model_name, modelDetail.model_name];
           // console.log(updateCoolersQuery);
           await queryDatabase(updateCoolersQuery, updateCoolersValues);
@@ -262,8 +286,8 @@ app.post('/api/saveFormDataAndDetails', async (req, res) => {
       }
     }
    
-    const query = 'INSERT INTO soldgoods (invoice_number, customer_name, shop_address, vehicle_number, date, additional_details_json,paidAmount,overallTotalAmount, dueAmount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    const values = [invoiceNumber, customer_name, shop_address, vehicle_number, date, additionalDetailsJSON, paidAmount, overallTotalAmount, dueAmount];
+    const query = 'INSERT INTO soldgoods (invoice_number, customer_name, shop_address, vehicle_number, date, additional_details_json,paidAmount,overallTotalAmount, dueAmount, purchased) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [invoiceNumber, customer_name, shop_address, vehicle_number, date, additionalDetailsJSON, paidAmount, overallTotalAmount, dueAmount, purchased];
 
     // Replace the null value with the SQL NULL keyword
     values[8] = dueAmount !== null ? dueAmount : null;
@@ -282,7 +306,7 @@ app.get('/api/get_amountDetails', async (req, res) => {
   // console.log('customerName', customerName);
 
   try {
-    const get_amountDetails = 'select amount from maintain_due_advance where name = ?';
+    const get_amountDetails = 'select amount from maintain_due_amount where name = ?';
     const amount = await queryDatabase(get_amountDetails, customerName);
     // Note: 'results' should be used instead of 'error' in the following condition
     if (amount.error) {
@@ -345,7 +369,7 @@ app.post('/api/updateDueAmount', async (req, res) => {
           res.status(200).json({ message: 'New DATA ADDED' });
         });
       } else {
-        const updateQuery = 'UPDATE maintain_due_amount SET amount = amount + ? WHERE name = ?';
+        const updateQuery = 'UPDATE maintain_due_amount SET amount = ? WHERE name = ?';
         db.query(updateQuery, [remainingAmount, name], (error, results) => {
           if (error) {
             console.error('Error updating data:', error);

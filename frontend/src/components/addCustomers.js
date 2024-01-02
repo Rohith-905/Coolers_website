@@ -8,6 +8,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DoneIcon from '@mui/icons-material/Done';
 import { styled } from '@mui/material/styles';
+import Switch from '@mui/material/Switch';
 
 const AddCustomers = () => {
 
@@ -35,6 +36,7 @@ const AddCustomers = () => {
   const [editedAmount, setEditedAmount] = useState(0);
   const [dueAmount, setDueAmount] = useState(0);
   const [error,setError] = useState('');
+  const [purchased, setPurchased] = useState(true);
   
   const navigate = useNavigate();
 
@@ -49,6 +51,10 @@ const AddCustomers = () => {
     },
   }));
 
+  const handleChange = (event) => {
+    setPurchased(event.target.checked);
+  };
+  
   const handleInputChange = async (e, name, value) => {
     // console.log("Called");
 
@@ -135,8 +141,8 @@ const AddCustomers = () => {
       const response = await fetch(`http://localhost:5000/api/get_amountDetails?name=${formData.customer_name}`);
       if (response.status === 200) {
         const amountDetails = await response.json();
-        console.log(amountDetails.remaining);
-        setDueAmount(amountDetails.remaining);
+        // console.log(amountDetails.amount);
+        setDueAmount(amountDetails.amount);
       } else {
         console.error('Failed to add coolers:', response.statusText);
         setError('Failed to add coolers');
@@ -196,9 +202,9 @@ const AddCustomers = () => {
     const model = additionalDetails.model_name;
     const quantityObject = coolersWithQuantityList.find((res) => res.model_name === model);
     const quantity = quantityObject ? quantityObject.quantity : null;
-    console.log(additionalDetails);
+    // console.log(additionalDetails);
     // const quantity = coolersWithQuantityList.filter((res) => res.model_name === model).map((res) => res.quantity);
-    if(additionalDetails.quantity > quantity){
+    if(!purchased && additionalDetails.quantity > quantity){
       window.alert(`Available Quantity of ${model} is ${quantity}`);
     }
     else{
@@ -249,7 +255,7 @@ const AddCustomers = () => {
 
   const handlePrintReceipt = () =>{
     handleClose();
-    return navigate("/billingPage" ,{ state: { formData, additionalDetailsList,dueAmount } });
+    return navigate("/billingPage" ,{ state: { formData, additionalDetailsList,dueAmount, purchased } });
   }
 
   const handleOpen = () => {
@@ -295,8 +301,12 @@ const AddCustomers = () => {
           <Button onClick={handleClose}>No</Button>
         </DialogActions>
     </Dialog>
-    <div style={{display:"flex", justifyContent: "space-between", marginTop: '20px'}}>
-      <h3>Add Customer Details</h3>
+    <div style={{display:"flex", justifyContent: "space-between",alignItems:'center'}}>
+      <Switch checked={purchased}
+        onChange={handleChange}
+        inputProps={{ 'aria-label': 'controlled' }}
+      />
+      <h3>{purchased ?  'Add Purchase Details' : 'Add Customer Details' }</h3>
       <Button
         sx={{
           backgroundColor: '#1a75ff',
@@ -313,7 +323,6 @@ const AddCustomers = () => {
       >
         Reset
       </Button>
-
     </div>
       <form>
         <table>
@@ -367,7 +376,9 @@ const AddCustomers = () => {
                 <Autocomplete
                   value={additionalDetails.model_name}
                   onChange={(e, value) => handleInputChange(e, "model_name",value)}
+                  onInputChange={(e, newInputValue) => handleInputChange(e, "model_name", newInputValue)}
                   options={modelNameSuggestions}
+                  {...(purchased ? { freeSolo: true } : {})}
                   renderInput={(params) => <TextField {...params} />}
                 />
               </td>
