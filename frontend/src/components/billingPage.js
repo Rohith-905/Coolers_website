@@ -14,7 +14,7 @@ const BillingPage = () => {
   const navigate = useNavigate();
 
   // Destructure data from state
-  const { formData, additionalDetailsList, dueAmount } = state;
+  const { formData, additionalDetailsList, dueAmount, purchased } = state;
 
   const [paidAmount, setPaidAmount] = useState(0);
   const [invoiceNumber,setInvoiceNumber] = useState('');
@@ -77,7 +77,7 @@ const BillingPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({invoiceNumber, formData, additionalDetailsList, paidAmount, overallTotalAmount, dueAmount }),
+        body: JSON.stringify({invoiceNumber, formData, additionalDetailsList, paidAmount, overallTotalAmount, dueAmount, purchased }),
       });
 
       if (response.ok) {
@@ -127,6 +127,7 @@ const BillingPage = () => {
   useEffect(() => {
     generateInvoiceNumber();
     calculateTotalAmount();
+    // console.log(purchased);
 }, []);
 
 
@@ -151,7 +152,7 @@ const BillingPage = () => {
         </div>
       </div>
   
-      <h2>XYZ Name</h2>
+      <h2>Sai Rohit Coolers</h2>
       <pre>Address: H.NO : 15, 13-261, Bypass Rd, near NTR STATUE,
            Bank Colony, Khammam, Telangana 507002</pre>
       <p><strong>Ph No:</strong>+1 (234) 567-890</p>

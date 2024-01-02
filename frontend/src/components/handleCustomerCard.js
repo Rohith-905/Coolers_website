@@ -29,8 +29,8 @@ const HandleCustomerCard = ({ customerDetails, onBack }) => {
       const response = await fetch(`http://localhost:5000/api/get_amountDetails?name=${customerName}`);
       if (response.status === 200) {
         const amountDetails = await response.json();
-        console.log(amountDetails.remaining);
-        setRemainingAmount(amountDetails.remaining);
+        // console.log(amountDetails.amount);
+        setRemainingAmount(amountDetails.amount);
       } else {
         console.error('Failed to add coolers:', response.statusText);
         setError('Failed to add coolers');
