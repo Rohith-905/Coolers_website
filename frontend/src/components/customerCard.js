@@ -11,49 +11,70 @@ import axios from 'axios';
 import AppBarPage from './appBarPage';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import '../styles.css';
-
 import HandleCustomerCard from './handleCustomerCard';
+import Switch from '@mui/material/Switch';
+
 
 export default function CustomerCard() {
-  const [customerDetails, setCustomerDetails] = useState([]);
-  const [uniqueNames, setUniqueNames] = useState([]);
+
+  const [custVendorList , setCustVendorList ] = useState([]);
+  const [customerUniqueNames, setCustomerUniqueNames] = useState([]);
+  const [customerDetailsList, setCustomerDetailsList] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [vendorUniqueNames , setVendorUniqueNames] = useState([]);
+  const [vendorDetailsList , setVendorDetailsList] = useState([]);
+  const [purchased, setPurchased] = useState(false);
+
+  const handleToggleChange = (e) =>{
+    setPurchased(e.target.checked);
+  }
 
   useEffect(() => {
-    const fetchCustomerDetails = async () => {
+    const fetchCustVendorDetails = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/customerDetails');
-        setCustomerDetails(response.data);
+        setCustVendorList(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
-    fetchCustomerDetails();
+    fetchCustVendorDetails();
   }, []);
 
   useEffect(() => {
-    const namesSet = new Set(customerDetails.map((customer) => customer.customer_name));
-    setUniqueNames(namesSet);
-  }, [customerDetails]);
+    const tempCustomerDetailsList = custVendorList.filter((custVendor) => custVendor.purchased === 0);
+    const tempVendorDetailsList = custVendorList.filter((custVendor) => custVendor.purchased === 1);
+    const customerDetailsSet = new Set(tempCustomerDetailsList.map((customer) => customer.customer_name));
+    const vendorDetailsSet = new Set(tempVendorDetailsList.map((customer) => customer.customer_name));
+    setCustomerDetailsList(tempCustomerDetailsList);
+    setVendorDetailsList(tempVendorDetailsList);
+    setCustomerUniqueNames(customerDetailsSet);
+    setVendorUniqueNames(vendorDetailsSet);
+    // console.log(customerDetailsSet);
+    // console.log(vendorDetailsSet);
+  }, [custVendorList]);
 
   const handleSearch = (e) => {
     const inputValue = e.target.value.toLowerCase();
     setSearchInput(inputValue);
-
+  
     if (inputValue === '') {
-      setUniqueNames(Array.from(new Set(customerDetails.map((customer) => customer.customer_name))));
+      purchased
+        ? setVendorUniqueNames(Array.from(new Set(vendorDetailsList.map((vendor) => vendor.customer_name))))
+        : setCustomerUniqueNames(Array.from(new Set(customerDetailsList.map((customer) => customer.customer_name))));
     } else {
-      const uniqueNamesArray = Array.from(uniqueNames);
+
+      const uniqueNamesArray = Array.from(purchased ? vendorUniqueNames : customerUniqueNames);
       const filteredNames = uniqueNamesArray.filter((name) => name.toLowerCase().includes(inputValue));
-      setUniqueNames(filteredNames);
+      purchased ? setVendorUniqueNames(filteredNames) : setCustomerUniqueNames(filteredNames);
     }
   };
 
   const handleCustomerCard = (customerName) => {
-    const selectedCustomerDetails = customerDetails.filter((customer) => customer.customer_name === customerName);
-    console.log(selectedCustomerDetails);
+    const selectedCustomerDetails = purchased ? vendorDetailsList.filter((vendor) => vendor.customer_name === customerName): customerDetailsList.filter((customer) => customer.customer_name === customerName);
+    // console.log(selectedCustomerDetails);
     setSelectedCustomer(selectedCustomerDetails);
   };
 
@@ -67,8 +88,14 @@ export default function CustomerCard() {
         <HandleCustomerCard customerDetails={selectedCustomer} onBack={handleBackToMainView} />
       ) : (
         <>
+          <div>
+            <Switch checked={purchased}
+              onChange={handleToggleChange}
+              inputProps={{ 'aria-label': 'controlled' }}
+            />
+          </div>
           <TextField
-            label="Search by Customer Name"
+            label={purchased ? "Search by Vendor Name" :"Search by Customer Name"}
             variant="standard"
             value={searchInput}
             onChange={handleSearch}
@@ -85,10 +112,14 @@ export default function CustomerCard() {
               justifyContent: 'flex-start',
             }}
           >
-            {Array.from(uniqueNames).map((name) => {
-              const customer = customerDetails.find((c) => c.customer_name === name);
+            {Array.from(purchased ? vendorUniqueNames : customerUniqueNames).map((name) => {
+              const customer = purchased ? Array.isArray(vendorDetailsList) ? vendorDetailsList.find((c) => c.customer_name === name) : null : Array.isArray(customerDetailsList) ? customerDetailsList.find((c) => c.customer_name === name) : null;
+              if (!customer || customer === null || customer === undefined) {
+                // Handle the case where customer is not found
+                return null; // or provide a default value
+              }              
               return (
-                <Card  key={customer.id} sx={{ minWidth: 200, maxWidth: 250, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)' }}>
+                <Card  key={name.id} sx={{ minWidth: 200, maxWidth: 250, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)' }}>
                   <CardContent>
                     <Typography variant="h6" color="text.primary" gutterBottom>
                       {customer.customer_name}
