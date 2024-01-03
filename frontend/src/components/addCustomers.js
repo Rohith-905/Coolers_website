@@ -36,7 +36,7 @@ const AddCustomers = () => {
   const [editedAmount, setEditedAmount] = useState(0);
   const [dueAmount, setDueAmount] = useState(0);
   const [error,setError] = useState('');
-  const [purchased, setPurchased] = useState(true);
+  const [purchased, setPurchased] = useState(false);
   
   const navigate = useNavigate();
 
@@ -306,7 +306,7 @@ const AddCustomers = () => {
         onChange={handleChange}
         inputProps={{ 'aria-label': 'controlled' }}
       />
-      <h3>{purchased ?  'Add Purchase Details' : 'Add Customer Details' }</h3>
+      <h3>{purchased ?  'Add Vendor Details' : 'Add Customer Details' }</h3>
       <Button
         sx={{
           backgroundColor: '#1a75ff',
@@ -329,7 +329,7 @@ const AddCustomers = () => {
           <tbody>
             <tr>
               <td>
-                <label>Customer Name:</label>
+                <label>{purchased ?  'Vendor Name' : 'Customer Name:' }</label>
                 <Autocomplete
                   value={formData.customer_name}
                   onChange={(e, value) => handleInputChange(e, "customer_name",value)}
