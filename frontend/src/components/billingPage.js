@@ -1,20 +1,20 @@
 // BillingPage.js
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
-import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+// import { useLocation } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 import './billPage.css';
 
-const BillingPage = () => {
+const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, setPrint}) => {
 
-  // Access location to get state
-  const location = useLocation();
-  const { state } = location;
-  const navigate = useNavigate();
+  // // Access location to get state
+  // const location = useLocation();
+  // const { state } = location;
+  // const navigate = useNavigate();
 
   // Destructure data from state
-  const { formData, additionalDetailsList, dueAmount, purchased } = state;
+  // const { formData, additionalDetailsList, dueAmount, purchased } = state;
 
   const [paidAmount, setPaidAmount] = useState(0);
   const [invoiceNumber,setInvoiceNumber] = useState('');
@@ -54,7 +54,7 @@ const BillingPage = () => {
 
   const handlePrint = () => {
     // generatePDF(); // Generate PDF before printing
-    console.log("overallTotalAmount",overallTotalAmount,paidAmount);
+    // console.log("overallTotalAmount",overallTotalAmount,paidAmount);
     remainingAmount = overallTotalAmount-paidAmount;
     savePDFToBackend();
     updateRemainingAmount();
@@ -133,7 +133,8 @@ const BillingPage = () => {
 
    // Redirect to AddCustomers component
    const redirectToAddCustomers = () => {
-    navigate('/addCustomers');
+    // navigate('/addCustomers');
+    setPrint(false);
   };
 
   return (

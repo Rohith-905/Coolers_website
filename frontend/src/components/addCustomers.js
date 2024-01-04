@@ -3,12 +3,13 @@ import AppBarPage from "./appBarPage";
 import "./addCustomers.css"; // Import your CSS file
 import { Autocomplete, Button, Dialog, DialogActions, DialogTitle, Fab, Grid, Table, TableBody, TableCell, TableHead, TableRow, TextField, tableCellClasses } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DoneIcon from '@mui/icons-material/Done';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
+import BillingPage from "./billingPage";
 
 const AddCustomers = () => {
 
@@ -37,8 +38,9 @@ const AddCustomers = () => {
   const [dueAmount, setDueAmount] = useState(0);
   const [error,setError] = useState('');
   const [purchased, setPurchased] = useState(false);
+  const [print,setPrint] = useState(false);
   
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -58,11 +60,14 @@ const AddCustomers = () => {
   const handleInputChange = async (e, name, value) => {
     // console.log("Called");
 
+    // Check if value is not undefined or null before applying trim()
+    const trimmedValue = value ? value.trim() : '';
+
     if (name === "model_name" || name === "amount" || name === "quantity" || name === "total_amount")
     setAdditionalDetails((prevData) =>{
       const newData ={
         ...prevData,
-        [name]:value,
+        [name]:trimmedValue,
       }
       // Update total amount based on the latest quantity and amount
       if (name === "quantity" || name === "amount") {
@@ -74,7 +79,7 @@ const AddCustomers = () => {
       setFormData((prevData) => {
         const newData = {
           ...prevData,
-          [name]: value,
+          [name]: trimmedValue,
         };
         return newData;
     });
@@ -86,7 +91,7 @@ const AddCustomers = () => {
         // If customer is found, set the address
         setFormData((prevData) => ({
           ...prevData,
-          shop_address: selectedCustomer.shop_address,
+          shop_address: selectedCustomer.shop_address.trim(),
         }));
       } else {
         // If customer is not found, set an empty address
@@ -255,7 +260,8 @@ const AddCustomers = () => {
 
   const handlePrintReceipt = () =>{
     handleClose();
-    return navigate("/billingPage" ,{ state: { formData, additionalDetailsList,dueAmount, purchased } });
+    setPrint(true);
+    // return navigate("/billingPage" ,{ state: { formData, additionalDetailsList,dueAmount, purchased } });
   }
 
   const handleOpen = () => {
@@ -291,7 +297,9 @@ const AddCustomers = () => {
 
   return (
     <AppBarPage>
-
+    {
+    print?<BillingPage formData={formData} additionalDetailsList={additionalDetailsList} dueAmount={dueAmount} purchased={purchased} setPrint={setPrint}/>:
+    <>
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Print Receipt</DialogTitle>
       <DialogActions>
@@ -511,6 +519,8 @@ const AddCustomers = () => {
         Print Receipt
       </Button>
       </div>
+      </>
+    }
     </AppBarPage>
   );
 };

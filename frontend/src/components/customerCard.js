@@ -88,11 +88,12 @@ export default function CustomerCard() {
         <HandleCustomerCard customerDetails={selectedCustomer} onBack={handleBackToMainView} />
       ) : (
         <>
-          <div>
+          <div style={{display:"flex", justifyContent: "center",alignItems:'center'}}>
             <Switch checked={purchased}
               onChange={handleToggleChange}
               inputProps={{ 'aria-label': 'controlled' }}
             />
+            <h3>{purchased ?  'Vendor Details' : 'Customer Details' }</h3>
           </div>
           <TextField
             label={purchased ? "Search by Vendor Name" :"Search by Customer Name"}
