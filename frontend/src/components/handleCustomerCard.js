@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Accordion, AccordionSummary, Typography, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import InvoiceDetailsByNumber from './invoiceDetails';
-const HandleCustomerCard = ({ customerDetails, onBack }) => {
+const HandleCustomerCard = ({ customerDetails, purchased, onBack }) => {
 
   const [error,setError] = useState('');
   const [remainingAmount,setRemainingAmount] = useState();
@@ -13,6 +13,7 @@ const HandleCustomerCard = ({ customerDetails, onBack }) => {
   let customerName ='';
   // Group customer details by date
   const groupedByDate = {};
+  console.log(customerDetails);
   customerDetails.forEach((customer) => {
     // console.log(customer);
     const date = customer.date;
@@ -26,7 +27,7 @@ const HandleCustomerCard = ({ customerDetails, onBack }) => {
     customerDetails.forEach((customer) => { customerName = customer.customer_name})
     try {
       // console.log(customerName);
-      const response = await fetch(`http://localhost:5000/api/get_amountDetails?name=${customerName}`);
+      const response = await fetch(`http://localhost:5000/api/get_amountDetails?name=${customerName}&purchased=${purchased}`);
       if (response.status === 200) {
         const amountDetails = await response.json();
         // console.log(amountDetails.amount);
@@ -76,7 +77,7 @@ const HandleCustomerCard = ({ customerDetails, onBack }) => {
                 </AccordionSummary>
                 <AccordionDetails>
                   <Typography>
-                    <InvoiceDetailsByNumber invoiceNumber= {customer.invoice_number} />
+                    <InvoiceDetailsByNumber details = {customer} invoiceNumber= {customer.invoice_number}/>
                     {/* <Paper elevation={6} style={{ width: '50%', display: 'flex' }}>
                       <Table>
                         <TableHead>

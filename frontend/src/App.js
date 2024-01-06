@@ -9,8 +9,7 @@ import Login from './components/login';
 import Register from './components/register';
 import AddCustomers from './components/addCustomers';
 import CustomerCard from './components/customerCard';
-import BillingPage from './components/billingPage';
-import InvoiceDetailsByNumber from './components/invoiceDetails';
+import ReportPage from './components/reportPage';
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -67,8 +66,8 @@ function App() {
             element={<Navigate to="/"/>}
           />
           < Route
-            path="/billingPage"
-            element =  { isLoggedIn ? <BillingPage /> : <Navigate to="/" />}
+            path="/report"
+            element =  { isLoggedIn ? <ReportPage /> : <Navigate to="/" />}
           />
         </Routes>
       </Grid>

@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+// import React, { useEffect, useState } from 'react';
 import AppBarPage from './appBarPage';
 import './billPage.css';
 
-const InvoiceDetailsByNumber = ( {invoiceNumber}) => {
+const InvoiceDetailsByNumber = ( {details,invoiceNumber} ) => {
     console.log(invoiceNumber);
-    const [details, setDetails] = useState(null);
-    const [errorMessage, setErrorMessage] = useState('');
+    console.log(details);
+    // const [details, setDetails] = useState(null);
+    // const [errorMessage, setErrorMessage] = useState('');
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -15,35 +16,35 @@ const InvoiceDetailsByNumber = ( {invoiceNumber}) => {
         return `${year}-${month}-${day}`;
     };
 
-    const getDetailsByInvoice = async () => {
-        try {
-            console.log(invoiceNumber);
-            const response = await fetch(`http://localhost:5000/api/getDetailsByInvoiceNumber?invoiceNumber=${invoiceNumber}`);
-            if (response.ok) {
-                const data = await response.json();
-                setDetails(data);
-                setErrorMessage('');
-            } else {
-                const errorData = await response.json();
-                setDetails(null);
-                setErrorMessage(errorData.message || 'Failed to fetch details');
-            }
-        } catch (error) {
-            console.error('Error fetching details:', error);
-            setDetails(null);
-            setErrorMessage('Failed to fetch details');
-        }
-    };
+    // const getDetailsByInvoice = async () => {
+    //     try {
+    //         console.log(invoiceNumber);
+    //         const response = await fetch(`http://localhost:5000/api/getDetailsByInvoiceNumber?invoiceNumber=${invoiceNumber}`);
+    //         if (response.ok) {
+    //             const data = await response.json();
+    //             setDetails(data);
+    //             setErrorMessage('');
+    //         } else {
+    //             const errorData = await response.json();
+    //             setDetails(null);
+    //             setErrorMessage(errorData.message || 'Failed to fetch details');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching details:', error);
+    //         setDetails(null);
+    //         setErrorMessage('Failed to fetch details');
+    //     }
+    // };
 
-    useEffect(() =>{
-        console.log(invoiceNumber);
-        getDetailsByInvoice();
-    },[]);
+    // useEffect(() =>{
+    //     console.log(invoiceNumber);
+    //     getDetailsByInvoice();
+    // },[]);
 
     return (
         <AppBarPage>
             <div>
-                {errorMessage && <p>{errorMessage}</p>}
+                {/* {errorMessage && <p>{errorMessage}</p>} */}
                 <div className='BillStyle'>
                     {details && (
                         <><div className="shopDetails">
@@ -52,7 +53,7 @@ const InvoiceDetailsByNumber = ( {invoiceNumber}) => {
                                     <p><strong>GSTNo:</strong> Uncle GST no</p>
                                 </div>
                                 <div className="right-info">
-                                    <p><strong>Date:</strong>{formatDate(details[0].date)}</p>
+                                    <p><strong>Date:</strong>{formatDate(details.date)}</p>
                                 </div>
                             </div>
 
@@ -61,18 +62,19 @@ const InvoiceDetailsByNumber = ( {invoiceNumber}) => {
                                 Address: H.NO : 15, 13-261, Bypass Rd, near NTR STATUE, Bank Colony, Khammam, Telangana 507002
                             </pre>
                             <p><strong>Ph No:</strong>+1 (234) 567-890</p>
-                        </div><div>
-                                {details.map((detail, index) => (
-                                    <div key={index}>
+                        </div>
+                        <div>
+                                {/* {details.map((detail, index) => ( */}
+                                    <div>
 
                                         <h2>Billing Details</h2>
 
                                         <div className="header">
                                             <div className="left-info">
-                                                <p><strong>Name:</strong> {detail.customer_name}</p>
+                                                <p><strong>Name:</strong> {details.customer_name}</p>
                                                 <p><strong>Invoice No:</strong> {invoiceNumber}</p>
-                                                <p><strong>Shop Address:</strong> {detail.shop_address}</p>
-                                                <p><strong>Vehicle Number:</strong> {detail.vehicle_number}</p>
+                                                <p><strong>Shop Address:</strong> {details.shop_address}</p>
+                                                <p><strong>Vehicle Number:</strong> {details.vehicle_number}</p>
                                             </div>
                                         </div>
 
@@ -88,28 +90,28 @@ const InvoiceDetailsByNumber = ( {invoiceNumber}) => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {JSON.parse(detail.additional_details_json).map((detail, index) => (
+                                                {JSON.parse(details.additional_details_json).map((details, index) => (
                                                     <tr key={index}>
                                                         <td>{index + 1}</td>
-                                                        <td>{detail.model_name}</td>
-                                                        <td>{detail.amount}</td>
-                                                        <td>{detail.quantity}</td>
-                                                        <td>{detail.amount * detail.quantity}</td>
+                                                        <td>{details.model_name}</td>
+                                                        <td>{details.amount}</td>
+                                                        <td>{details.quantity}</td>
+                                                        <td>{details.amount * details.quantity}</td>
                                                     </tr>
                                                 ))}
                                                 {
-                                                    detail.dueAmount?
+                                                    details.dueAmount?
                                                     <tr className="totalAmountRow">
                                                     <td colSpan="3"></td>
                                                     <td><strong>Due Amount:</strong></td>
-                                                    <td>{detail.dueAmount}</td>
+                                                    <td>{details.dueAmount}</td>
                                                     </tr>
                                                     :null
                                                 }
                                                 <tr className="totalAmountRow">
                                                     <td colSpan="3"></td>
                                                     <td><strong>Total Amount:</strong></td>
-                                                    <td>{detail.overallTotalAmount}</td>
+                                                    <td>{details.overallTotalAmount}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -118,7 +120,7 @@ const InvoiceDetailsByNumber = ( {invoiceNumber}) => {
                                             <input
                                                 id="paidAmount"
                                                 type="text"
-                                                value={detail.paidAmount}
+                                                value={details.paidAmount}
                                                 readOnly
                                                 required
                                                 style={{ outline: 'none' }}
@@ -127,7 +129,7 @@ const InvoiceDetailsByNumber = ( {invoiceNumber}) => {
                                             <input
                                                 id="remainingDue"
                                                 type="text"
-                                                value={detail.overallTotalAmount - detail.paidAmount}
+                                                value={details.overallTotalAmount - details.paidAmount}
                                                 readOnly
                                                 required
                                                 style={{ outline: 'none' }}
@@ -136,7 +138,7 @@ const InvoiceDetailsByNumber = ( {invoiceNumber}) => {
                                         <h2 className='thankYouMessage'>Thank you, visit again!</h2>
                                 
                                     </div>
-                                ))}
+                                {/* ))} */}
                             </div></>
                     )}
                 </div>

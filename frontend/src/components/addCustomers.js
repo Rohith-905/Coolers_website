@@ -27,11 +27,13 @@ const AddCustomers = () => {
   });
 
   const [customerDetails, setCustomerDetails] = useState();
+  const [vendorDetails, setVendorDetails] = useState();
   const [additionalDetailsList, setAdditionalDetailsList] = useState([]);
   const [modelNameSuggestions, setModelNameSuggestions] = useState([]);
   const [customerNameSuggestions, setCustomerNameSuggestions] = useState([]);
+  const [vendorNameSuggestions, setVendorNameSuggestions] = useState([]);
   const [coolersWithQuantityList,setCoolersWithQuantityList] = useState([]);
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
   const [editedQuantity, setEditedQuantity] = useState(0);
   const [editedAmount, setEditedAmount] = useState(0);
@@ -53,7 +55,8 @@ const AddCustomers = () => {
     },
   }));
 
-  const handleChange = (event) => {
+  const handleToogleChange = (event) => {
+    handleReset();
     setPurchased(event.target.checked);
   };
   
@@ -85,7 +88,7 @@ const AddCustomers = () => {
     });
     };
     if (name === 'customer_name') {
-      const selectedCustomer = customerDetails.find((customer) => customer.customer_name === value);
+      const selectedCustomer = purchased ? vendorDetails.find((vendor) => vendor.customer_name === value): customerDetails.find((customer) => customer.customer_name === value);
   
       if (selectedCustomer) {
         // If customer is found, set the address
@@ -125,17 +128,29 @@ const AddCustomers = () => {
 
   const fetchCustomerNames = async()=>{
     try{
-      const response = await fetch(`http://localhost:5000/api/customerDetails`);
-      if (!response.ok) {
-        const errorData = await response.json();
+      const custDetailsResponse = await fetch(`http://localhost:5000/api/customerDetails`);
+      const vendorDetailsResponse = await fetch(`http://localhost:5000/api/vendorDetails`);
+      if (!custDetailsResponse.ok) {
+        const errorData = await custDetailsResponse.json();
         throw new Error(errorData.message || "Server error");
       }
-      const customerDetails = await response.json();
+      const customerDetails = await custDetailsResponse.json();
       setCustomerDetails(customerDetails);
       const customerNames = new Set(customerDetails.map((customer) => customer.customer_name));
       const customerNamesList = [...customerNames];
       // console.log(customerNamesList);
       setCustomerNameSuggestions(customerNamesList);
+
+      if (!vendorDetailsResponse.ok) {
+        const errorData = await vendorDetailsResponse.json();
+        throw new Error(errorData.message || "Server error");
+      }
+      const vendorDetails = await vendorDetailsResponse.json();
+      setVendorDetails(vendorDetails);
+      const vendorNames = new Set(vendorDetails.map((vendor) => vendor.customer_name));
+      const vendorNamesList = [...vendorNames];
+      // console.log(customerNamesList);
+      setVendorNameSuggestions(vendorNamesList);
     } catch (error) {
       console.error("Error fetching model details:", error);
     }
@@ -143,7 +158,7 @@ const AddCustomers = () => {
 
   const isDueCheck = async() =>{
     try {
-      const response = await fetch(`http://localhost:5000/api/get_amountDetails?name=${formData.customer_name}`);
+      const response = await fetch(`http://localhost:5000/api/get_amountDetails?name=${formData.customer_name}&purchased=${purchased}`);
       if (response.status === 200) {
         const amountDetails = await response.json();
         // console.log(amountDetails.amount);
@@ -203,6 +218,7 @@ const AddCustomers = () => {
   }
 
   const handleAddDetails = async (e) => {
+
     e.preventDefault();
     const model = additionalDetails.model_name;
     const quantityObject = coolersWithQuantityList.find((res) => res.model_name === model);
@@ -259,23 +275,28 @@ const AddCustomers = () => {
   // };
 
   const handlePrintReceipt = () =>{
-    handleClose();
-    setPrint(true);
-    // return navigate("/billingPage" ,{ state: { formData, additionalDetailsList,dueAmount, purchased } });
-  }
-
-  const handleOpen = () => {
     if(additionalDetailsList.length!==0 ){
-      setOpen(true);
+      setPrint(true);
     }
     else{
       window.alert("please fill all the details");
     }
-  };
+    // handleClose();
+    // return navigate("/billingPage" ,{ state: { formData, additionalDetailsList,dueAmount, purchased } });
+  }
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  // const handleOpen = () => {
+  //   if(additionalDetailsList.length!==0 ){
+  //     setOpen(true);
+  //   }
+  //   else{
+  //     window.alert("please fill all the details");
+  //   }
+  // };
+
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
 
   const handleDelete = (index) => {
     setAdditionalDetailsList((prevList) => {
@@ -285,7 +306,7 @@ const AddCustomers = () => {
     });
   };
 
-  const handleRest = () =>{
+  const handleReset = () =>{
     setFormData({
       customer_name: "",
       shop_address: "",
@@ -298,9 +319,9 @@ const AddCustomers = () => {
   return (
     <AppBarPage>
     {
-    print?<BillingPage formData={formData} additionalDetailsList={additionalDetailsList} dueAmount={dueAmount} purchased={purchased} setPrint={setPrint}/>:
+    print?<BillingPage formData={formData} additionalDetailsList={additionalDetailsList} dueAmount={dueAmount} purchased={purchased} setPrint={setPrint} setFormData={setFormData} setAdditionalDetailsList={setAdditionalDetailsList}/>:
     <>
-    <Dialog onClose={handleClose} open={open}>
+    {/* <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Print Receipt</DialogTitle>
       <DialogActions>
           <Button onClick={handlePrintReceipt} autoFocus>
@@ -308,10 +329,10 @@ const AddCustomers = () => {
           </Button>
           <Button onClick={handleClose}>No</Button>
         </DialogActions>
-    </Dialog>
+    </Dialog> */}
     <div style={{display:"flex", justifyContent: "space-between",alignItems:'center'}}>
       <Switch checked={purchased}
-        onChange={handleChange}
+        onChange={handleToogleChange}
         inputProps={{ 'aria-label': 'controlled' }}
       />
       <h3>{purchased ?  'Add Vendor Details' : 'Add Customer Details' }</h3>
@@ -327,7 +348,7 @@ const AddCustomers = () => {
           },
         }}
         type="Reset"
-        onClick={handleRest}
+        onClick={handleReset}
       >
         Reset
       </Button>
@@ -342,7 +363,7 @@ const AddCustomers = () => {
                   value={formData.customer_name}
                   onChange={(e, value) => handleInputChange(e, "customer_name",value)}
                   onInputChange={(e, newInputValue) => handleInputChange(e, "customer_name", newInputValue)}
-                  options={customerNameSuggestions}
+                  options={purchased ? vendorNameSuggestions: customerNameSuggestions}
                   freeSolo
                   renderInput={(params) => <TextField {...params}  style={{ width: '200px' }} />}
                 />
@@ -514,7 +535,7 @@ const AddCustomers = () => {
             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
           },
         }}
-        onClick={handleOpen}
+        onClick={handlePrintReceipt}
       >
         Print Receipt
       </Button>

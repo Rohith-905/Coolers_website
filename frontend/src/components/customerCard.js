@@ -17,7 +17,7 @@ import Switch from '@mui/material/Switch';
 
 export default function CustomerCard() {
 
-  const [custVendorList , setCustVendorList ] = useState([]);
+  // const [custVendorList , setCustVendorList ] = useState([]);
   const [customerUniqueNames, setCustomerUniqueNames] = useState([]);
   const [customerDetailsList, setCustomerDetailsList] = useState([]);
   const [searchInput, setSearchInput] = useState('');
@@ -31,30 +31,44 @@ export default function CustomerCard() {
   }
 
   useEffect(() => {
-    const fetchCustVendorDetails = async () => {
+    const fetchCustomerDetails = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/customerDetails');
-        setCustVendorList(response.data);
+        const customerResponse = await axios.get(`http://localhost:5000/api/customerDetails`);
+        // console.log(response.data);
+        setCustomerDetailsList(customerResponse.data);
+
+        const vendorResponse = await axios.get(`http://localhost:5000/api/vendorDetails`);
+        // console.log(response.data);
+        setVendorDetailsList(vendorResponse.data);
+
+        const customerDetailsSet = new Set(customerResponse.data.map((customer) => customer.customer_name));
+        const vendorDetailsSet = new Set(vendorResponse.data.map((customer) => customer.customer_name));
+        setCustomerUniqueNames(customerDetailsSet);
+        setVendorUniqueNames(vendorDetailsSet);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-
-    fetchCustVendorDetails();
+    fetchCustomerDetails();
+    // fetchVendorDetails();
   }, []);
 
-  useEffect(() => {
-    const tempCustomerDetailsList = custVendorList.filter((custVendor) => custVendor.purchased === 0);
-    const tempVendorDetailsList = custVendorList.filter((custVendor) => custVendor.purchased === 1);
-    const customerDetailsSet = new Set(tempCustomerDetailsList.map((customer) => customer.customer_name));
-    const vendorDetailsSet = new Set(tempVendorDetailsList.map((customer) => customer.customer_name));
-    setCustomerDetailsList(tempCustomerDetailsList);
-    setVendorDetailsList(tempVendorDetailsList);
-    setCustomerUniqueNames(customerDetailsSet);
-    setVendorUniqueNames(vendorDetailsSet);
-    // console.log(customerDetailsSet);
-    // console.log(vendorDetailsSet);
-  }, [custVendorList]);
+  // useEffect(() => {
+  //   console.log(customerDetailsList);
+  //   console.log(vendorDetailsList);
+  //   // const tempCustomerDetailsList = custVendorList.filter((custVendor) => custVendor.purchased === 0);
+  //   // const tempVendorDetailsList = custVendorList.filter((custVendor) => custVendor.purchased === 1);
+  //   const customerDetailsSet = new Set(customerDetailsList.map((customer) => customer.customer_name));
+  //   const vendorDetailsSet = new Set(vendorDetailsList.map((customer) => customer.customer_name));
+  //   // setCustomerDetailsList(tempCustomerDetailsList);
+  //   // setVendorDetailsList(tempVendorDetailsList);
+  //   setCustomerUniqueNames(customerDetailsSet);
+  //   console.log(customerDetailsSet);
+  //   setVendorUniqueNames(vendorDetailsSet);
+  //   console.log(customerDetailsSet);
+  //   // console.log(customerDetailsSet);
+  //   // console.log(vendorDetailsSet);
+  // }, []);
 
   const handleSearch = (e) => {
     const inputValue = e.target.value.toLowerCase();
@@ -85,7 +99,7 @@ export default function CustomerCard() {
   return (
     <AppBarPage>
       {selectedCustomer ? (
-        <HandleCustomerCard customerDetails={selectedCustomer} onBack={handleBackToMainView} />
+        <HandleCustomerCard customerDetails={selectedCustomer} purchased={purchased} onBack={handleBackToMainView} />
       ) : (
         <>
           <div style={{display:"flex", justifyContent: "center",alignItems:'center'}}>
