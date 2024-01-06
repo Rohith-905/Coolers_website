@@ -21,6 +21,10 @@ const AppBarPage = ({ children }) => {
         navigate('/home');
     }
 
+    const handleReportPage = () => {
+        navigate('/report');
+    }
+
     const handleLogout = () => {
         navigate('/logout');
     }
@@ -40,7 +44,10 @@ const AppBarPage = ({ children }) => {
                                 <HomeIcon />
                                 </Button>
                             </Grid>
-                            <Grid item xs={6} />
+                            <Grid item xs={5} />
+                            <Grid item xs={1} >
+                                <Button sx={{ color: '#fff' }} onClick={handleReportPage}>Report</Button>
+                            </Grid>
                             <Grid item xs={2} >
                                 <Button sx={{ color: '#fff' }} onClick={handleCustomerCard}>Customers</Button>
                             </Grid> 

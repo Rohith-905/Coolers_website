@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import { jsPDF } from 'jspdf';
 import './billPage.css';
 
-const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, setPrint}) => {
+const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, setPrint, setFormData, setAdditionalDetailsList}) => {
 
   // // Access location to get state
   // const location = useLocation();
@@ -59,6 +59,13 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
     savePDFToBackend();
     updateRemainingAmount();
     window.print(); // Print the document
+    setFormData({
+      customer_name: "",
+      shop_address: "",
+      vehicle_number: "",
+      date: "",
+    });
+    setAdditionalDetailsList([]);
   };
 
   const savePDFLocally = (pdfBlob, filename) => {
@@ -93,13 +100,13 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
 
   const updateRemainingAmount = async () =>{
     try{
-      console.log(remainingAmount,formData.customer_name);
+      // console.log(remainingAmount,formData.customer_name);
       const response = await fetch('http://localhost:5000/api/updateDueAmount',{
         method:'POST',
         headers:{
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({"remainingAmount":remainingAmount,"name":formData.customer_name}),
+        body: JSON.stringify({"remainingAmount":remainingAmount,"name":formData.customer_name,"purchased":purchased}),
       });
       if (response.ok) {
         console.log('Data saved to the backend');

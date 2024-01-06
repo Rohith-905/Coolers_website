@@ -106,11 +106,25 @@ app.get('/api/coolers_available', (req, res) => {
 
 // API route to fetch details of products
 app.get('/api/customerDetails', (req, res) => {
-  const query = 'select * from soldgoods';
+  const purchased = req.query.purchased;
+  const query =`select * from soldGoods`;
   // console.log(query);
   db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching customer details:', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+    // console.log(results);
+    return res.status(200).json(results);
+  });
+});
+app.get('/api/vendorDetails', (req, res) => {
+  const purchased = req.query.purchased;
+  const query =`select * from purchasedGoods`;
+  // console.log(query);
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching Vendor details:', err);
       return res.status(500).json({ error: 'Internal server error' });
     }
     // console.log(results);
@@ -320,8 +334,10 @@ app.post('/api/saveFormDataAndDetails', async (req, res) => {
       }
     }
    
-    const query = 'INSERT INTO soldgoods (invoice_number, customer_name, shop_address, vehicle_number, date, additional_details_json,paidAmount,overallTotalAmount, dueAmount, purchased) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    const values = [invoiceNumber, customer_name, shop_address, vehicle_number, date, additionalDetailsJSON, paidAmount, overallTotalAmount, dueAmount, purchased];
+    const query = !purchased ? 'INSERT INTO soldGoods (invoice_number, customer_name, shop_address, vehicle_number, date, additional_details_json,paidAmount,overallTotalAmount, dueAmount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)' 
+                            : 'INSERT INTO purchasedGoods (invoice_number, customer_name, shop_address, vehicle_number, date, additional_details_json,paidAmount,overallTotalAmount, dueAmount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)' ;
+    // console.log(query);
+    const values = [invoiceNumber, customer_name, shop_address, vehicle_number, date, additionalDetailsJSON, paidAmount, overallTotalAmount, dueAmount];
 
     // Replace the null value with the SQL NULL keyword
     values[8] = dueAmount !== null ? dueAmount : null;
@@ -337,10 +353,14 @@ app.post('/api/saveFormDataAndDetails', async (req, res) => {
 
 app.get('/api/get_amountDetails', async (req, res) => {
   const customerName = req.query.name;
+  const purchased = req.query.purchased;
+  console.log(purchased);
   // console.log('customerName', customerName);
 
   try {
-    const get_amountDetails = 'select amount from maintain_due_amount where name = ?';
+    console.log(purchased?"hello":"hi");
+    const get_amountDetails = purchased ? 'select amount from customer_due where name = ?' : 'select amount from vendor_due where name = ?';
+    // console.log(get_amountDetails);
     const amount = await queryDatabase(get_amountDetails, customerName);
     // Note: 'results' should be used instead of 'error' in the following condition
     if (amount.error) {
@@ -359,7 +379,7 @@ app.get('/api/get_amountDetails', async (req, res) => {
 app.get('/api/getDetailsByInvoiceNumber', (req, res) => {
   // console.log("in server");
   const invoiceNumber = req.query.invoiceNumber;
-  const query = 'SELECT * FROM soldgoods WHERE invoice_number = ?';
+  const query = purchased ? 'SELECT * FROM purchasedGoods WHERE invoice_number = ?': 'SELECT * FROM soldGoods WHERE invoice_number = ?';
 
   db.query(query, invoiceNumber, (error, results) => {
     if (error) {
@@ -378,12 +398,13 @@ app.get('/api/getDetailsByInvoiceNumber', (req, res) => {
 });
 
 app.post('/api/updateDueAmount', async (req, res) => {
-  console.log(req.body);
-  const { remainingAmount, name } = req.body;
-  console.log(remainingAmount, name);
+  
+  const { remainingAmount, name, purchased } = req.body;
+  // console.log(remainingAmount, name,purchased);
 
   try {
-    const selectQuery = 'SELECT * FROM maintain_due_amount WHERE name = ?';
+    const selectQuery = !purchased ? 'SELECT * FROM customer_due WHERE name = ?' : 'SELECT * FROM vendor_due WHERE name = ?';
+    // console.log(selectQuery);
     db.query(selectQuery, [name], (error, results) => {
       if (error) {
         console.error('Error fetching data:', error);
@@ -392,7 +413,8 @@ app.post('/api/updateDueAmount', async (req, res) => {
       }
 
       if (results.length === 0) {
-        const insertQuery = 'INSERT INTO maintain_due_amount (name, amount) VALUES (?, ?)';
+        const insertQuery = !purchased ? 'INSERT INTO customer_due (name, amount) VALUES (?, ?)' : 'INSERT INTO vendor_due (name, amount) VALUES (?, ?)';
+        // console.log(insertQuery);
         db.query(insertQuery, [name, remainingAmount], (error, results) => {
           if (error) {
             console.error('Error inserting data:', error);
@@ -403,7 +425,8 @@ app.post('/api/updateDueAmount', async (req, res) => {
           res.status(200).json({ message: 'New DATA ADDED' });
         });
       } else {
-        const updateQuery = 'UPDATE maintain_due_amount SET amount = ? WHERE name = ?';
+        const updateQuery = !purchased ? 'UPDATE customer_due SET amount = ? WHERE name = ?' : 'UPDATE vendor_due SET amount = ? WHERE name = ?';
+        // console.log(updateQuery);
         db.query(updateQuery, [remainingAmount, name], (error, results) => {
           if (error) {
             console.error('Error updating data:', error);
@@ -423,14 +446,14 @@ app.post('/api/updateDueAmount', async (req, res) => {
 
 // Helper function to execute queries on the database
 function queryDatabase(query, values) {
-  // console.log(query, values);
+  console.log(query, values);
   return new Promise((resolve, reject) => {
     db.query(query, values, (error, results) => {
       if (error) {
         // Use the 'error' variable here
         reject( error );
       } else {
-        // console.log(results);
+        // console.log("result",results);
         resolve( results );
       }
     });
