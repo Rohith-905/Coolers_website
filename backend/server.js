@@ -320,21 +320,27 @@ app.post('/api/saveFormDataAndDetails', async (req, res) => {
 app.get('/api/get_amountDetails', async (req, res) => {
   const customerName = req.query.name;
   const purchased = req.query.purchased;
-  console.log(purchased);
-  // console.log('customerName', customerName);
-
+  
   try {
-    console.log(purchased?"hello":"hi");
-    const get_amountDetails = purchased ? 'select amount from customer_due where name = ?' : 'select amount from vendor_due where name = ?';
-    // console.log(get_amountDetails);
-    const amount = await queryDatabase(get_amountDetails, customerName);
-    // Note: 'results' should be used instead of 'error' in the following condition
-    if (amount.error) {
-      console.error('Error fetching amount details:', amount.error);
-      res.status(500).json({ message: 'Internal server error' });
+    console.log(purchased);
+    if (purchased === 'true' || purchased === '1') {
+      console.log("Hello");
+      const amount = await queryDatabase('SELECT amount FROM  vendor_due WHERE name = ?', customerName);
+      if (amount.error) {
+        console.error('Error fetching amount details:', amount.error);
+        res.status(500).json({ message: 'Internal server error' });
+      } else {
+        res.status(200).json(amount[0]);
+      }
     } else {
-      // console.log(amount[0]);
-      res.status(200).json(amount[0]);
+      console.log("Hi");
+      const amount = await queryDatabase('SELECT amount FROM  customer_due  WHERE name = ?', customerName);
+      if (amount.error) {
+        console.error('Error fetching amount details:', amount.error);
+        res.status(500).json({ message: 'Internal server error' });
+      } else {
+        res.status(200).json(amount[0]);
+      }
     }
   } catch (error) {
     console.error('Error:', error);
@@ -408,6 +414,16 @@ app.post('/api/updateDueAmount', async (req, res) => {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
+});
+
+app.get('/api/get_due_data', (req, res) => {
+  db.query('SELECT * FROM vendor_due', (error, vendorData) => {
+    if (error) throw error;
+    db.query('SELECT * FROM customer_due', (error, customerData) => {
+      if (error) throw error;
+      res.json({ vendorData, customerData });
+    });
+  });
 });
 
 // Helper function to execute queries on the database

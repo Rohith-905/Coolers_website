@@ -1,0 +1,48 @@
+/* ReportPage.css */
+
+/* CSS for the table containers */
+.table-container {
+    display: flex;
+  }
+  
+  .table-container > div {
+    flex: 1;
+    margin: 10px;
+  }
+  
+  /* CSS for the tables */
+  .table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    margin: 0;
+  }
+  
+  /* CSS for table headers */
+  .table-container th,
+  .table-container td {
+    padding: 8px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #000000;
+  }
+  
+  .table-container th {
+    text-align: left;
+    background-color: #3dccd3;
+  }
+  
+  /* CSS for table row hover effect */
+  .table-container tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  /* CSS for hover effect on table cells */
+  .table-container tbody td:hover::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    z-index: -1;
+  }

@@ -57,15 +57,6 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
     // console.log("overallTotalAmount",overallTotalAmount,paidAmount);
     remainingAmount = overallTotalAmount-paidAmount;
     savePDFToBackend();
-    updateRemainingAmount();
-    window.print(); // Print the document
-    setFormData({
-      customer_name: "",
-      shop_address: "",
-      vehicle_number: "",
-      date: "",
-    });
-    setAdditionalDetailsList([]);
   };
 
   const savePDFLocally = (pdfBlob, filename) => {
@@ -89,6 +80,15 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
 
       if (response.ok) {
         console.log('Data saved to the backend');
+        updateRemainingAmount();
+        window.print(); // Print the document
+        setFormData({
+          customer_name: "",
+          shop_address: "",
+          vehicle_number: "",
+          date: "",
+        });
+        setAdditionalDetailsList([]);
         // Optionally, perform further actions after successful save
       } else {
         console.error('Failed to save data to the backend');
