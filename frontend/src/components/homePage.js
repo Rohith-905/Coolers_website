@@ -210,16 +210,12 @@ const Home = () => {
                         value={addCoolers.name}
                         onChange={(e, value) => handleInputChange(e, "name",value)}
                         onInputChange={(e, newInputValue) => handleInputChange(e, "name", newInputValue)}
-                        options={coolers.map(cooler => cooler.model_name)}
+                        options={coolers.map((cooler) => cooler.model_name)}
                         freeSolo
-                        renderInput={(params) => <TextField {...params}  style={{ width: '300px' }} />}
+                        renderInput={(params) => (
+                          <TextField {...params} style={{ width: '300px', marginBottom: '10px' }} />
+                        )}
                       />
-                      {/* <Autocomplete
-                        value={addCoolers.name}
-                        onChange={(e, value) => handleInputChange(e, "model_name",value)}
-                        options={coolers.map(cooler => cooler.model_name)}
-                        renderInput={(params) => <TextField {...params} style={{ width: '270px'}} />}
-                      /> */}
 
                       <label>Quantity:</label>
                       <input
@@ -227,6 +223,7 @@ const Home = () => {
                         name="quantity"
                         value={addCoolers.quantity}
                         onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
+                        style={{ width: '300px', marginBottom: '10px', padding: '8px', height:'50px' }}
                         required
                       />
 
@@ -249,6 +246,7 @@ const Home = () => {
                   </form>
                 )}
               </Grid>
+
             </Grid>
           </Grid>
         </Grid>

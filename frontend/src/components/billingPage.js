@@ -7,7 +7,7 @@ import { jsPDF } from 'jspdf';
 import './billPage.css';
 import { Dialog, DialogActions, DialogTitle } from '@mui/material';
 
-const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, setPrint, handleReset}) => {
+const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, setPrint, handleReset, fetchCustomerNames}) => {
 
   // // Access location to get state
   // const location = useLocation();
@@ -87,12 +87,13 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
         window.print(); // Print the document
         handleReset();
         setPrint(false);
+        fetchCustomerNames();
         // Optionally, perform further actions after successful save
       } else {
-        console.error('Failed to save data to the backend');
+        window.alert('Failed to save data to the backend');
       }
     } catch (error) {
-      console.error('Error saving data to the backend:', error);
+      window.alert('Error saving data to the backend:', error);
     }
   };
 
@@ -110,10 +111,10 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
         console.log('Data saved to the backend');
         // Optionally, perform further actions after successful save
       } else {
-        console.error('Failed to save data to the backend');
+        window.alert('Failed updating Remaining amount to backend');
       }
     } catch (error) {
-      console.error('Error saving data to the backend:', error);
+      window.alert('Error updating Remaining amount to backend:', error);
     }
   }
 
@@ -149,6 +150,11 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
   const handleOpen =()=>{
     setOpen(true);
   }
+
+  const formatAmountWithCommas = (amount) => {
+    // Use toLocaleString to format amount with commas
+    return amount.toLocaleString('en-IN');
+  };
 
   return (
     <div className='BillStyle'>
@@ -208,9 +214,9 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
             <tr key={index}>
               <td>{index + 1}</td>
               <td>{detail.model_name}</td>
-              <td>{detail.amount}</td>
+              <td>{formatAmountWithCommas(detail.amount)}</td>
               <td>{detail.quantity}</td>
-              <td>{detail.amount * detail.quantity}</td>
+              <td>{formatAmountWithCommas(detail.amount * detail.quantity)}</td>
             </tr>
           ))}
           {
@@ -218,7 +224,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
             <tr className="totalAmountRow">
               <td colSpan="3"></td>
               <td><strong>Due Amount:</strong></td>
-              <td>{dueAmount}</td>
+              <td>{formatAmountWithCommas(dueAmount)}</td>
             </tr>
             :null
           }
@@ -226,7 +232,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
           <tr className="totalAmountRow">
             <td colSpan="3"></td>
             <td><strong>Total Amount:</strong></td>
-            <td>{overallTotalAmount}</td>
+            <td>{formatAmountWithCommas(overallTotalAmount)}</td>
           </tr>
         </tbody>
     </table>
@@ -236,7 +242,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
         <input
           id="paidAmount"
           type="text"
-          value={paidAmount}
+          value={formatAmountWithCommas(paidAmount)}
           onChange={handlePaidAmountChange}
           required
         />
@@ -244,7 +250,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
         <input
           id="remainingDue"
           type="text"
-          value={overallTotalAmount-paidAmount}
+          value={formatAmountWithCommas(overallTotalAmount-paidAmount)}
           readOnly
           required
         />

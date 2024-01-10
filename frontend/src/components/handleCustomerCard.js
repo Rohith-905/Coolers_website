@@ -54,18 +54,23 @@ const HandleCustomerCard = ({ customerDetails, purchased, onBack }) => {
     fetchData();
   }, []);
   
+  const formatAmountWithCommas = (amount) => {
+    // Use toLocaleString to format amount with commas
+    return amount.toLocaleString('en-IN');
+  };
+
   return (
     <div>
       <Button onClick={onBack}>Back</Button>
       {remainingAmount !== undefined && remainingAmount !== null && (
       <div style={{ textAlign: 'right', color: remainingAmountColor, fontWeight: 'bold' }}>
-        {advance_or_due} : {remainingAmount}
+        {advance_or_due} : {formatAmountWithCommas(remainingAmount)}
       </div>
       )}
       {Object.entries(groupedByDate).map(([date, details]) => (
         <div key={date} style={{width:'70%'}}>
           <h3>Date: {date}</h3>
-          {details.map((customer,index) =>(
+          {details.map((customer) =>(
             <div> 
               <Accordion>
                 <AccordionSummary

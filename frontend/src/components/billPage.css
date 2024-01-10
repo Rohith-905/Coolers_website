@@ -133,6 +133,12 @@
     }
   }
   
+  /* @media print {
+    .appBarClassName {
+      border: none !important;
+    }
+  } */
+  
   
   .header .info-table {
     width: 100%;
@@ -189,4 +195,18 @@
     margin-top: 10px; /* Optional: Add margin for spacing */
   }
   
-  
+/* Print styles */
+/* @media print {
+  body {
+    margin: 0; 
+  }
+
+  .BillStyle {
+    width: 100%; 
+  }
+  .shopDetails,
+  .header,
+  table {
+    width: 100%;
+  }
+}  */

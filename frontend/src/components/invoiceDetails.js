@@ -16,6 +16,11 @@ const InvoiceDetailsByNumber = ( {details,invoiceNumber} ) => {
         return `${year}-${month}-${day}`;
     };
 
+    const formatAmountWithCommas = (amount) => {
+        // Use toLocaleString to format amount with commas
+        return amount.toLocaleString('en-IN');
+      };
+
     // const getDetailsByInvoice = async () => {
     //     try {
     //         console.log(invoiceNumber);
@@ -94,9 +99,9 @@ const InvoiceDetailsByNumber = ( {details,invoiceNumber} ) => {
                                                     <tr key={index}>
                                                         <td>{index + 1}</td>
                                                         <td>{details.model_name}</td>
-                                                        <td>{details.amount}</td>
+                                                        <td>{formatAmountWithCommas(details.amount)}</td>
                                                         <td>{details.quantity}</td>
-                                                        <td>{details.amount * details.quantity}</td>
+                                                        <td>{formatAmountWithCommas(details.amount * details.quantity)}</td>
                                                     </tr>
                                                 ))}
                                                 {
@@ -104,14 +109,14 @@ const InvoiceDetailsByNumber = ( {details,invoiceNumber} ) => {
                                                     <tr className="totalAmountRow">
                                                     <td colSpan="3"></td>
                                                     <td><strong>Due Amount:</strong></td>
-                                                    <td>{details.dueAmount}</td>
+                                                    <td>{formatAmountWithCommas(details.dueAmount)}</td>
                                                     </tr>
                                                     :null
                                                 }
                                                 <tr className="totalAmountRow">
                                                     <td colSpan="3"></td>
                                                     <td><strong>Total Amount:</strong></td>
-                                                    <td>{details.overallTotalAmount}</td>
+                                                    <td>{formatAmountWithCommas(details.overallTotalAmount)}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -120,7 +125,7 @@ const InvoiceDetailsByNumber = ( {details,invoiceNumber} ) => {
                                             <input
                                                 id="paidAmount"
                                                 type="text"
-                                                value={details.paidAmount}
+                                                value={formatAmountWithCommas(details.paidAmount)}
                                                 readOnly
                                                 required
                                                 style={{ outline: 'none' }}
@@ -129,7 +134,7 @@ const InvoiceDetailsByNumber = ( {details,invoiceNumber} ) => {
                                             <input
                                                 id="remainingDue"
                                                 type="text"
-                                                value={details.overallTotalAmount - details.paidAmount}
+                                                value={formatAmountWithCommas(details.overallTotalAmount - details.paidAmount)}
                                                 readOnly
                                                 required
                                                 style={{ outline: 'none' }}

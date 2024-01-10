@@ -18,6 +18,11 @@ const ReportPage = () => {
       .reduce((acc, curr) => acc + parseInt(curr.amount), 0);
   };
 
+  const formatAmountWithCommas = (amount) => {
+    // Use toLocaleString to format amount with commas
+    return amount.toLocaleString('en-IN');
+  };
+
   const fetchData = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/get_due_data');
@@ -32,7 +37,7 @@ const ReportPage = () => {
       <div className="table-container">
         <div>
           <h2>Vendor Due</h2>
-          <p>Total Amount: {getTotalAmount(data.vendorData)}</p>
+          <p>Total Amount: {formatAmountWithCommas(getTotalAmount(data.vendorData))}</p>
           <table border="1">
             <thead>
               <tr>
@@ -46,7 +51,7 @@ const ReportPage = () => {
                 .map((row, index) => (
                   <tr key={index}>
                     <td>{row.name}</td>
-                    <td>{row.amount}</td>
+                    <td>{formatAmountWithCommas(row.amount)}</td>
                   </tr>
                 ))}
             </tbody>
@@ -55,7 +60,7 @@ const ReportPage = () => {
 
         <div>
           <h2>Customer Due</h2>
-          <p>Total Amount: {getTotalAmount(data.customerData)}</p>
+          <p>Total Amount: {formatAmountWithCommas(getTotalAmount(data.customerData))}</p>
           <table border="1">
             <thead>
               <tr>
@@ -69,7 +74,7 @@ const ReportPage = () => {
                 .map((row, index) => (
                   <tr key={index} style={{ color: row.amount > 0 ? 'red' : 'green' }}>
                     <td>{row.name}</td>
-                    <td>{row.amount}</td>
+                    <td>{formatAmountWithCommas(row.amount)}</td>
                   </tr>
                 ))}
             </tbody>

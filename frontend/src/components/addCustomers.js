@@ -41,6 +41,7 @@ const AddCustomers = () => {
   const [error,setError] = useState('');
   const [purchased, setPurchased] = useState(false);
   const [print,setPrint] = useState(false);
+  const [ fetchSuggestionsAfterPrint ,setFetchSuggestionsAfterPrint ] = useState(false);
   
   // const navigate = useNavigate();
 
@@ -126,7 +127,7 @@ const AddCustomers = () => {
     
   };
 
-  const fetchCustomerNames = async()=>{
+  const fetchCustomerNames = useCallback( async()=>{
     try{
       const custDetailsResponse = await fetch(`http://localhost:5000/api/customerDetails`);
       const vendorDetailsResponse = await fetch(`http://localhost:5000/api/vendorDetails`);
@@ -154,7 +155,7 @@ const AddCustomers = () => {
     } catch (error) {
       console.error("Error fetching model details:", error);
     }
-  };
+  },[]);
 
   const isDueCheck = async() =>{
     try {
@@ -176,7 +177,7 @@ const AddCustomers = () => {
   useEffect(() => {
     fetchCustomerNames();
     fetchModelDetails();
-  }, []);
+  }, [fetchCustomerNames]);
 
   const handleEdit = (index) => {
     setEditIndex(index);
@@ -310,19 +311,6 @@ const AddCustomers = () => {
     // handleClose();
     // return navigate("/billingPage" ,{ state: { formData, additionalDetailsList,dueAmount, purchased } });
   }
-
-  // const handleOpen = () => {
-  //   if(additionalDetailsList.length!==0 ){
-  //     setOpen(true);
-  //   }
-  //   else{
-  //     window.alert("please fill all the details");
-  //   }
-  // };
-
-  // const handleClose = () => {
-  //   setOpen(false);
-  // };
 
   const handleDelete = (index) => {
     setAdditionalDetailsList((prevList) => {
