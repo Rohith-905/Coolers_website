@@ -5,8 +5,8 @@ import HomeIcon from '@mui/icons-material/Home';
 
 import { useNavigate } from "react-router-dom";
 
-const AppBarPage = ({ children }) => {
-
+const AppBarPage = ({ children, loggedIn }) => {
+    
     const navigate = useNavigate();
 
     const handleCustomerCard = () => {
@@ -25,40 +25,61 @@ const AppBarPage = ({ children }) => {
         navigate('/report');
     }
 
-    const handleLogout = () => {
-        navigate('/logout');
-    }
+    const handleLogin = () => {
+        navigate("/");
+    };
+    
+    const handleRegister = () => {
+        navigate("/register");
+    };
 
     return (
         <>
-            <Box sx={{ display: 'flex',padding:'20px' }}>
+            <Box sx={{ display: 'flex',padding:'30px' }}>
                 <CssBaseline />
                 <AppBar component="nav">
                     <Toolbar sx={{ justifyContent: 'space-between' }}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={1}>
-                                <Button sx={{
-                                    color: '#fff',
-                                    borderRadius: '50%',
-                                    }}onClick={handleHome}>
-                                <HomeIcon />
-                                </Button>
+                        {
+                        !loggedIn
+                        ?
+                        <>
+                            <Grid container spacing={2}>
+                                <Grid item xs={8}/>
+                                <Grid item xs={2} >
+                                    <Button sx={{ color: '#fff' }} onClick={handleLogin}>Login</Button>
+                                </Grid>
+                                <Grid item xs={2} >
+                                    <Button sx={{ color: '#fff' }} onClick={handleRegister}>Register</Button>
+                                </Grid> 
                             </Grid>
-                            <Grid item xs={5} />
-                            <Grid item xs={1} >
-                                <Button sx={{ color: '#fff' }} onClick={handleReportPage}>Report</Button>
+                        </>
+                        :
+                            <Grid container spacing={2}>
+                                <Grid item xs={1}>
+                                    <Button sx={{
+                                        color: '#fff',
+                                        borderRadius: '50%',
+                                        }}onClick={handleHome}>
+                                    <HomeIcon />
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={5} />
+                                <Grid item xs={1} >
+                                    <Button sx={{ color: '#fff' }} onClick={handleReportPage}>Report</Button>
+                                </Grid>
+                                <Grid item xs={2} >
+                                    <Button sx={{ color: '#fff' }} onClick={handleCustomerCard}>Customers</Button>
+                                </Grid> 
+                                <Grid item xs={2} >
+                                    <Button sx={{ color: '#fff' }} onClick={handleAddCustomers}>Add Customer</Button>
+                                </Grid>
+                                <Grid item xs={1}>
+                                    <Button sx={{ color: '#fff' }} onClick={handleLogin}>Logout</Button>
+                                </Grid>
+                                
                             </Grid>
-                            <Grid item xs={2} >
-                                <Button sx={{ color: '#fff' }} onClick={handleCustomerCard}>Customers</Button>
-                            </Grid> 
-                            <Grid item xs={2} >
-                                <Button sx={{ color: '#fff' }} onClick={handleAddCustomers}>Add Customer</Button>
-                            </Grid>
-                            <Grid item xs={1}>
-                                <Button sx={{ color: '#fff' }} onClick={handleLogout}>Logout</Button>
-                            </Grid>
-                            
-                        </Grid>
+                        }
+                        
                     </Toolbar>
                 </AppBar>
             </Box>

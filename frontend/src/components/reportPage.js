@@ -28,8 +28,7 @@ const ReportPage = () => {
   };
 
   return (
-    <AppBarPage>
-        <AppBarPage>
+    <AppBarPage loggedIn={true}>
       <div className="table-container">
         <div>
           <h2>Vendor Due</h2>
@@ -77,11 +76,6 @@ const ReportPage = () => {
           </table>
         </div>
       </div>
-    </AppBarPage>
-     
-
-   
-
     </AppBarPage>
   );
 };

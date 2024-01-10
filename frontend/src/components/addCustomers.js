@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AppBarPage from "./appBarPage";
 import "./addCustomers.css"; // Import your CSS file
 import { Autocomplete, Button, Dialog, DialogActions, DialogTitle, Fab, Grid, Table, TableBody, TableCell, TableHead, TableRow, TextField, tableCellClasses } from "@mui/material";
@@ -306,7 +306,7 @@ const AddCustomers = () => {
     });
   };
 
-  const handleReset = () =>{
+  const handleReset = useCallback(() =>{
     setFormData({
       customer_name: "",
       shop_address: "",
@@ -314,12 +314,12 @@ const AddCustomers = () => {
       date: "",
     });
     setAdditionalDetailsList([]);
-  }
+  },[]);
 
   return (
-    <AppBarPage>
+    <AppBarPage loggedIn={true}>
     {
-    print?<BillingPage formData={formData} additionalDetailsList={additionalDetailsList} dueAmount={dueAmount} purchased={purchased} setPrint={setPrint} setFormData={setFormData} setAdditionalDetailsList={setAdditionalDetailsList}/>:
+    print?<BillingPage formData={formData} additionalDetailsList={additionalDetailsList} dueAmount={dueAmount} purchased={purchased} setPrint={setPrint} handleReset={handleReset}/>:
     <>
     {/* <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Print Receipt</DialogTitle>

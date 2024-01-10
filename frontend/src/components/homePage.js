@@ -133,7 +133,7 @@ const Home = () => {
   };
 
   return (
-    <AppBarPage>
+    <AppBarPage loggedIn={true}>
       <div>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
@@ -179,7 +179,7 @@ const Home = () => {
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} paddingTop={'30px'} >
               <Grid item xs={9} />
               <Grid item xs={3}>
                 <Button

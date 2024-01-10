@@ -5,8 +5,9 @@ import Button from '@mui/material/Button';
 // import { useNavigate } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 import './billPage.css';
+import { Dialog, DialogActions, DialogTitle } from '@mui/material';
 
-const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, setPrint, setFormData, setAdditionalDetailsList}) => {
+const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, setPrint, handleReset}) => {
 
   // // Access location to get state
   // const location = useLocation();
@@ -20,6 +21,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
   const [invoiceNumber,setInvoiceNumber] = useState('');
   const [overallTotalAmount,setOverallTotalAmount ] = useState(0);
   let remainingAmount = 0;
+  const [open,setOpen] = useState(false);
 
   const handlePaidAmountChange = (event) => {
     setPaidAmount(event.target.value);
@@ -53,6 +55,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
   
 
   const handlePrint = () => {
+    setOpen(false);
     // generatePDF(); // Generate PDF before printing
     // console.log("overallTotalAmount",overallTotalAmount,paidAmount);
     remainingAmount = overallTotalAmount-paidAmount;
@@ -82,13 +85,8 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
         console.log('Data saved to the backend');
         updateRemainingAmount();
         window.print(); // Print the document
-        setFormData({
-          customer_name: "",
-          shop_address: "",
-          vehicle_number: "",
-          date: "",
-        });
-        setAdditionalDetailsList([]);
+        handleReset();
+        setPrint(false);
         // Optionally, perform further actions after successful save
       } else {
         console.error('Failed to save data to the backend');
@@ -144,8 +142,25 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
     setPrint(false);
   };
 
+  const handleClose = () =>{
+     setOpen(false);
+  }
+
+  const handleOpen =()=>{
+    setOpen(true);
+  }
+
   return (
     <div className='BillStyle'>
+      <Dialog onClose={handleClose} open={open}>
+      <DialogTitle>Do you want to print?</DialogTitle>
+      <DialogActions>
+        <Button onClick={handlePrint}>Yes</Button>
+        <Button onClick={handleClose}>No</Button>
+      </DialogActions>
+
+    </Dialog>
+      
     <Button className='BackButton' onClick={redirectToAddCustomers}>
       Back
     </Button>
@@ -162,7 +177,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
   
       <h2>Sai Rohit Coolers</h2>
       <pre>Address: H.NO : 15, 13-261, Bypass Rd, near NTR STATUE,
-           Bank Colony, Khammam, Telangana 507002</pre>
+          Bank Colony, Khammam, Telangana 507002</pre>
       <p><strong>Ph No:</strong>+1 (234) 567-890</p>
     </div>
   
@@ -235,84 +250,12 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
         />
     </div>
     <h2 className='thankYouMessage'>Thank you, visit again!</h2>
-  <Button className='printButton' onClick={handlePrint}>
+    <Button className='printButton' onClick={handleOpen}>
       Print
     </Button>
   </div>
-  
       
-    );
-  //   <div className='BillStyle'>
-  //   <Button className='BackButton' onClick={redirectToAddCustomers}>
-  //       Back
-  //     </Button>
-  //     <div className="shopDetails">
-  //         <h2>Rohit Coolers</h2>
-  //         <p>Address: H.NO : 15, 13-261, Bypass Rd, near NTR STATUE, Bank Colony, Khammam, Telangana 507002</p>
-  //     </div>
-  //     <h2 >Billing Details</h2>
-  //     <div className="header">
-  //   <div className="left-info">
-  //     <p><strong>Invoice No:</strong> {invoiceNumber}</p>
-  //     <p><strong>GSTNo:</strong> Uncle GST no</p>
-  //   </div>
-  //   <div className="right-info">
-  //     <p><strong>Customer Name:</strong> {formData.customer_name}</p>
-  //     <p><strong>Shop Address:</strong> {formData.shop_address}</p>
-  //     <p><strong>Vehicle Number:</strong> {formData.vehicle_number}</p>
-  //     <p><strong>Date:</strong> {formData.date}</p>
-  //   </div>
-  // </div>
-
-  //     <h3 >Purchase Details</h3>
-  //     <table >
-  //       <thead>
-  //         <tr>
-  //           <th>Model Name</th>
-  //           <th>Amount</th>
-  //           <th>Quantity</th>
-  //           <th>Total</th>
-  //         </tr>
-  //       </thead>
-  //       <tbody>
-  //         {additionalDetailsList.map((detail, index) => (
-  //           <tr key={index}>
-  //             <td>{detail.model_name}</td>
-  //             <td>{detail.amount}</td>
-  //             <td>{detail.quantity}</td>
-  //             <td>{detail.amount *detail.quantity}</td>
-  //           </tr>
-  //         ))}
-  //       </tbody>
-  //     </table>
-
-  //     <p className="totalAmount">Total Amount:<span className="totalValue">{calculateTotalAmount()}</span></p>
-
-  //     {/* New input fields for Paid and Due amounts */}
-  //     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '100px' }}>
-  //       <label> Amount Paid:</label>
-  //       <input
-  //         id="paidAmount"
-  //         type="text"
-  //         value={paidAmount}
-  //         onChange={handlePaidAmountChange}
-  //         required
-  //       />
-  //       <label>Remaining Due:</label>
-  //       <input
-  //         id="remainingDue"
-  //         type="text"
-  //         value={calculateTotalAmount()-paidAmount}
-  //         readOnly
-  //         required
-  //       />
-  //     </div>
-
-  //     <Button className='printButton' onClick={handlePrint}>
-  //       Print
-  //     </Button>
-  //   </div>
-  // );
+    )
 };
 
 
