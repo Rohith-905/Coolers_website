@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Grid } from '@mui/material';
+import AppBarPage from './appBarPage';
 
 const Registration = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
@@ -30,6 +31,7 @@ const Registration = () => {
   };
 
   return (
+    <AppBarPage loggedIn={false}>
     <Grid className="login-container">
       <h2 className="login-title">Register</h2>
       <form className="login-form" onSubmit={handleRegistration}>
@@ -67,6 +69,7 @@ const Registration = () => {
       </form>
       {error && <p>{error}</p>}
     </Grid>
+    </AppBarPage>
   );
 };
 

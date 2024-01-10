@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AppBarPage from "./appBarPage";
 import "./addCustomers.css"; // Import your CSS file
 import { Autocomplete, Button, Dialog, DialogActions, DialogTitle, Fab, Grid, Table, TableBody, TableCell, TableHead, TableRow, TextField, tableCellClasses } from "@mui/material";
@@ -332,7 +332,7 @@ const AddCustomers = () => {
     });
   };
 
-  const handleReset = () =>{
+  const handleReset = useCallback(() =>{
     setFormData({
       customer_name: "",
       shop_address: "",
@@ -340,7 +340,7 @@ const AddCustomers = () => {
       date: "",
     });
     setAdditionalDetailsList([]);
-  }
+  },[]);
 
   return (
 

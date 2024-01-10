@@ -4,6 +4,7 @@ import axios from 'axios';
 import {  Navigate } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import '../styles.css';
+import AppBarPage from './appBarPage';
 
 const Login = ({ setLoggedIn, isLoggedIn  }) => {
   // const[data,setData] = useState('');
@@ -39,7 +40,7 @@ const Login = ({ setLoggedIn, isLoggedIn  }) => {
       setError(res.data.message);
         setLoggedIn(true);
         setLogIn(true);
-
+        
         // Navigate to the homePage route
         // navigateToHomePage();
     } catch (err) {
@@ -52,43 +53,45 @@ const Login = ({ setLoggedIn, isLoggedIn  }) => {
   }
 
   return (
-    <Grid className="login-container">
-      <h2 className="login-title">Login</h2>
-      <form className="login-form" onSubmit={HandleLogin}>
-        <input
-          type="text"
-          name="username"
-          className="login-input"
-          placeholder="Username"
-          value={formData.username}
-          onChange={handleInputChange}
-        />
-        <Grid style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+    <AppBarPage loggedIn={false}>
+      <Grid className="login-container">
+        <h2 className="login-title">Login</h2>
+        <form className="login-form" onSubmit={HandleLogin}>
           <input
-            type={showPassword ? 'text' : 'password'}
-            name="password"
+            type="text"
+            name="username"
             className="login-input"
-            placeholder="Password"
-            value={formData.password}
+            placeholder="Username"
+            value={formData.username}
             onChange={handleInputChange}
-            style={{ flex: 1 }}
           />
-          <p
-            className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}
-            style={{
-              marginLeft: '-26px',
-              cursor: 'pointer',
-            }}
-            onClick={togglePasswordVisibility}
-          ></p>
-        </Grid>
+          <Grid style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              className="login-input"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleInputChange}
+              style={{ flex: 1 }}
+            />
+            <p
+              className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}
+              style={{
+                marginLeft: '-26px',
+                cursor: 'pointer',
+              }}
+              onClick={togglePasswordVisibility}
+            ></p>
+          </Grid>
 
-        <button type="submit" className="login-button">
-          Login
-        </button>
-      </form>
-      {error && <p>{error}</p>}
-    </Grid>
+          <button type="submit" className="login-button">
+            Login
+          </button>
+        </form>
+        {error && <p>{error}</p>}
+      </Grid>
+    </AppBarPage>
   );
 };
 

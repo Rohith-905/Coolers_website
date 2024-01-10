@@ -42,7 +42,7 @@ const InvoiceDetailsByNumber = ( {details,invoiceNumber} ) => {
     // },[]);
 
     return (
-        <AppBarPage>
+        <AppBarPage loggedIn={true}>
             <div>
                 {/* {errorMessage && <p>{errorMessage}</p>} */}
                 <div className='BillStyle'>

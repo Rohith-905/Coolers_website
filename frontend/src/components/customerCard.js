@@ -97,7 +97,7 @@ export default function CustomerCard() {
   };
 
   return (
-    <AppBarPage>
+    <AppBarPage loggedIn={true}>
       {selectedCustomer ? (
         <HandleCustomerCard customerDetails={selectedCustomer} purchased={purchased} onBack={handleBackToMainView} />
       ) : (
