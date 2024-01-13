@@ -208,6 +208,18 @@ const Home = () => {
                       <label>Cooler Name:</label>
                       <Autocomplete
                         value={addCoolers.name}
+                        onChange={(e, value) => handleInputChange(e, "name", value)}
+                        onInputChange={(e, newInputValue) => handleInputChange(e, "name", newInputValue)}
+                        options={coolers.map((cooler) => cooler.model_name)}
+                        getOptionLabel={(option) => option}  // Use getOptionLabel to specify how the label is displayed
+                        freeSolo
+                        renderInput={(params) => (
+                          <TextField {...params} style={{ width: '300px', marginBottom: '10px' }} />
+                        )}
+                      />
+
+                      {/* <Autocomplete
+                        value={addCoolers.name}
                         onChange={(e, value) => handleInputChange(e, "name",value)}
                         onInputChange={(e, newInputValue) => handleInputChange(e, "name", newInputValue)}
                         options={coolers.map((cooler) => cooler.model_name)}
@@ -215,7 +227,7 @@ const Home = () => {
                         renderInput={(params) => (
                           <TextField {...params} style={{ width: '300px', marginBottom: '10px' }} />
                         )}
-                      />
+                      /> */}
 
                       <label>Quantity:</label>
                       <input
