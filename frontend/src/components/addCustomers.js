@@ -85,33 +85,41 @@ const AddCustomers = () => {
   
   const handleInputChange = async (e, name, value) => {
     // console.log("Called");
-
+  
     // Check if value is not undefined or null before applying trim()
-    const trimmedValue = value ? value.trim() : '';
-
-    if (name === "model_name" || name === "amount" || name === "quantity" || name === "total_amount")
-    setAdditionalDetails((prevData) =>{
-      const newData ={
-        ...prevData,
-        [name]:trimmedValue,
-      }
-      // Update total amount based on the latest quantity and amount
-      if (name === "quantity" || name === "amount") {
-        newData.total_amount = newData.quantity * newData.amount;
-      }
-      return newData;
-    })
-    else{
+    let trimmedValue;
+  
+    if (name !== "shop_address") {
+      trimmedValue = value ? value.trim() : '';
+    } else {
+      trimmedValue = value; // Do not trim if name is "shop_address"
+    }
+  
+    if (name === "model_name" || name === "amount" || name === "quantity" || name === "total_amount") {
+      setAdditionalDetails((prevData) => {
+        const newData = {
+          ...prevData,
+          [name]: trimmedValue,
+        };
+  
+        // Update total amount based on the latest quantity and amount
+        if (name === "quantity" || name === "amount") {
+          newData.total_amount = newData.quantity * newData.amount;
+        }
+        return newData;
+      });
+    } else {
       setFormData((prevData) => {
         const newData = {
           ...prevData,
           [name]: trimmedValue,
         };
         return newData;
-    });
-    };
+      });
+    }
+  
     if (name === 'customer_name') {
-      const selectedCustomer = purchased ? vendorDetails.find((vendor) => vendor.customer_name === value): customerDetails.find((customer) => customer.customer_name === value);
+      const selectedCustomer = purchased ? vendorDetails.find((vendor) => vendor.customer_name === value) : customerDetails.find((customer) => customer.customer_name === value);
   
       if (selectedCustomer) {
         // If customer is found, set the address
@@ -127,9 +135,7 @@ const AddCustomers = () => {
         }));
       }
     }
-  
   };
-  
   const fetchModelDetails = async () => {
     try {
       const response = await fetch(`http://localhost:5000/api/coolers_available`);
@@ -295,37 +301,6 @@ const AddCustomers = () => {
     
   };
 
-  // const handleSubmit = async () => {
-
-  //   if (formDataList.length!==0) {
-  //     try {
-  //       console.log(formDataList);
-  //       const response = await fetch("http://localhost:5000/api/add-customer", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(formDataList),
-  //       });
-
-  //       if (!response.ok) {
-  //         const errorData = await response.json();
-  //         throw new Error(errorData.message || "Server error");
-  //       }
-  //       else{
-  //         window.alert("Successfully saved");
-  //         setDataSaved(true);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error:", error);
-  //       window.alert("Quantity is more than available");
-  //     }
-  //   }
-  //   else{
-  //     window.alert("please click on add Details button");
-  //   }
-  // };
-
   const handlePrintReceipt = () =>{
     if(additionalDetailsList.length!==0 ){
       setPrint(true);
@@ -427,6 +402,7 @@ const AddCustomers = () => {
                   name="amount"
                   value={additionalDetails.amount}
                   onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
+                  min="1"
                   required
                 />
               </td>
@@ -437,6 +413,7 @@ const AddCustomers = () => {
                   name="quantity"
                   value={additionalDetails.quantity}
                   onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
+                  min="1"
                   required
                 />
               </td>
@@ -446,6 +423,7 @@ const AddCustomers = () => {
                   type="number"
                   name="total_amount"
                   value={additionalDetails.total_amount}
+                  min="1"
                   readOnly
                 />
               </td>
@@ -484,6 +462,7 @@ const AddCustomers = () => {
                       type="number"
                       value={editedAmount}
                       onChange={(e) => setEditedAmount(e.target.value)}
+                      min="1"
                       style={{ width: '100px' }}
                     />
                   ) : (
@@ -497,6 +476,7 @@ const AddCustomers = () => {
                       type="number"
                       value={editedQuantity}
                       onChange={(e) => setEditedQuantity(e.target.value)}
+                      min="1"
                       style={{ width: '100px' }}
                     />
                   </>
