@@ -13,7 +13,7 @@ app.use(cors());
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'Amruthama@2',
+  password: 'root',
   database: 'Coolers',
 });
 
@@ -356,9 +356,9 @@ app.get('/api/get_amountDetails', async (req, res) => {
   const purchased = req.query.purchased;
   
   try {
-    console.log(purchased);
+    // console.log(purchased);
     if (purchased === 'true' || purchased === '1') {
-      console.log("Hello");
+      // console.log("Hello");
       const amount = await queryDatabase('SELECT amount FROM  vendor_due WHERE name = ?', customerName);
       if (amount.error) {
         console.error('Error fetching amount details:', amount.error);
@@ -367,7 +367,7 @@ app.get('/api/get_amountDetails', async (req, res) => {
         res.status(200).json(amount[0]);
       }
     } else {
-      console.log("Hi");
+      // console.log("Hi");
       const amount = await queryDatabase('SELECT amount FROM  customer_due  WHERE name = ?', customerName);
       if (amount.error) {
         console.error('Error fetching amount details:', amount.error);

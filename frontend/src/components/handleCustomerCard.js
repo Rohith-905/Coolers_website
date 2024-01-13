@@ -68,7 +68,7 @@ const HandleCustomerCard = ({ customerDetails, purchased, onBack }) => {
       </div>
       )}
       {Object.entries(groupedByDate).map(([date, details]) => (
-        <div key={date} style={{width:'70%'}}>
+        <div key={date}>
           <h3>Date: {date}</h3>
           {details.map((customer) =>(
             <div> 
@@ -80,32 +80,9 @@ const HandleCustomerCard = ({ customerDetails, purchased, onBack }) => {
                 >
                   <Typography>{customer.invoice_number}</Typography>
                 </AccordionSummary>
-                <AccordionDetails>
+                <AccordionDetails style={{ display: 'flex', flexDirection: 'column' }}>
                   <Typography>
                     <InvoiceDetailsByNumber details = {customer} invoiceNumber= {customer.invoice_number}/>
-                    {/* <Paper elevation={6} style={{ width: '50%', display: 'flex' }}>
-                      <Table>
-                        <TableHead>
-                          <TableRow>
-                            <TableCell align="center">Model Name</TableCell>
-                            <TableCell align="center">Quantity</TableCell>
-                            <TableCell align="center">Amount</TableCell>
-                            <TableCell align="center">Total Amount</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                      
-                          {JSON.parse(customer.additional_details_json).map((model, index) => (
-                            <TableRow key={index}>
-                              <TableCell align="center">{model.model_name}</TableCell>
-                              <TableCell align="center">{model.quantity}</TableCell>
-                              <TableCell align="center">{model.amount}</TableCell>
-                              <TableCell align="center">{model.total_amount}</TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </Paper> */}
                   </Typography>
                 </AccordionDetails>
               </Accordion>

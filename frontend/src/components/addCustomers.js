@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import AppBarPage from "./appBarPage";
 import "./addCustomers.css"; // Import your CSS file
-import { Autocomplete, Button, Dialog, DialogActions, DialogTitle, Fab, Grid, Table, TableBody, TableCell, TableHead, TableRow, TextField, tableCellClasses } from "@mui/material";
+import { Alert, Autocomplete, Button, Fab, Grid, Snackbar, Table, TableBody, TableCell, TableHead, TableRow, TextField, tableCellClasses } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 // import { useNavigate } from "react-router-dom";
 import EditIcon from '@mui/icons-material/Edit';
@@ -10,6 +10,8 @@ import DoneIcon from '@mui/icons-material/Done';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import BillingPage from "./billingPage";
+import MuiAlert from '@mui/material/Alert';
+import { red } from "@mui/material/colors";
 
 const AddCustomers = () => {
 
@@ -42,6 +44,26 @@ const AddCustomers = () => {
   const [purchased, setPurchased] = useState(false);
   const [print,setPrint] = useState(false);
   const [ fetchSuggestionsAfterPrint ,setFetchSuggestionsAfterPrint ] = useState(false);
+  const [pr, setPr] = useState(false);
+  const [prr, setPrr] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
+  const showMessage = (message) => {
+    setMessage(message);
+    setSnackbarOpen(true);
+  };
+
+  const handleQuantityAlert = (editedItem, availableQuantity) => {
+    showMessage(`Available quantity of ${editedItem} is ${availableQuantity}`);
+  };
   
   // const navigate = useNavigate();
 
@@ -191,7 +213,7 @@ const AddCustomers = () => {
     const availableQuantity = coolersWithQuantityList.find(cooler => cooler.model_name === editedItem.model_name)?.quantity;
     
     if (parseFloat(editedQuantity) > availableQuantity) {
-      window.alert(`Available quantity of ${editedItem.model_name} is ${availableQuantity}`);
+      handleQuantityAlert(editedItem.model_name,availableQuantity);
       return;
     }
   
@@ -204,18 +226,21 @@ const AddCustomers = () => {
     });
     setEditIndex(null);
   };
-  
-  const validateFields = () =>{
-  // Validate form fields
-  const fieldsToValidate = ['customer_name', 'shop_address', 'vehicle_number', 'date', 'model_name', 'amount', 'quantity'];
-  const isFormValid = fieldsToValidate.every(field => (additionalDetails[field] || formData[field]));
+  const validateFields = () => {
+    // Validate form fields
+    const fieldsToValidate = ['customer_name', 'shop_address', 'vehicle_number', 'date', 'model_name', 'amount', 'quantity'];
+    const isFormValid = fieldsToValidate.every(field => (additionalDetails[field] || formData[field]));
 
-  if (!isFormValid) {
-    // Display an error message or perform any other action
-    alert('Please fill in all fields before submitting.');
-    return false;
-  }
-  return true;
+    if (!isFormValid) {
+      // Display an error message or perform any other action
+      setPrr(true)
+      setTimeout(() => {
+        setPrr(false);
+      }, 2000);
+      // alert('Please fill in all fields before submitting.');
+      return false;
+    }
+    return true;
   }
 
   const handleAddDetails = async (e) => {
@@ -306,7 +331,10 @@ const AddCustomers = () => {
       setPrint(true);
     }
     else{
-      window.alert("please fill all the details");
+      setPr(true)
+      setTimeout(() => {
+        setPr(false);
+      }, 2000);
     }
     // handleClose();
     // return navigate("/billingPage" ,{ state: { formData, additionalDetailsList,dueAmount, purchased } });
@@ -494,18 +522,6 @@ const AddCustomers = () => {
       <Grid item xs={3}/>
     </Grid>
       <div style={{display:"flex", justifyContent: "space-between", marginTop: '20px'}}>
-      {/* <Button
-        sx={{
-          backgroundColor: '#1a75ff',
-          color: '#fff',
-          '&:hover': {
-            backgroundColor: '#0066ff',
-            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-          },
-        }}
-        type="submit" onClick={handleSubmit}>
-        Submit
-      </Button> */}
 
       <Button
         sx={{
@@ -520,6 +536,38 @@ const AddCustomers = () => {
       >
         Print Receipt
       </Button>
+
+      {pr && (
+        <Alert
+          variant="filled"
+          severity="warning"
+          sx={{ position: 'fixed', top: 0, left: '50%', transform: 'translateX(-50%)', zIndex: 9999 }}
+        >
+          please fill all the details
+        </Alert>
+      )}
+
+      {prr && (
+        <Alert
+          variant="filled"
+          severity="warning"
+          sx={{ position: 'fixed', top: 0, left: '50%', transform: 'translateX(-50%)', zIndex: 9999 }}
+        >
+          Please fill in all fields before submitting
+        </Alert>
+      )}
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        style={{ top: 20,"color":red }} 
+      >
+        <MuiAlert elevation={6} variant="filled" onClose={handleSnackbarClose} severity="error">
+          {message}
+        </MuiAlert>
+      </Snackbar>
       </div>
       </>
     }

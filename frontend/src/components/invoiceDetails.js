@@ -1,4 +1,4 @@
-// import React, { useEffect, useState } from 'react';
+import React from 'react';
 import AppBarPage from './appBarPage';
 import './billPage.css';
 
@@ -63,9 +63,9 @@ const InvoiceDetailsByNumber = ( {details,invoiceNumber} ) => {
                             </div>
 
                             <h2>XYZ Name</h2>
-                            <pre className="pre-address">
+                            <p className="pre-address">
                                 Address: H.NO : 15, 13-261, Bypass Rd, near NTR STATUE, Bank Colony, Khammam, Telangana 507002
-                            </pre>
+                            </p>
                             <p><strong>Ph No:</strong>+1 (234) 567-890</p>
                         </div>
                         <div>
