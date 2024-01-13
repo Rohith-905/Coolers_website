@@ -7,9 +7,17 @@ import './reportPage.css';
 
 const ReportPage = () => {
   const [data, setData] = useState({ vendorData: [], customerData: [] });
+  const [custDue, setCustDue]  = useState(0);
+  const [vendorDue, setVendorDue]  = useState(0);
+  const custDueColor = custDue < 0 ? 'green' : 'red';
+  const vendorDueColor = vendorDue < 0 ? 'green' : 'red';
+  const custDueOrAdv = custDue < 0 ? 'Advance' : 'Due';
+  const vendorDueOrAdv = vendorDue < 0 ? 'Advance' : 'Due';
 
   useEffect(() => {
     fetchData();
+    setCustDue(getTotalAmount(data.customerData));
+    setVendorDue(getTotalAmount(data.vendorData));
   }, []);
 
   const getTotalAmount = (data) => {
@@ -36,8 +44,8 @@ const ReportPage = () => {
     <AppBarPage loggedIn={true}>
       <div className="table-container">
         <div>
-          <h2>Vendor Due</h2>
-          <p>Total Amount: {formatAmountWithCommas(getTotalAmount(data.vendorData))}</p>
+          <h2>Vendor</h2>
+          <p style={{color : vendorDueColor}}>Total Amount: {vendorDueOrAdv} {formatAmountWithCommas(getTotalAmount(data.vendorData))}</p>
           <table border="1">
             <thead>
               <tr>
@@ -59,8 +67,8 @@ const ReportPage = () => {
         </div>
 
         <div>
-          <h2>Customer Due</h2>
-          <p>Total Amount: {formatAmountWithCommas(getTotalAmount(data.customerData))}</p>
+          <h2>Customer</h2>
+          <p style={{color:custDueColor}}>Total Amount: {custDueOrAdv} {formatAmountWithCommas(getTotalAmount(data.customerData))}</p>
           <table border="1">
             <thead>
               <tr>

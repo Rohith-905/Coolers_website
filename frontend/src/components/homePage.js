@@ -165,7 +165,7 @@ const Home = () => {
                   </TableHead>
                   <TableBody>
                     {filteredCoolers.map((cooler) => (
-                      <StyledTableRow key={cooler.id}>
+                      <StyledTableRow key={cooler.model_name}>
                         <StyledTableCell align="center">{cooler.model_name}</StyledTableCell>
                         <StyledTableCell align="center">{cooler.quantity}</StyledTableCell>
                       </StyledTableRow>
