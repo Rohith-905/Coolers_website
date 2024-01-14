@@ -56,7 +56,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
 
   const handlePrint = () => {
     setOpen(false);
-    // generatePDF(); // Generate PDF before printing
+    generatePDF(); // Generate PDF before printing
     // console.log("overallTotalAmount",overallTotalAmount,paidAmount);
     remainingAmount = overallTotalAmount-paidAmount;
     savePDFToBackend();
@@ -182,8 +182,8 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
       </div>
   
       <h2>Sai Rohit Coolers</h2>
-      <pre>Address: H.NO : 15, 13-261, Bypass Rd, near NTR STATUE,
-          Bank Colony, Khammam, Telangana 507002</pre>
+      <p>Address: H.NO : 15, 13-261, Bypass Rd, near NTR STATUE,
+          Bank Colony, Khammam, Telangana 507002</p>
       <p><strong>Ph No:</strong>+1 (234) 567-890</p>
     </div>
   
@@ -237,13 +237,14 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
         </tbody>
     </table>
   
-    <div style={{display: 'flex', justifyContent: 'flex-end', gap: '100px'}}>
+    <div style={{display: 'flex', gap: '50px'}}>
         <label>Amount Paid:</label>
         <input
           id="paidAmount"
           type="text"
           value={formatAmountWithCommas(paidAmount)}
           onChange={handlePaidAmountChange}
+          style={{width:'100px', height:'40px'}}
           required
         />
         <label>Remaining Due:</label>
@@ -252,6 +253,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
           type="text"
           value={formatAmountWithCommas(overallTotalAmount-paidAmount)}
           readOnly
+          style={{width:'100px', height:'40px'}}
           required
         />
     </div>
