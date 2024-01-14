@@ -173,7 +173,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
     <div className="shopDetails">
       <div className="header">
         <div className="left-info">
-          <p><strong>GSTNo:</strong> Uncle GST no</p>
+          <p><strong>GSTNo:</strong> 36AIMPT0183B2Z9</p>
         </div>
         <div className="right-info">
           <p><strong>Date:</strong> {formData.date}</p>
