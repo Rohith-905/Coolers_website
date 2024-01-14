@@ -367,7 +367,7 @@ const AddCustomers = () => {
                 <input
                   type="text"
                   name="vehicle_number"
-                  value={formData.vehicle_number}
+                  value={formData.vehicle_number.toUpperCase()}
                   onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
                   required
                 />

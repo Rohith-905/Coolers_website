@@ -56,7 +56,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
 
   const handlePrint = () => {
     setOpen(false);
-    // generatePDF(); // Generate PDF before printing
+    generatePDF(); // Generate PDF before printing
     // console.log("overallTotalAmount",overallTotalAmount,paidAmount);
     remainingAmount = overallTotalAmount-paidAmount;
     savePDFToBackend();
@@ -249,6 +249,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
           type="text"
           value={formatAmountWithCommas(paidAmount)}
           onChange={handlePaidAmountChange}
+          style={{width:'100px', height:'40px'}}
           required
         />
         <label style={{fontSize:'1.2em'}}>Remaining Due:</label>
@@ -257,6 +258,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
           type="text"
           value={formatAmountWithCommas(overallTotalAmount-paidAmount)}
           readOnly
+          style={{width:'100px', height:'40px'}}
           required
         />
     </div>
