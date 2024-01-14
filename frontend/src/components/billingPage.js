@@ -174,17 +174,16 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
     <div className="shopDetails">
       <div className="header">
         <div className="left-info">
-          <p><strong>GSTNo:</strong> Uncle GST no</p>
+          <p><strong>GSTNo:</strong> 36AIMPT0183B2Z9</p>
         </div>
         <div className="right-info">
           <p><strong>Date:</strong> {formData.date}</p>
         </div>
       </div>
   
-      <h2>Sai Rohit Coolers</h2>
-      <p>Address: H.NO : 15, 13-261, Bypass Rd, near NTR STATUE,
-          Bank Colony, Khammam, Telangana 507002</p>
-      <p><strong>Ph No:</strong>+1 (234) 567-890</p>
+      <h2>SAI ROHIT ELECTRONICS & HOME NEEDS</h2>
+      <p>Address: D.NO: 2-5-52, PSR Road Khammam-507003,Telangana</p>
+      <p><strong>Ph No:</strong>9849377387,8465077387</p>
     </div>
   
     <h2>Billing Details</h2>

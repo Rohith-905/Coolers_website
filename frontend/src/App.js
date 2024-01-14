@@ -24,7 +24,7 @@ function App() {
           />
           <Route
             path="/register"
-            element={<Register />}
+            element={<Login setLoggedIn={setLoggedIn} isLoggedIn={isLoggedIn}/>}
           />
           <Route
             path="/home"
