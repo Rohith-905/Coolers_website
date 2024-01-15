@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 // import { useNavigate } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 import './billPage.css';
-import { Dialog, DialogActions, DialogTitle } from '@mui/material';
+import { Dialog, DialogActions, DialogTitle, Grid } from '@mui/material';
 
 const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, setPrint, handleReset, fetchCustomerNames}) => {
 
@@ -159,13 +159,12 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
   return (
     <div className='BillStyle'>
       <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Do you want to print?</DialogTitle>
-      <DialogActions>
-        <Button onClick={handlePrint}>Yes</Button>
-        <Button onClick={handleClose}>No</Button>
-      </DialogActions>
-
-    </Dialog>
+        <DialogTitle>Do you want to print?</DialogTitle>
+        <DialogActions>
+          <Button onClick={handlePrint}>Yes</Button>
+          <Button onClick={handleClose}>No</Button>
+        </DialogActions>
+      </Dialog>
       
     <Button className='BackButton' onClick={redirectToAddCustomers}>
       Back
@@ -180,23 +179,29 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
           <p><strong>Date:</strong> {formData.date}</p>
         </div>
       </div>
-  
-      <h2>Sai Rohit Coolers</h2>
-      <pre>Address: H.NO : 15, 13-261, Bypass Rd, near NTR STATUE,
-          Bank Colony, Khammam, Telangana 507002</pre>
-      <p><strong>Ph No:</strong>+1 (234) 567-890</p>
     </div>
-  
+    <Grid display={'flex'} justifyContent={'space-between'}>
+      <Grid item xs={12} md={6}>
+        <Grid container spacing={2} style={{ paddingLeft: '10px' }}>
+          <p>
+          <strong>Sai Rohit Coolers</strong><br/>
+          <strong>Address:</strong>H.NO : 15, 13-261, Bypass Rd,<br/>
+            near NTR STATUE,<br/>
+            Bank Colony, Khammam, Telangana 507002<br/>
+            <strong>Ph No:</strong>+1 (234) 567-890
+          </p>
+        </Grid>
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <Grid container spacing={2} style={{ paddingLeft: '10px' }}>
+          <p><strong>Name:</strong> {formData.customer_name}<br/>
+          <strong>Invoice No:</strong> {invoiceNumber}<br/>
+          <strong>Shop Address:</strong> {formData.shop_address}<br/>
+          <strong>Vehicle Number:</strong> {formData.vehicle_number}</p>
+        </Grid>
+      </Grid>
+    </Grid>
     <h2>Billing Details</h2>
-  
-    <div className="header">
-      <div className="left-info">
-          <p><strong>Name:</strong> {formData.customer_name}</p>
-          <p><strong>Invoice No:</strong> {invoiceNumber}</p>
-          <p><strong>Shop Address:</strong> {formData.shop_address}</p>
-          <p><strong>Vehicle Number:</strong> {formData.vehicle_number}</p>
-      </div>
-    </div>
   
     <h3>Purchase Details</h3>
     <table>
@@ -238,7 +243,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
     </table>
   
     <div style={{display: 'flex', justifyContent: 'flex-end', gap: '100px'}}>
-        <label>Amount Paid:</label>
+        <label style={{fontSize:'1.2em'}}>Amount Paid:</label>
         <input
           id="paidAmount"
           type="text"
@@ -246,7 +251,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
           onChange={handlePaidAmountChange}
           required
         />
-        <label>Remaining Due:</label>
+        <label style={{fontSize:'1.2em'}}>Remaining Due:</label>
         <input
           id="remainingDue"
           type="text"
