@@ -34,10 +34,10 @@
   
   .BillStyle th,
   .BillStyle td {
-    border: 1px solid #ccc;
+    border: 2px solid black;
     padding: 8px;
     text-align: center;
-    font-size: 1.1em;
+    font-size: 1.2em;
   }
   
   .BillStyle th {

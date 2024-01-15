@@ -48,7 +48,7 @@ const Home = () => {
     setAddCoolers((prevData) => {
       const newData = {
         ...prevData,
-        [name]: value,
+        [name]: value ? value.trim() : '',
       };
       return newData;
     });
