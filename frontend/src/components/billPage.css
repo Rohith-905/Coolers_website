@@ -1,6 +1,6 @@
 .BillStyle {
     font-family: "Courier New", Courier, monospace;
-    font-size: 18px;
+    font-size: 13px;
     max-width: 650px; /* Adjust this value as needed */
     margin: 0 auto; /* Center the receipt horizontally */
     padding: 20px;
