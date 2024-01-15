@@ -145,6 +145,7 @@ const AddCustomers = () => {
       }
       // console.log(response.json());
       const availableCoolersList = await response.json();
+      // console.log(availableCoolersList);
       setCoolersWithQuantityList(availableCoolersList);
       const modelNames = availableCoolersList.map((availableCooler) => availableCooler.model_name);
       console.log(modelNames);
