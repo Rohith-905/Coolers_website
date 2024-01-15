@@ -1,9 +1,6 @@
 .BillStyle {
     font-family: "Courier New", Courier, monospace;
-
-    font-size: 13px;
-    max-width: 650px; /* Adjust this value as needed */
-
+    font-size: 12px;
     margin: 0 auto; /* Center the receipt horizontally */
     /* padding: 20px; */
     border: 2px solid black; /* Black border with 2px width */
@@ -36,10 +33,10 @@
   
   .BillStyle th,
   .BillStyle td {
-    border: 1px solid #ccc;
+    border: 2px solid black;
     padding: 8px;
     text-align: center;
-    font-size: 1.1em;
+    font-size: 1.2em;
   }
   
   .BillStyle th {

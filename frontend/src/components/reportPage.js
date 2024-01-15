@@ -9,7 +9,7 @@ const ReportPage = () => {
   const [data, setData] = useState({ vendorData: [], customerData: [] });
   const [custDue, setCustDue]  = useState(0);
   const [vendorDue, setVendorDue]  = useState(0);
-  const custDueColor = custDue > 0 ? 'green' : 'red';
+  const custDueColor = custDue < 0 ? 'green' : 'red';
   const vendorDueColor = vendorDue < 0 ? 'green' : 'red';
   const custDueOrAdv = custDue < 0 ? 'Advance' : 'Due';
   const vendorDueOrAdv = vendorDue < 0 ? 'Advance' : 'Due';
