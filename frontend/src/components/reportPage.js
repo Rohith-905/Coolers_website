@@ -16,8 +16,6 @@ const ReportPage = () => {
 
   useEffect(() => {
     fetchData();
-    setCustDue(getTotalAmount(data.customerData));
-    setVendorDue(getTotalAmount(data.vendorData));
   }, []);
 
   const getTotalAmount = (data) => {
@@ -27,7 +25,6 @@ const ReportPage = () => {
   };
 
   const formatAmountWithCommas = (amount) => {
-    // Use toLocaleString to format amount with commas
     return amount.toLocaleString('en-IN');
   };
 
@@ -35,6 +32,9 @@ const ReportPage = () => {
     try {
       const response = await axios.get('http://localhost:5000/api/get_due_data');
       setData(response.data);
+      console.log(getTotalAmount(response.data.customerData));
+      setCustDue(getTotalAmount(response.data.customerData)); // Update custDue
+      setVendorDue(getTotalAmount(response.data.vendorData)); // Update vendorDue
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -45,7 +45,7 @@ const ReportPage = () => {
       <div className="table-container">
         <div>
           <h2>Vendor</h2>
-          <p style={{color : vendorDueColor}}>Total Amount: {vendorDueOrAdv} {formatAmountWithCommas(getTotalAmount(data.vendorData))}</p>
+          <p style={{color : vendorDueColor}}>Total Amount: {vendorDueOrAdv} {formatAmountWithCommas(vendorDue)}</p>
           <table border="1">
             <thead>
               <tr>
@@ -68,7 +68,7 @@ const ReportPage = () => {
 
         <div>
           <h2>Customer</h2>
-          <p style={{color:custDueColor}}>Total Amount: {custDueOrAdv} {formatAmountWithCommas(getTotalAmount(data.customerData))}</p>
+          <p style={{color:custDueColor}}>Total Amount: {custDueOrAdv} {formatAmountWithCommas(custDue)}</p>
           <table border="1">
             <thead>
               <tr>

@@ -437,70 +437,70 @@ const AddCustomers = () => {
         </table>
       </form>
 
-    <Grid container spacing={2}>
-      <Grid item xs={9}>
-      <h3>Additional Details</h3>
-      <form>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell align="center">Model Name:</StyledTableCell>
-              <StyledTableCell align="center">Amount:</StyledTableCell>
-              <StyledTableCell align="center">Quantity:</StyledTableCell>
-              <StyledTableCell align="center">Total Amount:</StyledTableCell>
-              <StyledTableCell align="center"></StyledTableCell>
-              <StyledTableCell align="center"></StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {additionalDetailsList.map((detail, index) => (
-              <TableRow key={index}>
-                <td align="center">{detail.model_name}</td>
-                <td align="center">
+      <Grid container spacing={2}>
+        <Grid item xs={9}>
+        <h3>Additional Details</h3>
+        <form>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <StyledTableCell align="center">Model Name:</StyledTableCell>
+                <StyledTableCell align="center">Amount:</StyledTableCell>
+                <StyledTableCell align="center">Quantity:</StyledTableCell>
+                <StyledTableCell align="center">Total Amount:</StyledTableCell>
+                <StyledTableCell align="center"></StyledTableCell>
+                <StyledTableCell align="center"></StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {additionalDetailsList.map((detail, index) => (
+                <TableRow key={index}>
+                  <td align="center">{detail.model_name}</td>
+                  <td align="center">
+                    {editIndex === index ? (
+                      <input
+                        type="number"
+                        value={editedAmount}
+                        onChange={(e) => setEditedAmount(e.target.value)}
+                        min="1"
+                        style={{ width: '100px' }}
+                      />
+                    ) : (
+                      <span>{detail.amount}</span>
+                    )}
+                  </td>
+                  <td align="center">
                   {editIndex === index ? (
-                    <input
-                      type="number"
-                      value={editedAmount}
-                      onChange={(e) => setEditedAmount(e.target.value)}
-                      min="1"
-                      style={{ width: '100px' }}
-                    />
+                    <>
+                      <input
+                        type="number"
+                        value={editedQuantity}
+                        onChange={(e) => setEditedQuantity(e.target.value)}
+                        min="1"
+                        style={{ width: '100px' }}
+                      />
+                    </>
                   ) : (
-                    <span>{detail.amount}</span>
+                    <span>{detail.quantity}</span>
                   )}
                 </td>
+                <td align="center">{detail.total_amount}</td>
                 <td align="center">
-                {editIndex === index ? (
-                  <>
-                    <input
-                      type="number"
-                      value={editedQuantity}
-                      onChange={(e) => setEditedQuantity(e.target.value)}
-                      min="1"
-                      style={{ width: '100px' }}
-                    />
-                  </>
-                ) : (
-                  <span>{detail.quantity}</span>
-                )}
-              </td>
-              <td align="center">{detail.total_amount}</td>
-              <td align="center">
-                {editIndex !== index ? (
-                  <EditIcon onClick={() => handleEdit(index)} />
-                ):<DoneIcon onClick={handleSaveEdit}>Save</DoneIcon>}
-              </td>
-              <td style={{ paddingLeft: '50px' }}>
-                <DeleteIcon onClick={() => handleDelete(index)} />
-              </td>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </form>
+                  {editIndex !== index ? (
+                    <EditIcon onClick={() => handleEdit(index)} />
+                  ):<DoneIcon onClick={handleSaveEdit}>Save</DoneIcon>}
+                </td>
+                <td style={{ paddingLeft: '50px' }}>
+                  <DeleteIcon onClick={() => handleDelete(index)} />
+                </td>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </form>
+        </Grid>
+        <Grid item xs={3}/>
       </Grid>
-      <Grid item xs={3}/>
-    </Grid>
       <div style={{display:"flex", justifyContent: "space-between", marginTop: '20px'}}>
 
       <Button
@@ -549,9 +549,9 @@ const AddCustomers = () => {
         </MuiAlert>
       </Snackbar>
       </div>
-      </>
-    }
     </AppBarPage>
+    }
+    </>
   );
 };
 

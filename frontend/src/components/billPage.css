@@ -1,10 +1,12 @@
 .BillStyle {
     font-family: "Courier New", Courier, monospace;
     font-size: 12px;
-    max-width: 700px; /* Adjust this value as needed */
+    /* max-width: 700px; Adjust this value as needed */
     margin: 0 auto; /* Center the receipt horizontally */
-    padding: 20px;
+    /* padding: 20px; */
     border: 2px solid black; /* Black border with 2px width */
+    width: 21cm;
+    height: 29.7cm;
   }
   
   .BillStyle h2 {
@@ -34,17 +36,18 @@
     border: 1px solid #ccc;
     padding: 8px;
     text-align: center;
+    font-size: 1.1em;
   }
   
   .BillStyle th {
     background-color: #f5f5f5;
   }
   
-  .BillStyle p:last-child {
+  /* .BillStyle p:last-child {
     font-weight: bold;
     margin-top: 15px;
   }
-  
+   */
   .BillStyle BackButton {
     display: block;
     width: 10%;
@@ -55,15 +58,15 @@
     text-align: right;
   }
   
-  .totalValue {
+  /* .totalValue {
     font-weight: bold;
     color: red;
-  }
+  } */
   
   .BillStyle .printButton {
     display: block;
     margin: 0 auto;
-    width: fit-content; /* Adjust width based on content */
+    /* width: fit-content; Adjust width based on content */
     margin-top: 20px; /* Add spacing */
   }
   
@@ -75,7 +78,7 @@
     padding: 20px;
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 80%; /* Adjust width as needed */
+    /* width: 100%;  */
     margin: 0 auto;
   }
   
@@ -120,6 +123,11 @@
     .BackButton,
     .printButton {
       display: none !important;
+    }
+    .appBar {
+      display: none; /* Hide the appBar in print view */
+      margin: 0; /* Reset margin to remove any spacing */
+      padding: 0; /* Reset padding to remove any spacing */
     }
   }
   
