@@ -56,7 +56,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
 
   const handlePrint = () => {
     setOpen(false);
-    // generatePDF(); // Generate PDF before printing
+    generatePDF(); // Generate PDF before printing
     // console.log("overallTotalAmount",overallTotalAmount,paidAmount);
     remainingAmount = overallTotalAmount-paidAmount;
     savePDFToBackend();
@@ -173,12 +173,16 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
     <div className="shopDetails">
       <div className="header">
         <div className="left-info">
-          <p><strong>GSTNo:</strong> Uncle GST no</p>
+          <p><strong>GSTNo:</strong> 36AIMPT0183B2Z9</p>
         </div>
         <div className="right-info">
           <p><strong>Date:</strong> {formData.date}</p>
         </div>
       </div>
+  
+      <h2>SAI ROHIT ELECTRONICS & HOME NEEDS</h2>
+      <p>Address: D.NO: 2-5-52, PSR Road Khammam-507003,Telangana</p>
+      <p><strong>Ph No:</strong>9849377387,8465077387</p>
     </div>
     <Grid display={'flex'} justifyContent={'space-between'}>
       <Grid item xs={12} md={6}>
@@ -242,13 +246,16 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
         </tbody>
     </table>
   
+
     <div style={{display: 'flex', justifyContent: 'flex-end', gap: '100px'}}>
         <label style={{fontSize:'1.2em'}}>Amount Paid:</label>
+
         <input
           id="paidAmount"
           type="text"
           value={formatAmountWithCommas(paidAmount)}
           onChange={handlePaidAmountChange}
+          style={{width:'100px', height:'40px'}}
           required
         />
         <label style={{fontSize:'1.2em'}}>Remaining Due:</label>
@@ -257,6 +264,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
           type="text"
           value={formatAmountWithCommas(overallTotalAmount-paidAmount)}
           readOnly
+          style={{width:'100px', height:'40px'}}
           required
         />
     </div>

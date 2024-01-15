@@ -145,6 +145,7 @@ const AddCustomers = () => {
       }
       // console.log(response.json());
       const availableCoolersList = await response.json();
+      // console.log(availableCoolersList);
       setCoolersWithQuantityList(availableCoolersList);
       const modelNames = availableCoolersList.map((availableCooler) => availableCooler.model_name);
       console.log(modelNames);
@@ -253,7 +254,9 @@ const AddCustomers = () => {
 
     e.preventDefault();
     const model = additionalDetails.model_name;
+    // console.log(model);
     const quantityObject = coolersWithQuantityList.find((res) => res.model_name === model);
+    // console.log(quantityObject);
     const quantity = quantityObject ? quantityObject.quantity : null;
     // console.log(additionalDetails);
     // const quantity = coolersWithQuantityList.filter((res) => res.model_name === model).map((res) => res.quantity);
@@ -365,7 +368,7 @@ const AddCustomers = () => {
                 <input
                   type="text"
                   name="vehicle_number"
-                  value={formData.vehicle_number}
+                  value={formData.vehicle_number.toUpperCase()}
                   onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
                   required
                 />
