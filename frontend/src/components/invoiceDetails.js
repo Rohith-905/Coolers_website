@@ -1,11 +1,10 @@
 import React from 'react';
-import AppBarPage from './appBarPage';
 import './billPage.css';
 import { Grid } from '@mui/material';
 
-const InvoiceDetailsByNumber = ( {details,invoiceNumber} ) => {
-    console.log(invoiceNumber);
-    console.log(details);
+const InvoiceDetailsByNumber = ( {selectedCustomer, details,invoiceNumber} ) => {
+    console.log(selectedCustomer, details, invoiceNumber);
+
     // const [details, setDetails] = useState(null);
     // const [errorMessage, setErrorMessage] = useState('');
 
@@ -46,9 +45,13 @@ const InvoiceDetailsByNumber = ( {details,invoiceNumber} ) => {
     //     console.log(invoiceNumber);
     //     getDetailsByInvoice();
     // },[]);
+    if(selectedCustomer){
+        setTimeout(() => {
+            window.print();
+          }, 2000);
+    }
 
     return (
-        <AppBarPage loggedIn={true}>
             <div>
                 {/* {errorMessage && <p>{errorMessage}</p>} */}
                 <div className='BillStyle'>
@@ -152,8 +155,6 @@ const InvoiceDetailsByNumber = ( {details,invoiceNumber} ) => {
                     )}
                 </div>
             </div>
-
-        </AppBarPage>
     );
 
 }

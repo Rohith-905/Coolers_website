@@ -3,17 +3,19 @@ import React, { useEffect, useState } from 'react';
 import { Button, Accordion, AccordionSummary, Typography, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import InvoiceDetailsByNumber from './invoiceDetails';
+import AppBarPage from './appBarPage';
 const HandleCustomerCard = ({ customerDetails, purchased, onBack }) => {
 
   const [error,setError] = useState('');
   const [remainingAmount,setRemainingAmount] = useState();
   const remainingAmountColor = remainingAmount < 0 ? 'green' : 'red';
   const advance_or_due = remainingAmount < 0 ? 'Advance' : 'Due';
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   let customerName ='';
   // Group customer details by date
   const groupedByDate = {};
-  console.log(customerDetails);
+  // console.log(customerDetails);
   customerDetails.forEach((customer) => {
     // console.log(customer);
     const date = customer.date;
@@ -45,7 +47,7 @@ const HandleCustomerCard = ({ customerDetails, purchased, onBack }) => {
     const fetchData = async () => {
       try {
         await handleAmountDetails();
-        console.log(remainingAmount);
+        // console.log(remainingAmount);
       } catch (error) {
         console.error('Error fetching amount details:', error);
       }
@@ -59,8 +61,21 @@ const HandleCustomerCard = ({ customerDetails, purchased, onBack }) => {
     return amount.toLocaleString('en-IN');
   };
 
+  const handlePrint = (customer) => {
+    console.log(customer);
+    setSelectedCustomer(customer);
+    // setTimeout(() => {
+    //   window.print();
+    // }, 2000);
+    
+  };
+
   return (
     <div>
+      {selectedCustomer ? (
+        <InvoiceDetailsByNumber selectedCustomer={selectedCustomer} details={selectedCustomer} invoiceNumber={selectedCustomer.invoice_number} />)
+        :
+      <AppBarPage loggedIn={true}>
       <Button onClick={onBack}>Back</Button>
       {remainingAmount !== undefined && remainingAmount !== null && (
       <div style={{ textAlign: 'right', color: remainingAmountColor, fontWeight: 'bold' }}>
@@ -82,7 +97,8 @@ const HandleCustomerCard = ({ customerDetails, purchased, onBack }) => {
                 </AccordionSummary>
                 <AccordionDetails style={{ display: 'flex', flexDirection: 'column' }}>
                   <Typography>
-                    <InvoiceDetailsByNumber details = {customer} invoiceNumber= {customer.invoice_number}/>
+                    <InvoiceDetailsByNumber selectedCustomer={selectedCustomer} details = {customer} invoiceNumber= {customer.invoice_number}/>
+                    <Button onClick={() => handlePrint(customer)}>Print</Button>
                   </Typography>
                 </AccordionDetails>
               </Accordion>
@@ -91,7 +107,8 @@ const HandleCustomerCard = ({ customerDetails, purchased, onBack }) => {
           
         </div>
       ))}
-      
+      </AppBarPage>
+      }
     </div>
   );
 };
