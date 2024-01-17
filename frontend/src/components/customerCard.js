@@ -97,11 +97,11 @@ export default function CustomerCard() {
   };
 
   return (
-    <AppBarPage loggedIn={true}>
+    <>
       {selectedCustomer ? (
         <HandleCustomerCard customerDetails={selectedCustomer} purchased={purchased} onBack={handleBackToMainView} />
       ) : (
-        <>
+        <AppBarPage loggedIn={true}>
           <div style={{display:"flex", justifyContent: "center",alignItems:'center'}}>
             <Switch checked={purchased}
               onChange={handleToggleChange}
@@ -155,8 +155,8 @@ export default function CustomerCard() {
               );
             })}
           </Box>
-        </>
+        </AppBarPage>
       )}
-    </AppBarPage>
+    </>
   );
 }
