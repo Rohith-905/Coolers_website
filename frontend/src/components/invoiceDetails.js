@@ -1,13 +1,13 @@
-import React from 'react';
+import React,{useRef} from 'react';
 import './billPage.css';
-import { Grid } from '@mui/material';
+import { Button, Grid } from '@mui/material';
+import html2canvas from "html2canvas";
+import {jsPDF} from "jspdf";
 
-const InvoiceDetailsByNumber = ( {selectedCustomer, details,invoiceNumber} ) => {
-    console.log(selectedCustomer, details, invoiceNumber);
+const InvoiceDetailsByNumber = ( {selectedCustomer, details,invoiceNumber,setSelectedCustomer} ) => {
+    // console.log(selectedCustomer, details, invoiceNumber);
 
-    // const [details, setDetails] = useState(null);
-    // const [errorMessage, setErrorMessage] = useState('');
-
+    const billingDivRef = useRef(null);
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const year = date.getFullYear();
@@ -21,40 +21,57 @@ const InvoiceDetailsByNumber = ( {selectedCustomer, details,invoiceNumber} ) => 
         return amount.toLocaleString('en-IN');
       };
 
-    // const getDetailsByInvoice = async () => {
-    //     try {
-    //         console.log(invoiceNumber);
-    //         const response = await fetch(`http://localhost:5000/api/getDetailsByInvoiceNumber?invoiceNumber=${invoiceNumber}`);
-    //         if (response.ok) {
-    //             const data = await response.json();
-    //             setDetails(data);
-    //             setErrorMessage('');
-    //         } else {
-    //             const errorData = await response.json();
-    //             setDetails(null);
-    //             setErrorMessage(errorData.message || 'Failed to fetch details');
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching details:', error);
-    //         setDetails(null);
-    //         setErrorMessage('Failed to fetch details');
-    //     }
-    // };
+    // if(selectedCustomer){
+    //     setTimeout(() => {
+    //         window.print();
+    //         setSelectedCustomer(false);
+    //       }, 1000);  
+    // }
 
-    // useEffect(() =>{
-    //     console.log(invoiceNumber);
-    //     getDetailsByInvoice();
-    // },[]);
-    if(selectedCustomer){
-        setTimeout(() => {
-            window.print();
-          }, 2000);
-    }
+    const handlePdf = () => {
+        if (billingDivRef.current) {
+          html2canvas(billingDivRef.current).then((canvas) => {
+            const imgData = canvas.toDataURL("image/jpeg", 0.8); // Adjust the quality as needed
+            const pdf = new jsPDF("p", "mm", "a4");
+    
+            // Calculate dimensions to maintain aspect ratio
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const imgWidth = pdfWidth;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    
+            pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight);
+            pdf.save(`invoice_${invoiceNumber}.pdf`);
+          });
+        }
+      };
 
+      const handlePrint = () => {
+        window.print();
+      };
+
+      const handleBack = () =>{
+        setSelectedCustomer(false);
+      }
     return (
             <div>
+                {
+                    selectedCustomer?
+                    <Button className='printButton' sx={{
+                        backgroundColor: '#1a75ff',
+                        color: '#fff',
+                        '&:hover': {
+                          backgroundColor: '#0066ff',
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                        },
+                       
+                      }}onClick={handleBack}>
+                        Back
+                    </Button>:null
+                }
+                
                 {/* {errorMessage && <p>{errorMessage}</p>} */}
-                <div className='BillStyle'>
+                <div ref={billingDivRef} className='BillStyle'>
                     {details && (
                         <><div className="shopDetails">
                             <div className="header">
@@ -66,8 +83,8 @@ const InvoiceDetailsByNumber = ( {selectedCustomer, details,invoiceNumber} ) => 
                                 </div>
                             </div>
                         </div>
-                        <Grid display={'flex'}>
-                            <Grid item xs={12} md={6}>
+                        {/* <Grid display={'flex'} justifyContent={'space-between'}>
+                            <Grid item xs={12} md={6} >
                                 <Grid container spacing={2} style={{ paddingLeft: '10px' }}>
                                 <p>
                                 <strong>SAI ROHIT ELECTRONICS & HOME NEEDS</strong><br/>
@@ -85,7 +102,24 @@ const InvoiceDetailsByNumber = ( {selectedCustomer, details,invoiceNumber} ) => 
                                 <strong>Vehicle Number:</strong> {details.vehicle_number}</p>
                                 </Grid>
                             </Grid>
-                            </Grid>
+                        </Grid> */}
+                        <table>
+                            <tr>
+                                <td style={{width: '50%',textAlign: 'left'}}>
+                                    <strong>SAI ROHIT ELECTRONICS & HOME NEEDS</strong><br />
+                                    <strong>Address:</strong>D.NO: 2-5-52, PSR Road,<br />
+                                    Khammam-507003, Telangana,<br />
+                                    <strong>Ph No:</strong>9849377387,8465077387
+                                </td>
+                                <td style={{width: '50%',textAlign: 'left'}}>
+                                    <strong>Name:</strong> {details.customer_name}<br />
+                                    <strong>Invoice No:</strong> {invoiceNumber}<br />
+                                    <strong>Shop Address:</strong> {details.shop_address}<br />
+                                    <strong>Vehicle Number:</strong> {details.vehicle_number}
+                                </td>
+                            </tr>
+                            </table>
+
                         <div>
                                 {/* {details.map((detail, index) => ( */}
                                     <div>
@@ -154,6 +188,45 @@ const InvoiceDetailsByNumber = ( {selectedCustomer, details,invoiceNumber} ) => 
                             </div></>
                     )}
                 </div>
+
+                {selectedCustomer  && (
+                    <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        marginTop: "20px",
+                    }}
+                    >
+                    <div>
+                        <Button 
+                            sx={{
+                                backgroundColor: '#1a75ff',
+                                color: '#fff',
+                                '&:hover': {
+                                backgroundColor: '#0066ff',
+                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                                },
+                            
+                            }}onClick={handlePrint}  className="printButton">
+                            Print Invoice
+                        </Button>
+                    </div>
+                    <div style={{paddingLeft:'100px'}}>
+
+                        <Button sx={{
+                            backgroundColor: '#1a75ff',
+                            color: '#fff',
+                            '&:hover': {
+                            backgroundColor: '#0066ff',
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                            },
+                        
+                            }}onClick={handlePdf} className="printButton">
+                            Download Invoice
+                        </Button>
+                    </div>
+                </div>
+                )}
             </div>
     );
 

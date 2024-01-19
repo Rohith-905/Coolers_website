@@ -4,6 +4,7 @@ import { Button, Accordion, AccordionSummary, Typography, AccordionDetails } fro
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import InvoiceDetailsByNumber from './invoiceDetails';
 import AppBarPage from './appBarPage';
+
 const HandleCustomerCard = ({ customerDetails, purchased, onBack }) => {
 
   const [error,setError] = useState('');
@@ -64,19 +65,24 @@ const HandleCustomerCard = ({ customerDetails, purchased, onBack }) => {
   const handlePrint = (customer) => {
     console.log(customer);
     setSelectedCustomer(customer);
-    // setTimeout(() => {
-    //   window.print();
-    // }, 2000);
-    
   };
 
   return (
     <div>
       {selectedCustomer ? (
-        <InvoiceDetailsByNumber selectedCustomer={selectedCustomer} details={selectedCustomer} invoiceNumber={selectedCustomer.invoice_number} />)
+        <InvoiceDetailsByNumber selectedCustomer={selectedCustomer} details={selectedCustomer} invoiceNumber={selectedCustomer.invoice_number} setSelectedCustomer={setSelectedCustomer}/>)
         :
       <AppBarPage loggedIn={true}>
-      <Button onClick={onBack}>Back</Button>
+      <Button 
+      sx={{
+        backgroundColor: '#1a75ff',
+        color: '#fff',
+        '&:hover': {
+          backgroundColor: '#0066ff',
+          boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+        },
+      }}
+      onClick={onBack}>Back</Button>
       {remainingAmount !== undefined && remainingAmount !== null && (
       <div style={{ textAlign: 'right', color: remainingAmountColor, fontWeight: 'bold' }}>
         {advance_or_due} : {formatAmountWithCommas(remainingAmount)}
@@ -98,8 +104,17 @@ const HandleCustomerCard = ({ customerDetails, purchased, onBack }) => {
                 <AccordionDetails style={{ display: 'flex', flexDirection: 'column' }}>
                   <Typography>
                     <InvoiceDetailsByNumber selectedCustomer={selectedCustomer} details = {customer} invoiceNumber= {customer.invoice_number}/>
-                    <Button onClick={() => handlePrint(customer)}>Print</Button>
                   </Typography>
+                  <Button sx={{
+                    backgroundColor: '#1a75ff',
+                    color: '#fff',
+                    '&:hover': {
+                      backgroundColor: '#0066ff',
+                      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                    },
+                   
+                  }}
+                  onClick={() => handlePrint(customer)}>Print</Button>
                 </AccordionDetails>
               </Accordion>
            </div>

@@ -6,13 +6,13 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
 import axios from 'axios';
 import AppBarPage from './appBarPage';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import '../styles.css';
 import HandleCustomerCard from './handleCustomerCard';
 import Switch from '@mui/material/Switch';
+import { Button } from '@mui/material';
 
 
 export default function CustomerCard() {
@@ -134,7 +134,7 @@ export default function CustomerCard() {
                 return null; // or provide a default value
               }              
               return (
-                <Card  key={name.id} sx={{ minWidth: 200, maxWidth: 250, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)' }}>
+                <Card  key={name.id} sx={{width:250, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)' }}>
                   <CardContent>
                     <Typography variant="h6" color="text.primary" gutterBottom>
                       {customer.customer_name}
@@ -144,7 +144,15 @@ export default function CustomerCard() {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button
+                    <Button 
+                      sx={{
+                        backgroundColor: '#4da6ff',
+                        color: '#fff',
+                        '&:hover': {
+                          backgroundColor: '#0066ff',
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                        },
+                      }}
                       size="small"
                       onClick={() => handleCustomerCard(customer.customer_name)}
                     >
