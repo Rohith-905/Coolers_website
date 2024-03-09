@@ -6,6 +6,7 @@ import { tableCellClasses } from '@mui/material/TableCell';
 import AppBarPage from './appBarPage';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import './addCustomers.css';
+import SoldCoolerInfo from './soldCoolerInfo';
 // import '../styles.css'
 
 const Home = () => {
@@ -16,6 +17,8 @@ const Home = () => {
   const [addCoolers, setAddCoolers] = useState({ name: '', quantity: '' });
   const [enableAddCoolers, setEnableAddCoolers] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [viewSoldCoolersInfo, setViewSoldCoolersInfo] = useState(false);
+  const [viewModelname,setViewModelName] = useState('');
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -132,147 +135,171 @@ const Home = () => {
     }
   };
 
+  const handleViewSoldCoolers = (model_name) =>{
+    setViewModelName(model_name);
+    console.log(model_name);
+    setViewSoldCoolersInfo(true);
+  }
+
   return (
     <AppBarPage loggedIn={true}>
       <div>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <h2>Available Coolers</h2>
+        {
+          viewSoldCoolersInfo?
+          <SoldCoolerInfo model_name={viewModelname} setViewSoldCoolersInfo={setViewSoldCoolersInfo}/>:
+          <>
             <Grid container spacing={2}>
-              <Grid item xs={4}>
-                <div style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
-                  <TextField
-                    label="Search by Cooler Name"
-                    variant="standard"
-                    value={searchInput}
-                    onChange={handleSearch}
-                    InputProps={{
-                      startAdornment: <SearchRoundedIcon />,
-                    }}
-                  />
-                </div>
-              </Grid>
-              <Grid item xs={8} />
-            </Grid>
-            {filteredCoolers.length > 0 ? (
-              <div>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <StyledTableCell align="center">Name</StyledTableCell>
-                      <StyledTableCell align="center">Quantity Available</StyledTableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {filteredCoolers.map((cooler) => (
-                      <StyledTableRow key={cooler.model_name}>
-                        <StyledTableCell align="center">{cooler.model_name}</StyledTableCell>
-                        <StyledTableCell align="center">{cooler.quantity}</StyledTableCell>
-                      </StyledTableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            ) : (
-              <p>No coolers available</p>
-            )}
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Grid container spacing={2} paddingTop={'30px'} >
-              <Grid item xs={9} />
-              <Grid item xs={3}>
-                <Button
-                  sx={{
-                    backgroundColor: '#1a75ff',
-                    color: '#fff',
-                    '&:hover': {
-                      backgroundColor: '#0066ff',
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-                    },
-                  }}
-                  onClick={handleAddCoolerButton}
-                >
-                  Add Coolers
-                </Button>
-              </Grid>
-              <Grid item xs={12} md={8} style={{ paddingLeft: '25%' }}>
-                {enableAddCoolers && (
-                  <form onSubmit={handleAddCoolers}>
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <label>Cooler Name:</label>
-                      <Autocomplete
-                        value={addCoolers.name}
-                        onChange={(e, value) => handleInputChange(e, "name", value)}
-                        onInputChange={(e, newInputValue) => handleInputChange(e, "name", newInputValue)}
-                        options={coolers.map((cooler) => cooler.model_name)}
-                        getOptionLabel={(option) => option}  // Use getOptionLabel to specify how the label is displayed
-                        freeSolo
-                        renderInput={(params) => (
-                          <TextField {...params} style={{ width: '300px', marginBottom: '10px' }} />
-                        )}
-                      />
-
-                      {/* <Autocomplete
-                        value={addCoolers.name}
-                        onChange={(e, value) => handleInputChange(e, "name",value)}
-                        onInputChange={(e, newInputValue) => handleInputChange(e, "name", newInputValue)}
-                        options={coolers.map((cooler) => cooler.model_name)}
-                        freeSolo
-                        renderInput={(params) => (
-                          <TextField {...params} style={{ width: '300px', marginBottom: '10px' }} />
-                        )}
-                      /> */}
-
-                      <label>Quantity:</label>
-                      <input
-                        type="text"
-                        name="quantity"
-                        value={addCoolers.quantity}
-                        onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
-                        style={{ width: '300px', marginBottom: '10px', padding: '8px', height:'50px' }}
-                        required
-                      />
-
-                      <Button
-                        sx={{
-                          backgroundColor: '#1a75ff',
-                          color: '#fff',
-                          marginTop: '10px',
-                          '&:hover': {
-                            backgroundColor: '#0066ff',
-                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-                          },
+              <Grid item xs={12} md={6}>
+                <h2>Available Coolers</h2>
+                <Grid container spacing={2}>
+                  <Grid item xs={4}>
+                    <div style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
+                      <TextField
+                        label="Search by Cooler Name"
+                        variant="standard"
+                        value={searchInput}
+                        onChange={handleSearch}
+                        InputProps={{
+                          startAdornment: <SearchRoundedIcon />,
                         }}
-                        type="submit"
-                        onClick={handleAddCoolers}
-                      >
-                        Submit
-                      </Button>
-                    </Box>
-                  </form>
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={8} />
+                </Grid>
+                {filteredCoolers.length > 0 ? (
+                  <div>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <StyledTableCell align="center">Name</StyledTableCell>
+                          <StyledTableCell align="center">Quantity Available</StyledTableCell>
+                          <StyledTableCell align="center"></StyledTableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {filteredCoolers.map((cooler) => (
+                          <StyledTableRow key={cooler.model_name}>
+                            <StyledTableCell align="center">{cooler.model_name}</StyledTableCell>
+                            <StyledTableCell align="center">{cooler.quantity}</StyledTableCell>
+                            <StyledTableCell align="center"><Button 
+                            sx={{
+                              backgroundColor: '#1a75ff',
+                              color: '#fff',
+                              '&:hover': {
+                                backgroundColor: '#0066ff',
+                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                              },
+                            }}
+                            onClick={() => handleViewSoldCoolers(cooler.model_name)}>View info</Button></StyledTableCell>
+                          </StyledTableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <p>No coolers available</p>
                 )}
               </Grid>
 
-            </Grid>
-          </Grid>
-        </Grid>
+              <Grid item xs={12} md={6}>
+                <Grid container spacing={2} paddingTop={'30px'} >
+                  <Grid item xs={9} />
+                  <Grid item xs={3}>
+                    <Button
+                      sx={{
+                        backgroundColor: '#1a75ff',
+                        color: '#fff',
+                        '&:hover': {
+                          backgroundColor: '#0066ff',
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                        },
+                      }}
+                      onClick={handleAddCoolerButton}
+                    >
+                      Add Coolers
+                    </Button>
+                  </Grid>
+                  <Grid item xs={12} md={8} style={{ paddingLeft: '25%' }}>
+                    {enableAddCoolers && (
+                      <form onSubmit={handleAddCoolers}>
+                        <Box
+                          display="flex"
+                          flexDirection="column"
+                          alignItems="center"
+                          justifyContent="center"
+                        >
+                          <label>Cooler Name:</label>
+                          <Autocomplete
+                            value={addCoolers.name}
+                            onChange={(e, value) => handleInputChange(e, "name", value)}
+                            onInputChange={(e, newInputValue) => handleInputChange(e, "name", newInputValue)}
+                            options={coolers.map((cooler) => cooler.model_name)}
+                            getOptionLabel={(option) => option}  // Use getOptionLabel to specify how the label is displayed
+                            freeSolo
+                            renderInput={(params) => (
+                              <TextField {...params} style={{ width: '300px', marginBottom: '10px' }} />
+                            )}
+                          />
 
-        {/* Success Alert */}
-        {showSuccessAlert && (
-          <Alert
-            variant = "filled"
-            severity="success"
-            sx={{ position: 'fixed', top: 0, left: '50%', transform: 'translateX(-50%)', zIndex: 9999 }}
-          >
-            Successfully updated the coolers
-          </Alert>
-        )}
+                          {/* <Autocomplete
+                            value={addCoolers.name}
+                            onChange={(e, value) => handleInputChange(e, "name",value)}
+                            onInputChange={(e, newInputValue) => handleInputChange(e, "name", newInputValue)}
+                            options={coolers.map((cooler) => cooler.model_name)}
+                            freeSolo
+                            renderInput={(params) => (
+                              <TextField {...params} style={{ width: '300px', marginBottom: '10px' }} />
+                            )}
+                          /> */}
+
+                          <label>Quantity:</label>
+                          <input
+                            type="text"
+                            name="quantity"
+                            value={addCoolers.quantity}
+                            onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
+                            style={{ width: '300px', marginBottom: '10px', padding: '8px', height:'50px' }}
+                            required
+                          />
+
+                          <Button
+                            sx={{
+                              backgroundColor: '#1a75ff',
+                              color: '#fff',
+                              marginTop: '10px',
+                              '&:hover': {
+                                backgroundColor: '#0066ff',
+                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                              },
+                            }}
+                            type="submit"
+                            onClick={handleAddCoolers}
+                          >
+                            Submit
+                          </Button>
+                        </Box>
+                      </form>
+                    )}
+                  </Grid>
+
+                </Grid>
+              </Grid>
+            </Grid>
+
+            {/* Success Alert */}
+            {showSuccessAlert && (
+              <Alert
+                variant = "filled"
+                severity="success"
+                sx={{ position: 'fixed', top: 0, left: '50%', transform: 'translateX(-50%)', zIndex: 9999 }}
+              >
+                Successfully updated the coolers
+              </Alert>
+            )}
+          </>
+        }
+        
       </div>
     </AppBarPage>
   );
