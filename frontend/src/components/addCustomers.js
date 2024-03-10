@@ -3,7 +3,6 @@ import AppBarPage from "./appBarPage";
 import "./addCustomers.css"; // Import your CSS file
 import { Alert, Autocomplete, Button, Fab, Grid, Snackbar, Table, TableBody, TableCell, TableHead, TableRow, TextField, tableCellClasses } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
-// import { useNavigate } from "react-router-dom";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DoneIcon from '@mui/icons-material/Done';
@@ -35,7 +34,6 @@ const AddCustomers = () => {
   const [customerNameSuggestions, setCustomerNameSuggestions] = useState([]);
   const [vendorNameSuggestions, setVendorNameSuggestions] = useState([]);
   const [coolersWithQuantityList,setCoolersWithQuantityList] = useState([]);
-  // const [open, setOpen] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
   const [editedQuantity, setEditedQuantity] = useState(0);
   const [editedAmount, setEditedAmount] = useState(0);
@@ -43,7 +41,6 @@ const AddCustomers = () => {
   const [error,setError] = useState('');
   const [purchased, setPurchased] = useState(false);
   const [print,setPrint] = useState(false);
-  const [ fetchSuggestionsAfterPrint ,setFetchSuggestionsAfterPrint ] = useState(false);
   const [pr, setPr] = useState(false);
   const [prr, setPrr] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);

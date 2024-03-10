@@ -40,13 +40,6 @@ const Home = () => {
     },
   }));
 
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setAddCoolers((prevData) => ({
-  //     ...prevData,
-  //     [name]: value,
-  //   }));
-  // };
   const handleInputChange = async (e, name, value) => {  
     setAddCoolers((prevData) => {
       const newData = {

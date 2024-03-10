@@ -3,6 +3,11 @@ const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const fs = require('fs');
+const log4js = require('log4js');
+
+// Get logger instance
+const logger = log4js.getLogger();
 
 const app = express();
 const port = 5000;
@@ -26,6 +31,27 @@ db.connect((err) => {
 });
 
 
+// const path = require('path');
+if (!fs.existsSync('./logs')){
+  fs.mkdirSync('./logs');
+}
+// Create a new folder with timestamp
+const logsFolderName = `./logs/logs_${new Date().toString().replace(/:/g, '-')}`;
+
+// Update log4js configuration to write logs to the new folder
+log4js.configure({
+  appenders: {
+    file: { type: 'file', filename: `${logsFolderName}.log` },
+    console: { type: 'console' }
+  },
+  categories: {
+    default: { appenders: ['file', 'console'], level: 'debug' }
+  }
+});
+
+
+
+
 app.post('/api/register', async (req, res) => {
   const { username, password } = req.body;
 
@@ -43,6 +69,7 @@ app.post('/api/register', async (req, res) => {
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
     console.error('Error during registration:', error);
+    logger.error('Error during registration:');
 
     // Handle specific bcrypt errors
     if (error.name === 'BcryptError') {
@@ -62,11 +89,13 @@ app.post('/api/login', (req, res) => {
   //  console.log(findUserQuery);
    db.query(findUserQuery, [username], (err, results) => {
      if (err) {
+       logger.error('DB Internal server error');
        return res.status(500).json({ error: 'DB Internal server error' });
      }
  
      // Check if the user doesnt exists
      if (results.length === 0) {
+       logger.error('Authentication failed. User not found.');
        return res.status(401).json({ error: 'Authentication failed. User not found.' });
      }
  
@@ -75,14 +104,17 @@ app.post('/api/login', (req, res) => {
      // Compare the provided password with the hashed password in the database
     bcrypt.compare(password, user.password, (err, isMatch) => {
       if (err) {
+        logger.error('bcrypt Internal server error');
         return res.status(500).json({ error: 'bcrypt Internal server error' });
       }
 
       if (isMatch) {
         // Passwords match, authentication successful
+        logger.info('Login successful');
         return res.status(200).json({ message: 'Login successful' });
       } else {
         // Passwords don't match, authentication failed
+        logger.error('Authentication failed. Invalid password.');
         return res.status(401).json({ error: 'Authentication failed. Invalid password.' });
       }
     });
@@ -97,9 +129,11 @@ app.get('/api/coolers_available', (req, res) => {
   db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching cooler details:', err);
+      logger.error("Error fetching Cooler Details",err);
       return res.status(500).json({ error: 'Internal server error' });
     }
     // console.log(results);
+    logger.info("Successfully fetched coolers",results);
     return res.status(200).json(results);
   });
 });
@@ -111,10 +145,12 @@ app.get('/api/customerDetails', (req, res) => {
   // console.log(query);
   db.query(query, (err, results) => {
     if (err) {
+      logger.error("Error fetching customer details");
       console.error('Error fetching customer details:', err);
       return res.status(500).json({ error: 'Internal server error' });
     }
     // console.log(results);
+    logger.info("customer details fetched successfully",results);
     return res.status(200).json(results);
   });
 });
@@ -124,10 +160,12 @@ app.get('/api/vendorDetails', (req, res) => {
   // console.log(query);
   db.query(query, (err, results) => {
     if (err) {
+      logger.error("Error fetching Vendor details",query);
       console.error('Error fetching Vendor details:', err);
       return res.status(500).json({ error: 'Internal server error' });
     }
     // console.log(results);
+    logger.info("Vendor details fetched successfully",results);
     return res.status(200).json(results);
   });
 });
@@ -252,6 +290,7 @@ app.post('/api/add_coolers', async (req, res) => {
       res.status(200).json({ message: 'Cooler quantity updated successfully' });
     }
   } catch (error) {
+    logger.error(error);
     console.error('Error:', error);
     res.status(500).json({ error: 'Failed to store data or update cooler count in the database' });
   }
@@ -330,6 +369,7 @@ app.post('/api/saveFormDataAndDetails', async (req, res) => {
       } catch (error) {
         errorOccurred = true;
         console.error('Error:', error);
+        logger.error(error);
         break; // Break the loop if an error occurs
       }
     }
@@ -346,6 +386,7 @@ app.post('/api/saveFormDataAndDetails', async (req, res) => {
 
     res.status(200).send('Data saved to the backend');
   } catch (error) {
+    logger.error(error);
     console.error('Error saving data to the backend:', error);
     res.status(500).send('Failed to save data to the backend');
   }
@@ -361,22 +402,27 @@ app.get('/api/get_amountDetails', async (req, res) => {
       // console.log("Hello");
       const amount = await queryDatabase('SELECT amount FROM  vendor_due WHERE name = ?', customerName);
       if (amount.error) {
+        logger.error('Error fetching amount details:', amount.error);
         console.error('Error fetching amount details:', amount.error);
         res.status(500).json({ message: 'Internal server error' });
       } else {
+        logger.info('Amount details fetched successfully');
         res.status(200).json(amount[0]);
       }
     } else {
       // console.log("Hi");
       const amount = await queryDatabase('SELECT amount FROM  customer_due  WHERE name = ?', customerName);
       if (amount.error) {
+        logger.error('Error fetching amount details:', amount.error);
         console.error('Error fetching amount details:', amount.error);
         res.status(500).json({ message: 'Internal server error' });
       } else {
+        logger.info('Amount details fetched successfully');
         res.status(200).json(amount[0]);
       }
     }
   } catch (error) {
+    logger.error('Failed to store data or update cooler count in the database',error);
     console.error('Error:', error);
     res.status(500).json({ error: 'Failed to store data or update cooler count in the database' });
   }
@@ -389,12 +435,14 @@ app.get('/api/getDetailsByInvoiceNumber', (req, res) => {
 
   db.query(query, invoiceNumber, (error, results) => {
     if (error) {
+      logger.error('Error fetching data:', error);
       console.error('Error fetching data:', error);
       res.status(500).json({ error: 'Failed to fetch data' });
       return;
     }
 
     if (results.length === 0) {
+      logger.error('No data found for the invoice number');
       res.status(404).json({ message: 'No data found for the invoice number' });
       return;
     }
@@ -413,6 +461,7 @@ app.post('/api/updateDueAmount', async (req, res) => {
     // console.log(selectQuery);
     db.query(selectQuery, [name], (error, results) => {
       if (error) {
+        logger.error('Error fetching data:', error);
         console.error('Error fetching data:', error);
         res.status(500).json({ error: 'Failed to fetch data' });
         return;
@@ -423,11 +472,13 @@ app.post('/api/updateDueAmount', async (req, res) => {
         // console.log(insertQuery);
         db.query(insertQuery, [name, remainingAmount], (error, results) => {
           if (error) {
+            logger.error('Error inserting data:', error)
             console.error('Error inserting data:', error);
             res.status(500).json({ error: 'Failed to insert data' });
             return;
           }
           console.log('New DATA ADDED');
+          logger.info('New DATA ADDED');
           res.status(200).json({ message: 'New DATA ADDED' });
         });
       } else {
@@ -435,11 +486,13 @@ app.post('/api/updateDueAmount', async (req, res) => {
         // console.log(updateQuery);
         db.query(updateQuery, [remainingAmount, name], (error, results) => {
           if (error) {
+            logger.error('Error updating data:', error);
             console.error('Error updating data:', error);
             res.status(500).json({ error: 'Failed to update data' });
             return;
           }
           console.log('UPDATED the DATA');
+          logger.info('UPDATED the DATA');
           res.status(200).json({ message: 'UPDATED the DATA' });
         });
       }
@@ -462,14 +515,16 @@ app.get('/api/get_due_data', (req, res) => {
 
 // Helper function to execute queries on the database
 function queryDatabase(query, values) {
-  console.log(query, values);
+  // console.log(query, values);
   return new Promise((resolve, reject) => {
     db.query(query, values, (error, results) => {
       if (error) {
+        logger.info("error from DB",error);
         // Use the 'error' variable here
         reject( error );
       } else {
         // console.log("result",results);
+        logger.info("success from DB",results);
         resolve( results );
       }
     });
