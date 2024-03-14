@@ -4,6 +4,8 @@
 /node_modules
 /.pnp
 .pnp.js
+# Ignore logs folder in the backend directory
+../backend/logs/
 
 # testing
 /coverage
