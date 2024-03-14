@@ -145,6 +145,11 @@ const InvoiceDetailsByNumber = ( {selectedCustomer, details,invoiceNumber,setSel
                                                         <td>{formatAmountWithCommas(details.amount * details.quantity)}</td>
                                                     </tr>
                                                 ))}
+                                                <tr className="totalAmountRow">
+                                                    <td colSpan="3"></td>
+                                                    <td><strong>Total Amount:</strong></td>
+                                                    <td>{formatAmountWithCommas(details.overallTotalAmount-details.dueAmount)}</td>
+                                                </tr>
                                                 {
                                                     details.dueAmount?
                                                     <tr className="totalAmountRow">
@@ -156,7 +161,7 @@ const InvoiceDetailsByNumber = ( {selectedCustomer, details,invoiceNumber,setSel
                                                 }
                                                 <tr className="totalAmountRow">
                                                     <td colSpan="3"></td>
-                                                    <td><strong>Total Amount:</strong></td>
+                                                    <td><strong>Grand Total Amount:</strong></td>
                                                     <td>{formatAmountWithCommas(details.overallTotalAmount)}</td>
                                                 </tr>
                                             </tbody>
