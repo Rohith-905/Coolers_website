@@ -35,7 +35,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
 
   // Calculate total amount based on additional details
   const calculateTotalAmount = () => {
-    setOverallTotalAmount((additionalDetailsList.reduce((total, detail) => total + detail.amount * detail.quantity, 0)));
+    setOverallTotalAmount((additionalDetailsList.reduce((total, detail) => total + detail.amount * detail.quantity, 0))+dueAmount);
   };
 
   // const generatePDF = async() => {
@@ -262,7 +262,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
               <tr className="totalAmountRow">
                 <td colSpan="3"></td>
                 <td><strong>Total Amount:</strong></td>
-                <td>{formatAmountWithCommas(overallTotalAmount)}</td>
+                <td>{formatAmountWithCommas(overallTotalAmount-dueAmount)}</td>
               </tr>
               {
                 dueAmount?
@@ -277,7 +277,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
               <tr className="totalAmountRow">
                 <td colSpan="3"></td>
                 <td><strong>Grand Total Amount:</strong></td>
-                <td>{formatAmountWithCommas(overallTotalAmount+dueAmount)}</td>
+                <td>{formatAmountWithCommas(overallTotalAmount)}</td>
               </tr>
             </tbody>
         </table>
