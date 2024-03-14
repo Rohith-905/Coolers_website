@@ -328,6 +328,7 @@ const AddCustomers = () => {
       vehicle_number: "",
       date: "",
     });
+    setDueAmount(0);
     setAdditionalDetailsList([]);
   },[]);
 
