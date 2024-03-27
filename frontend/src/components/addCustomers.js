@@ -250,39 +250,15 @@ const AddCustomers = () => {
   const handleAddDetails = async (e) => {
 
     e.preventDefault();
-
-    setFormData({
-      customer_name: formData.customer_name,
-      shop_address: formData.shop_address,
-      model_name: "",
-      amount: "",
-      quantity: "",
-      vehicle_number: formData.vehicle_number,
-      date: formData.date,
-    });
-    try {
-      console.log(JSON.stringify(formData));
-      // Make a POST request to your backend API endpoint
-      await fetch("http://localhost:5000/api/add-customer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      })
-        .then(response => {
-          if (response.ok) {
-            console.log("Data successfully stored in the database!");
-          } else {
-            alert("No sufficeint quantity");
-          }
-        })
-        .catch(error => {
-          alert(error);
-        });      
-    } catch (error) {
-      console.error("Error:", error);
-      window.alert("Error");
+    const model = additionalDetails.model_name;
+    // console.log(model);
+    const quantityObject = coolersWithQuantityList.find((res) => res.model_name === model);
+    // console.log(quantityObject);
+    const quantity = quantityObject ? quantityObject.quantity : null;
+    // console.log(additionalDetails);
+    // const quantity = coolersWithQuantityList.filter((res) => res.model_name === model).map((res) => res.quantity);
+    if(!purchased && additionalDetails.quantity > quantity){
+      handleQuantityAlert(model, quantity);
     }
     else{
       if (validateFields()) {
@@ -333,10 +309,34 @@ const AddCustomers = () => {
   },[]);
 
   return (
-
-      <AppBarPage className="add-customers-container">
-        <h2>Add Customer Details</h2>
-        <form onSubmit={handleSubmit}>
+    <>
+    {
+    print?<BillingPage formData={formData} additionalDetailsList={additionalDetailsList} dueAmount={dueAmount} purchased={purchased} setPrint={setPrint} handleReset={handleReset} fetchCustomerNames={fetchCustomerNames}/>:
+    <AppBarPage loggedIn={true}>
+      <div style={{display:"flex", justifyContent: "space-between",alignItems:'center'}}>
+        <Switch checked={purchased}
+          onChange={handleToogleChange}
+          inputProps={{ 'aria-label': 'controlled' }}
+        />
+        <h3>{purchased ?  'Add Vendor Details' : 'Add Customer Details' }</h3>
+        <Button
+          sx={{
+            backgroundColor: '#1a75ff',
+            color: '#fff',
+            paddingX: '30px', // Adjust the horizontal padding
+            height: '30px',   // Adjust the height
+            '&:hover': {
+              backgroundColor: '#0066ff',
+              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+            },
+          }}
+          type="Reset"
+          onClick={handleReset}
+        >
+          Reset
+        </Button>
+      </div>
+      <form>
         <table>
           <tbody>
             <tr>
