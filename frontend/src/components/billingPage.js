@@ -192,40 +192,19 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
         <div  className="shopDetails">
           <div className="header">
             <div className="left-info">
-              <p><strong>GSTNo:</strong> 36AIMPT0183B2Z9</p>
+              <p><strong>GSTNo:</strong>-----------</p>
             </div>
             <div className="right-info">
               <p><strong>Date:</strong> {formData.date}</p>
             </div>
           </div>
         </div>
-        {/* <Grid display={'flex'} justifyContent={'space-between'}>
-          <Grid item xs={12} md={6}>
-            <Grid container spacing={2} style={{ paddingLeft: '10px' }}>
-              <p>
-              <strong>SAI ROHIT ELECTRONICS & HOME NEEDS</strong><br/>
-              <strong>Address:</strong>D.NO: 2-5-52, PSR Road,<br/>
-                Khammam-507003,Telangana,<br/>
-                <strong>Ph No:</strong>9849377387,8465077387
-              </p>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Grid container spacing={2} style={{ paddingLeft: '50px' }}>
-              <p><strong>Name:</strong> {formData.customer_name}<br/>
-              <strong>Invoice No:</strong> {invoiceNumber}<br/>
-              <strong>Shop Address:</strong> {formData.shop_address}<br/>
-              <strong>Vehicle Number:</strong> {formData.vehicle_number}</p>
-            </Grid>
-          </Grid>
-        </Grid> */}
         <table>
           <tr >
             <td style={{width: '50%',textAlign: 'left'}}>
-              <strong>SAI ROHIT ELECTRONICS & HOME NEEDS</strong><br />
-              <strong>Address:</strong>D.NO: 2-5-52, PSR Road,<br />
-              Khammam-507003, Telangana,<br />
-              <strong>Ph No:</strong>9849377387,8465077387
+              <strong>ABC company</strong><br />
+              <strong>Address:</strong>Address<br />
+              <strong>Ph No:</strong>0000000000
             </td>
             <td style={{width: '50%',textAlign: 'left'}}>
               <strong>Name:</strong> {formData.customer_name}<br />
