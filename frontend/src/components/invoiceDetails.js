@@ -76,7 +76,7 @@ const InvoiceDetailsByNumber = ( {selectedCustomer, details,invoiceNumber,setSel
                         <><div className="shopDetails">
                             <div className="header">
                                 <div className="left-info">
-                                    <p><strong>GSTNo:</strong> 36AIMPT0183B2Z9</p>
+                                    <p><strong>GSTNo:</strong>----------</p>
                                 </div>
                                 <div className="right-info">
                                     <p><strong>Date:</strong>{formatDate(details.date)}</p>
@@ -105,17 +105,16 @@ const InvoiceDetailsByNumber = ( {selectedCustomer, details,invoiceNumber,setSel
                         </Grid> */}
                         <table>
                             <tr>
-                                <td style={{width: '50%',textAlign: 'left'}}>
-                                    <strong>SAI ROHIT ELECTRONICS & HOME NEEDS</strong><br />
-                                    <strong>Address:</strong>D.NO: 2-5-52, PSR Road,<br />
-                                    Khammam-507003, Telangana,<br />
-                                    <strong>Ph No:</strong>9849377387,8465077387
+                            <td style={{width: '50%',textAlign: 'left'}}>
+                                <strong>ABC company</strong><br />
+                                <strong>Address:</strong>Address<br />
+                                <strong>Ph No:</strong>0000000000
                                 </td>
                                 <td style={{width: '50%',textAlign: 'left'}}>
-                                    <strong>Name:</strong> {details.customer_name}<br />
-                                    <strong>Invoice No:</strong> {invoiceNumber}<br />
-                                    <strong>Shop Address:</strong> {details.shop_address}<br />
-                                    <strong>Vehicle Number:</strong> {details.vehicle_number}
+                                <strong>Name:</strong> {details.customer_name}<br />
+                                <strong>Invoice No:</strong> {invoiceNumber}<br />
+                                <strong>Shop Address:</strong> {details.shop_address}<br />
+                                <strong>Vehicle Number:</strong> {details.vehicle_number}
                                 </td>
                             </tr>
                             </table>
