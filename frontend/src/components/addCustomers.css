@@ -1,0 +1,121 @@
+/* Variables */
+:root {
+  --ruler: 16px;
+  --color-red: #AE1100;
+  --color-bg: #EBECF0;
+  --color-shadow: #BABECC;
+  --color-white: #FFF;
+}
+
+/* Body and HTML */
+body,
+html {
+  background-color: var(--color-bg);
+}
+
+body,
+p,
+button,
+select,
+textarea
+ {
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: -0.2px;
+  font-size: var(--ruler);
+}
+
+/* Segment */
+.segment {
+  padding: calc(var(--ruler) * 2) 0;
+  text-align: center;
+}
+
+/* Button and Input */
+button
+{
+  border: 0;
+  outline: 0;
+  border-radius: calc(var(--ruler) * 20);
+  padding: var(--ruler);
+  background-color: var(--color-bg);
+  text-shadow: 1px 1px 0 var(--color-white);
+}
+
+/* Label */
+label {
+  display: block;
+  margin-bottom: calc(var(--ruler) * 1.5);
+  width: 100%;
+}
+
+/* Basic Input Style */
+input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.3s;
+  width: 100%; 
+}
+
+/* Input Focus Style */
+input:focus {
+  border-color: #3498db; /* Change to your desired focus color */
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Optional: Add a subtle box shadow on focus */
+}
+
+/* Placeholder Style */
+input::placeholder {
+  color: #999; /* Change to your desired placeholder color */
+}
+
+/* Hover Effect */
+input:hover {
+  border-color: #95a5a6; /* Change to your desired hover color */
+}
+
+
+/* Button */
+button:hover {
+  box-shadow: -1px -1px 5px var(--color-white), 1px 1px 5px var(--color-shadow);
+} */
+
+button {
+  box-shadow: -2px -2px 5px var(--color-white), 2px 2px 5px var(--color-shadow);
+}
+/*
+button:active {
+  box-shadow: inset 1px 1px 2px var(--color-shadow), inset -1px -1px 2px var(--color-white);
+}
+
+/* Button Icon */
+.icon {
+  margin-right: var(--ruler) / 2;
+}
+
+/* Unit Button */
+.unit {
+  border-radius: var(--ruler) / 2;
+  line-height: 0;
+  width: calc(var(--ruler) * 3);
+  height: calc(var(--ruler) * 3);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 var(--ruler) / 2;
+  font-size: calc(var(--ruler) * 1.2);
+}
+
+.unit .icon {
+  margin-right: 0;
+}
+
+/* Red Button */
+.red {
+  display: block;
+  width: 100%;
+  color: var(--color-red);
+}
+
+
