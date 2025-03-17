@@ -274,6 +274,10 @@ const AddCustomers = () => {
     }
     
   };
+  const formatAmountWithCommas = (amount) => {
+    if (!amount || isNaN(amount)) return ""; // Handle invalid cases
+    return Number(amount).toLocaleString("en-IN");
+  };
 
   const handlePrintReceipt = () =>{
     if(additionalDetailsList.length!==0 ){
@@ -419,9 +423,9 @@ const AddCustomers = () => {
               <td style={{ paddingLeft: '100px' }}>
                 <label>Total Amount:</label>
                 <input
-                  type="number"
+                  // type="number"
                   name="total_amount"
-                  value={additionalDetails.total_amount}
+                  value={formatAmountWithCommas(additionalDetails.total_amount)}
                   min="1"
                   readOnly
                 />
@@ -483,7 +487,7 @@ const AddCustomers = () => {
                     <span>{detail.quantity}</span>
                   )}
                 </td>
-                <td align="center">{detail.total_amount}</td>
+                <td align="center">{formatAmountWithCommas(detail.total_amount)}</td>
                 <td align="center">
                   {editIndex !== index ? (
                     <EditIcon onClick={() => handleEdit(index)} />

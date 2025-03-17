@@ -26,7 +26,12 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
   const billingDivRef = useRef(null);
 
   const handlePaidAmountChange = (event) => {
-    setPaidAmount(event.target.value);
+    let rawValue = event.target.value.replace(/,/g, ""); // Remove commas
+    if (!isNaN(rawValue) && rawValue !== "") {
+      setPaidAmount(rawValue); // Store only the number (no commas)
+    } else if (rawValue === "") {
+      setPaidAmount(""); // Allow clearing input
+    }
   };
 
   // const handleDueAmountChange = (event) => {
@@ -171,8 +176,8 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
   }
 
   const formatAmountWithCommas = (amount) => {
-    // Use toLocaleString to format amount with commas
-    return amount.toLocaleString('en-IN');
+    if (!amount || isNaN(amount)) return ""; // Handle invalid cases
+    return Number(amount).toLocaleString("en-IN");
   };
 
   return (
