@@ -28,7 +28,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
   const handlePaidAmountChange = (event) => {
     let rawValue = event.target.value.replace(/,/g, ""); // Remove commas
     if (!isNaN(rawValue) && rawValue !== "") {
-      setPaidAmount(rawValue); // Store only the number (no commas)
+      setPaidAmount(Number(rawValue)); // Store only the number (no commas)
     } else if (rawValue === "") {
       setPaidAmount(""); // Allow clearing input
     }
@@ -59,19 +59,48 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
   //     }
   //   });
   // };
+  // const handlePdf = () => {
+  //   if (billingDivRef.current) {
+  //     html2canvas(billingDivRef.current).then((canvas) => {
+  //       const imgData = canvas.toDataURL("image/jpeg", 0.8); // Adjust the quality as needed
+  //       const pdf = new jsPDF("p", "mm", "a4");
+
+  //       // Calculate dimensions to maintain aspect ratio
+  //       const pdfWidth = pdf.internal.pageSize.getWidth();
+  //       const pdfHeight = pdf.internal.pageSize.getHeight();
+  //       const imgWidth = pdfWidth;
+  //       const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  //       pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight);
+  //       pdf.save(`invoice_${invoiceNumber}.pdf`);
+  //     });
+  //   }
+  // };
+
   const handlePdf = () => {
     if (billingDivRef.current) {
-      html2canvas(billingDivRef.current).then((canvas) => {
-        const imgData = canvas.toDataURL("image/jpeg", 0.8); // Adjust the quality as needed
-        const pdf = new jsPDF("p", "mm", "a4");
+      html2canvas(billingDivRef.current, { scale: 2 }).then((canvas) => {
+        const imgData = canvas.toDataURL("image/jpeg", 0.8);
+  
+        // Get the actual content size in pixels
+        const contentWidth = canvas.width;
+        const contentHeight = canvas.height;
 
-        // Calculate dimensions to maintain aspect ratio
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        const imgWidth = pdfWidth;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight);
+        // console.log("contentHeight",contentWidth);
+        // console.log("contentWidth",contentWidth);
+  
+        // Convert pixels to mm (1 px = 0.264583 mm)
+        const pdfWidth = contentWidth * 0.264583;
+        const pdfHeight = contentHeight * 0.264583;
+  
+        // Create PDF with exact content size
+        const pdf = new jsPDF({
+          orientation: pdfWidth > pdfHeight ? "l" : "p",
+          unit: "mm",
+          format: [pdfWidth, pdfHeight], // Dynamic page size
+        });
+  
+        pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
         pdf.save(`invoice_${invoiceNumber}.pdf`);
       });
     }

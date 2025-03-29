@@ -1,12 +1,28 @@
 .BillStyle {
-    font-family: "Courier New", Courier, monospace;
+    /* font-family: "Courier New", Courier, monospace; */
     font-size: 12px;
     /* max-width: 700px; Adjust this value as needed */
     margin: 0 auto; /* Center the receipt horizontally */
     /* padding: 20px; */
-    border: 2px solid black; /* Black border with 2px width */
-    width: 21cm;
-    height: 29.7cm;
+    /* border: 2px solid black; Black border with 2px width */
+    /* width: 21cm; */
+    /* height: 29.7cm; */
+    width: 80%;
+    /* margin: auto; */
+    /* padding: 10px; */
+    /* background: white; */
+    /* border: 1px solid #ccc; */
+    /* box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); */
+
+    font-family: Arial, sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #fff;
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+    /* width: 100%;  */
+    /* margin: 0 auto; */
+    
   }
   
   .BillStyle h2 {
@@ -70,18 +86,7 @@
     /* width: fit-content; Adjust width based on content */
     margin-top: 20px; /* Add spacing */
   }
-  
-  /* Updated CSS for the bill receipt */
-  .BillStyle {
-    font-family: Arial, sans-serif;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* width: 100%;  */
-    margin: 0 auto;
-  }
+    
   
   /* Additional CSS for left and right sections */
   .header {
@@ -204,18 +209,18 @@
     margin-top: 10px; /* Optional: Add margin for spacing */
   }
   
-/* Print styles */
-/* @media print {
-  body {
-    margin: 0; 
-  }
 
-  .BillStyle {
-    width: 100%; 
+  /* .buttons {
+    background-color: #1a75ff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
   }
-  .shopDetails,
-  .header,
-  table {
-    width: 100%;
-  }
-}  */
+  
+  .buttons:hover {
+    background-color: #0066ff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  } */
+  
