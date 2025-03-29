@@ -94,26 +94,6 @@ const InvoiceDetailsByNumber = ( {selectedCustomer, details,invoiceNumber,setSel
                                 </div>
                             </div>
                         </div>
-                        {/* <Grid display={'flex'} justifyContent={'space-between'}>
-                            <Grid item xs={12} md={6} >
-                                <Grid container spacing={2} style={{ paddingLeft: '10px' }}>
-                                <p>
-                                <strong>SAI ROHIT ELECTRONICS & HOME NEEDS</strong><br/>
-                                <strong>Address:</strong>D.NO: 2-5-52, PSR Road,<br/>
-                                    Khammam-507003,Telangana,<br/>
-                                    <strong>Ph No:</strong>9849377387,8465077387
-                                </p>
-                                </Grid>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <Grid container spacing={2} style={{ paddingLeft: '50px' }}>
-                                <p><strong>Name:</strong> {details.customer_name}<br/>
-                                <strong>Invoice No:</strong> {invoiceNumber}<br/>
-                                <strong>Shop Address:</strong> {details.shop_address}<br/>
-                                <strong>Vehicle Number:</strong> {details.vehicle_number}</p>
-                                </Grid>
-                            </Grid>
-                        </Grid> */}
                         <table>
                             <tr>
                             <td style={{width: '50%',textAlign: 'left'}}>
