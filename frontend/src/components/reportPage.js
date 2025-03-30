@@ -3,7 +3,7 @@ import AppBarPage from "./appBarPage";
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './reportPage.css';
+import '../stylingCss/reportPage.css';
 
 const ReportPage = () => {
   const [data, setData] = useState({ vendorData: [], customerData: [] });
@@ -25,7 +25,8 @@ const ReportPage = () => {
   };
 
   const formatAmountWithCommas = (amount) => {
-    return amount.toLocaleString('en-IN');
+    if (!amount || isNaN(amount)) return 0; // Handle invalid cases
+    return Number(amount).toLocaleString("en-IN");
   };
 
   const fetchData = async () => {

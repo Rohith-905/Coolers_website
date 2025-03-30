@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 // import { useNavigate } from 'react-router-dom';
 import html2canvas from "html2canvas";
 import { jsPDF } from 'jspdf';
-import './billPage.css';
+import '../stylingCss/billPage.css';
 import { Dialog, DialogActions, DialogTitle, Grid } from '@mui/material';
 
 const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, setPrint, handleReset, fetchCustomerNames}) => {
@@ -205,7 +205,7 @@ const BillingPage = ({formData, additionalDetailsList, dueAmount, purchased, set
   }
 
   const formatAmountWithCommas = (amount) => {
-    if (!amount || isNaN(amount)) return ""; // Handle invalid cases
+    if (!amount || isNaN(amount)) return 0; // Handle invalid cases
     return Number(amount).toLocaleString("en-IN");
   };
 

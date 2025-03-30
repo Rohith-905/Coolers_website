@@ -1,5 +1,5 @@
 import React,{useRef} from 'react';
-import './billPage.css';
+import '../stylingCss/billPage.css';
 import { Button } from '@mui/material';
 import html2canvas from "html2canvas";
 import {jsPDF} from "jspdf";
@@ -17,7 +17,7 @@ const InvoiceDetailsByNumber = ( {selectedCustomer, details,invoiceNumber,setSel
     };
 
     const formatAmountWithCommas = (amount) => {
-        if (!amount || isNaN(amount)) return ""; // Handle invalid cases
+        if (!amount || isNaN(amount)) return 0; // Handle invalid cases
         return Number(amount).toLocaleString("en-IN");
       };
 

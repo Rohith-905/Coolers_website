@@ -9,11 +9,17 @@ import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import AppBarPage from './appBarPage';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import '../styles.css';
 import HandleCustomerCard from './handleCustomerCard';
 import Switch from '@mui/material/Switch';
 import { Button } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
+import '../stylingCss/styles.css';
 
 export default function CustomerCard() {
 
@@ -22,12 +28,20 @@ export default function CustomerCard() {
   const [customerDetailsList, setCustomerDetailsList] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [deletingCustomer, setDeletingCustomer] = useState(null);
   const [vendorUniqueNames , setVendorUniqueNames] = useState([]);
   const [vendorDetailsList , setVendorDetailsList] = useState([]);
   const [purchased, setPurchased] = useState(false);
+  const [dueAmountPopUp, setDueAmountPopUp] = useState(false);
+  const [dueAmount, setDueAmount] = useState(0);
+
 
   const handleToggleChange = (e) =>{
     setPurchased(e.target.checked);
+  }
+
+  const handleClose =()=>{
+    setDueAmountPopUp(false);
   }
 
   useEffect(() => {
@@ -96,6 +110,50 @@ export default function CustomerCard() {
     setSelectedCustomer(null);
   };
 
+  const formatAmountWithCommas = (amount) => {
+    if (!amount || isNaN(amount)) return 0; // Handle invalid cases
+    return Number(amount).toLocaleString("en-IN");
+  };
+
+  const handleDelete = async(customer_name)=>{
+    try{
+      const response = await fetch(`http://localhost:5000/api/get_amountDetails?name=${customer_name}&purchased=${purchased}`);
+      
+      if (response.status === 200) {
+        const amountDetails = await response.json();
+        setDeletingCustomer(customer_name);
+        setDueAmountPopUp(true);
+        setDueAmount(amountDetails.amount);
+        console.log(amountDetails.amount);
+      } else{
+        setDeletingCustomer(customer_name);
+        setDueAmountPopUp(true);
+      }
+    }catch(error){
+      console.log("error deleting the data of customer");
+    }
+     
+  }
+
+  const handleDeleteConfirm = async (customerName) => {
+    try {
+      const deleted = await axios.delete(`http://localhost:5000/api/deleteCustomerDetails`, {
+        data: { customer_name : customerName, purchased : purchased }  // Send data in the request body
+      });
+      if (deleted.status === 200) {
+        console.log("Successfully deleted the customer details");
+        setDueAmountPopUp(false);
+        setCustomerUniqueNames((prev) => Array.from(prev).filter((name) => name !== customerName));
+        setCustomerDetailsList((prev) => prev.filter((customer) => customer.customer_name !== customerName));
+        setVendorUniqueNames((prev) => Array.from(prev).filter((name) => name !== customerName));
+        setVendorDetailsList((prev) => prev.filter((vendor) => vendor.customer_name !== customerName));
+      }
+    } catch (error) {
+      console.error("Error deleting customer details", error);
+    }
+  };
+  
+
   return (
     <>
       {selectedCustomer ? (
@@ -158,6 +216,9 @@ export default function CustomerCard() {
                     >
                       View Details
                     </Button>
+                    <Button onClick={() => handleDelete(customer.customer_name)}>
+                      <DeleteIcon/>
+                    </Button>
                   </CardActions>
                 </Card>
               );
@@ -165,6 +226,28 @@ export default function CustomerCard() {
           </Box>
         </AppBarPage>
       )}
+      <Dialog
+        open={dueAmountPopUp}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Delete"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {deletingCustomer} is having Due Amount of {formatAmountWithCommas(dueAmount)} <br/>
+            Are you sure to delete?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+        <Button onClick={() => handleDeleteConfirm(deletingCustomer)}>Yes</Button>
+          <Button onClick={handleClose} autoFocus>
+            No
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

@@ -5,9 +5,8 @@ import { Grid, Table, TableHead, TableBody, TableRow, TableCell, TextField, Butt
 import { tableCellClasses } from '@mui/material/TableCell';
 import AppBarPage from './appBarPage';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import './addCustomers.css';
+import '../stylingCss/addCustomers.css';
 import SoldCoolerInfo from './soldCoolerInfo';
-// import '../styles.css'
 
 const Home = () => {
   const [coolers, setCoolers] = useState([]);

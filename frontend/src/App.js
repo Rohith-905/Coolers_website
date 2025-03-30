@@ -1,7 +1,7 @@
 // frontend/src/App.js
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import './styles.css';
+import './stylingCss/styles.css';
 import { Grid } from '@mui/material';
 
 import Home from './components/homePage';

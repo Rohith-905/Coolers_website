@@ -58,8 +58,8 @@ const HandleCustomerCard = ({ customerDetails, purchased, onBack }) => {
   }, []);
   
   const formatAmountWithCommas = (amount) => {
-    // Use toLocaleString to format amount with commas
-    return amount.toLocaleString('en-IN');
+    if (!amount || isNaN(amount)) return 0; // Handle invalid cases
+    return Number(amount).toLocaleString("en-IN");
   };
 
   const handlePrint = (customer) => {

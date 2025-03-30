@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import AppBarPage from "./appBarPage";
-import "./addCustomers.css"; // Import your CSS file
+import "../stylingCss/addCustomers.css"; // Import your CSS file
 import { Alert, Autocomplete, Button, Fab, Grid, Snackbar, Table, TableBody, TableCell, TableHead, TableRow, TextField, tableCellClasses } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -80,59 +80,112 @@ const AddCustomers = () => {
     setPurchased(event.target.checked);
   };
   
+  // const handleInputChange = async (e, name, value) => {
+  //   // console.log("Called");
+  
+  //   // Check if value is not undefined or null before applying trim()
+  //   let trimmedValue;
+  
+  //   if (name !== "shop_address") {
+  //     trimmedValue = value ? value.trim() : '';
+  //   } else {
+  //     trimmedValue = value; // Do not trim if name is "shop_address"
+  //   }
+  
+  //   if (name === "model_name" || name === "amount" || name === "quantity" || name === "total_amount") {
+  //     if(name === "amount"){
+  //       let rawValue = trimmedValue.replace(/,/g, ""); // Remove commas
+  //       if (!isNaN(rawValue) && rawValue !== "") {
+  //         trimmedValue = Number(rawValue); // Store only the number (no commas)
+  //       } else if (rawValue === "") {
+  //         trimmedValue = ""; // Allow clearing input
+  //       }
+  //     };
+  //     setAdditionalDetails((prevData) => {
+  //       const newData = {
+  //         ...prevData,
+  //         [name]: trimmedValue,
+  //       };
+  
+  //       // Update total amount based on the latest quantity and amount
+  //       if (name === "quantity" || name === "amount") {
+  //         newData.total_amount = newData.quantity * newData.amount;
+  //       }
+  //       return newData;
+  //     });
+  //   } else {
+  //     setFormData((prevData) => {
+  //       const newData = {
+  //         ...prevData,
+  //         [name]: trimmedValue,
+  //       };
+  //       return newData;
+  //     });
+  //   }
+  
+  //   if (name === 'customer_name') {
+  //     const selectedCustomer = purchased ? vendorDetails.find((vendor) => vendor.customer_name === value) : customerDetails.find((customer) => customer.customer_name === value);
+  
+  //     if (selectedCustomer) {
+  //       // If customer is found, set the address
+  //       setFormData((prevData) => ({
+  //         ...prevData,
+  //         shop_address: selectedCustomer.shop_address.trim(),
+  //       }));
+  //     } else {
+  //       // If customer is not found, set an empty address
+  //       setFormData((prevData) => ({
+  //         ...prevData,
+  //         shop_address: '',
+  //       }));
+  //     }
+  //   }
+  // };
+  
   const handleInputChange = async (e, name, value) => {
-    // console.log("Called");
+    let trimmedValue = value;
   
-    // Check if value is not undefined or null before applying trim()
-    let trimmedValue;
-  
-    if (name !== "shop_address") {
-      trimmedValue = value ? value.trim() : '';
-    } else {
-      trimmedValue = value; // Do not trim if name is "shop_address"
+    if (typeof value === "string" && name !== "shop_address") {
+      trimmedValue = value.trim();
     }
   
-    if (name === "model_name" || name === "amount" || name === "quantity" || name === "total_amount") {
-      setAdditionalDetails((prevData) => {
-        const newData = {
-          ...prevData,
-          [name]: trimmedValue,
-        };
-  
-        // Update total amount based on the latest quantity and amount
-        if (name === "quantity" || name === "amount") {
-          newData.total_amount = newData.quantity * newData.amount;
-        }
-        return newData;
-      });
-    } else {
-      setFormData((prevData) => {
-        const newData = {
-          ...prevData,
-          [name]: trimmedValue,
-        };
-        return newData;
-      });
+    if (name === "amount") {
+      let rawValue = trimmedValue.replace(/,/g, ""); // Remove commas
+      trimmedValue = rawValue !== "" && !isNaN(rawValue) ? Number(rawValue) : 0;
     }
   
-    if (name === 'customer_name') {
-      const selectedCustomer = purchased ? vendorDetails.find((vendor) => vendor.customer_name === value) : customerDetails.find((customer) => customer.customer_name === value);
+    setAdditionalDetails((prevData) => {
+      const newData = { ...prevData, [name]: trimmedValue };
   
-      if (selectedCustomer) {
-        // If customer is found, set the address
-        setFormData((prevData) => ({
-          ...prevData,
-          shop_address: selectedCustomer.shop_address.trim(),
-        }));
-      } else {
-        // If customer is not found, set an empty address
-        setFormData((prevData) => ({
-          ...prevData,
-          shop_address: '',
-        }));
+      // Ensure total_amount is only updated if both values exist and are valid numbers
+      if (name === "quantity" || name === "amount") {
+        const quantity = Number(newData.quantity) || 0;
+        const amount = Number(newData.amount) || 0;
+        newData.total_amount = quantity * amount;
       }
+  
+      return newData;
+    });
+  
+    if (!["model_name", "amount", "quantity", "total_amount"].includes(name)) {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: trimmedValue,
+      }));
+    }
+  
+    if (name === "customer_name") {
+      const selectedCustomer = purchased
+        ? vendorDetails.find((vendor) => vendor.customer_name === value)
+        : customerDetails.find((customer) => customer.customer_name === value);
+  
+      setFormData((prevData) => ({
+        ...prevData,
+        shop_address: selectedCustomer ? selectedCustomer.shop_address.trim() : "",
+      }));
     }
   };
+  
   const fetchModelDetails = async () => {
     try {
       const response = await fetch(`http://localhost:5000/api/coolers_available`);
@@ -275,7 +328,7 @@ const AddCustomers = () => {
     
   };
   const formatAmountWithCommas = (amount) => {
-    if (!amount || isNaN(amount)) return ""; // Handle invalid cases
+    if (!amount || isNaN(amount)) return 0; // Handle invalid cases
     return Number(amount).toLocaleString("en-IN");
   };
 
@@ -401,9 +454,9 @@ const AddCustomers = () => {
               <td style={{ paddingLeft: '100px' }}>
                 <label>Amount:</label>
                 <input
-                  type="number"
+                  type="text"
                   name="amount"
-                  value={additionalDetails.amount}
+                  value={formatAmountWithCommas(additionalDetails.amount)}
                   onChange={(e) => handleInputChange(e, e.target.name, e.target.value)}
                   min="1"
                   required
@@ -423,7 +476,7 @@ const AddCustomers = () => {
               <td style={{ paddingLeft: '100px' }}>
                 <label>Total Amount:</label>
                 <input
-                  // type="number"
+                  type="text"
                   name="total_amount"
                   value={formatAmountWithCommas(additionalDetails.total_amount)}
                   min="1"
@@ -469,7 +522,7 @@ const AddCustomers = () => {
                         style={{ width: '100px' }}
                       />
                     ) : (
-                      <span>{detail.amount}</span>
+                      <span>{formatAmountWithCommas(detail.amount)}</span>
                     )}
                   </td>
                   <td align="center">

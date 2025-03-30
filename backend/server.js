@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
 const log4js = require('log4js');
+const { error } = require('console');
 
 // Get logger instance
 const logger = log4js.getLogger();
@@ -415,6 +416,33 @@ app.get('/api/get_due_data', (req, res) => {
     });
   });
 });
+
+app.delete('/api/deleteCustomerDetails', (req, res) => {
+  const { customer_name, purchased } = req.body; // Extract from request body
+  if (!customer_name) {
+    return res.status(400).json({ error: "Customer name is required" });
+  }
+
+  const deleteSoldGoodsQuery = purchased ? "DELETE FROM purchasedGoods WHERE customer_name = ?" : "DELETE FROM soldGoods WHERE customer_name = ?";
+  const deleteCustomerDueQuery = purchased ? "DELETE FROM vendor_due WHERE name = ?" :"DELETE FROM customer_due WHERE name = ?";
+
+  db.query(deleteSoldGoodsQuery, [customer_name], (error, result) => {
+    if (error) {
+      console.error("Error deleting from soldGoods:", error);
+      return res.status(500).json({ error: "Failed to delete from soldGoods" });
+    }
+
+    db.query(deleteCustomerDueQuery, [customer_name], (error, result) => {
+      if (error) {
+        console.error("Error deleting from customer_due:", error);
+        return res.status(500).json({ error: "Failed to delete from customer_due" });
+      }
+
+      res.status(200).json({ message: "Deleted customer data successfully" });
+    });
+  });
+});
+
 
 // Helper function to execute queries on the database
 function queryDatabase(query, values) {

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Navigate } from 'react-router-dom';
 import { Grid, Checkbox } from '@mui/material';
-import '../styles.css';
+import '../stylingCss/styles.css';
 import AppBarPage from './appBarPage';
 
 const Login = ({ setLoggedIn, isLoggedIn }) => {
